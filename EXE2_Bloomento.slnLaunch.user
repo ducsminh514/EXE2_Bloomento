@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
