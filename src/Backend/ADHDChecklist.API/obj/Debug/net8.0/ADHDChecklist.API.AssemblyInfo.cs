@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ADHDChecklist.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+401c7f2de64b1effa320422163b93b48afd48367")]
 [assembly: System.Reflection.AssemblyProductAttribute("ADHDChecklist.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ADHDChecklist.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
