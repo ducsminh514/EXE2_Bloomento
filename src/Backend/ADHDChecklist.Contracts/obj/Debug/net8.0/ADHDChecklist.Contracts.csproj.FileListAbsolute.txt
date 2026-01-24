@@ -1,0 +1,12 @@
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.Contracts\bin\Debug\net8.0\ADHDChecklist.Contracts.deps.json
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.Contracts\bin\Debug\net8.0\ADHDChecklist.Contracts.dll
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.Contracts\bin\Debug\net8.0\ADHDChecklist.Contracts.pdb
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.Contracts\obj\Debug\net8.0\ADHDChecklist.Contracts.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.Contracts\obj\Debug\net8.0\ADHDChecklist.Contracts.AssemblyInfoInputs.cache
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.Contracts\obj\Debug\net8.0\ADHDChecklist.Contracts.AssemblyInfo.cs
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.Contracts\obj\Debug\net8.0\ADHDChecklist.Contracts.csproj.CoreCompileInputs.cache
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.Contracts\obj\Debug\net8.0\ADHDChecklist.Contracts.sourcelink.json
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.Contracts\obj\Debug\net8.0\ADHDChecklist.Contracts.dll
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.Contracts\obj\Debug\net8.0\refint\ADHDChecklist.Contracts.dll
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.Contracts\obj\Debug\net8.0\ADHDChecklist.Contracts.pdb
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.Contracts\obj\Debug\net8.0\ref\ADHDChecklist.Contracts.dll
