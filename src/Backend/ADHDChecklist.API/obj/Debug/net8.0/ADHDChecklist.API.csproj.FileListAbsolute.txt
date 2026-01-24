@@ -195,10 +195,11 @@ C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\obj\Debug\net8.0\ADHDChec.8C804486.Up2Date
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\obj\Debug\net8.0\ADHDChecklist.API.dll
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\obj\Debug\net8.0\refint\ADHDChecklist.API.dll
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\obj\Debug\net8.0\ADHDChecklist.API.pdb
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\obj\Debug\net8.0\ADHDChecklist.API.genruntimeconfig.cache
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\obj\Debug\net8.0\ref\ADHDChecklist.API.dll
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\obj\Debug\net8.0\ADHDChecklist.API.sourcelink.json
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

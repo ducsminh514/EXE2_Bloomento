@@ -4,6 +4,38 @@
     "title": "ADHDChecklist.API",
     "version": "1.0"
   },
-  "paths": { },
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "ADHDChecklist.API"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "ADHDChecklist.API"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
   "components": { }
 }

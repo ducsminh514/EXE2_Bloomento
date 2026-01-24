@@ -1131,9 +1131,6 @@ C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Cl
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\compressed\k2vdn1a74e-tptq2av103.gz
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\compressed\unagygy78e-lfu7j35m59.gz
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\compressed\8ux5ls2z2o-oyz0vx2fzb.gz
-C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\compressed\rb6nzcyc8n-yw9p195lbp.gz
-C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\compressed\raszrubx8v-12n1dhbefr.gz
-C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\compressed\lgvy06n7ho-qun1r0yk7k.gz
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\staticwebassets.development.json
@@ -1144,3 +1141,7 @@ C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Cl
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\refint\ADHDChecklist.Client.dll
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\ADHDChecklist.Client.pdb
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\ref\ADHDChecklist.Client.dll
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\ADHDChecklist.Client.sourcelink.json
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\compressed\rb6nzcyc8n-nngo5jxxne.gz
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\compressed\raszrubx8v-fr2ikfmnva.gz
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\compressed\lgvy06n7ho-d51pze7bf6.gz
