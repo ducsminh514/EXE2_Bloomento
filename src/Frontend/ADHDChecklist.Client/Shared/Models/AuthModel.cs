@@ -1,0 +1,194 @@
+﻿namespace ADHDChecklist.Client.Shared.Models;
+
+// ============================================
+// AUTH REQUEST MODELS
+// ============================================
+public record RegisterRequest(
+    string Email,
+    string Password,
+    string FullName
+);
+
+public record LoginRequest(
+    string Email,
+    string Password,
+    bool RememberMe = false
+);
+
+public record GoogleLoginRequest(
+    string GoogleIdToken
+);
+
+public record RefreshTokenRequest(
+    string RefreshToken
+);
+
+// ============================================
+// AUTH RESPONSE MODELS
+// ============================================
+public record RegisterResponse(
+    bool Success,
+    string Message,
+    string? UserId = null
+);
+
+public record LoginResponse(
+    bool Success,
+    string Message,
+    string? AccessToken = null,
+    string? RefreshToken = null,
+    UserInfo? User = null,
+    bool RequireEmailVerification = false
+);
+
+public record GoogleLoginResponse(
+    bool Success,
+    string Message,
+    string? AccessToken = null,
+    string? RefreshToken = null,
+    UserInfo? User = null,
+    bool IsNewUser = false
+);
+
+public record RefreshTokenResponse(
+    bool Success,
+    string Message,
+    string? AccessToken = null,
+    string? RefreshToken = null
+);
+
+public record VerifyEmailResponse(
+    bool Success,
+    string Message
+);
+
+public record UserInfo(
+    string UserId,
+    string Email,
+    string FullName,
+    string SubscriptionTier,
+    bool IsPremium,
+    bool IsEmailVerified
+);
+
+// ============================================
+// USER STATE MODEL
+// ============================================
+public class CurrentUser
+{
+    public string UserId { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
+    public string SubscriptionTier { get; set; } = "Free";
+    public bool IsPremium { get; set; }
+    public bool IsEmailVerified { get; set; }
+    public bool IsAuthenticated { get; set; }
+}
+
+// ============================================
+// API RESPONSE WRAPPER
+// ============================================
+public class ApiResponse<T>
+{
+    public bool Success { get; set; }
+    public string Message { get; set; } = string.Empty;
+    public T? Data { get; set; }
+    public List<string> Errors { get; set; } = new();
+}
+
+// ============================================
+// TASK MODELS
+// ============================================
+public record TaskResponse(
+    Guid Id,
+    string Title,
+    string? Description,
+    Guid? CategoryId,
+    string? CategoryName,
+    string? CategoryColor,
+    DateOnly ScheduledDate,
+    TimeOnly? TimeBlockStart,
+    TimeOnly? TimeBlockEnd,
+    int? Duration,
+    bool IsCompleted,
+    DateTime? CompletedAt,
+    int Priority,
+    bool IsRecurring,
+    string? RecurrencePattern,
+    Guid? ParentTaskId,
+    List<TaskResponse> SubTasks,
+    int OrderIndex,
+    DateTime CreatedAt,
+    DateTime UpdatedAt
+);
+
+public record TaskListResponse(
+    List<TaskResponse> Tasks,
+    int TotalCount,
+    DateOnly Date
+);
+
+public record CreateTaskRequest(
+    string Title,
+    string? Description,
+    Guid? CategoryId,
+    DateOnly ScheduledDate,
+    TimeOnly? TimeBlockStart,
+    TimeOnly? TimeBlockEnd,
+    int? Duration,
+    int Priority,
+    bool IsRecurring,
+    string? RecurrencePattern
+);
+
+public record UpdateTaskRequest(
+    string Title,
+    string? Description,
+    Guid? CategoryId,
+    DateOnly ScheduledDate,
+    TimeOnly? TimeBlockStart,
+    TimeOnly? TimeBlockEnd,
+    int? Duration,
+    int Priority
+);
+
+// ============================================
+// CATEGORY MODELS
+// ============================================
+public record CategoryResponse(
+    Guid Id,
+    string Name,
+    string ColorHex,
+    string? Icon,
+    int OrderIndex,
+    int TaskCount
+);
+
+public record CreateCategoryRequest(
+    string Name,
+    string ColorHex,
+    string? Icon
+);
+
+public record UpdateCategoryRequest(
+    string Name,
+    string ColorHex,
+    string? Icon
+);
+
+// ============================================
+// ANALYTICS MODELS
+// ============================================
+public record WeeklyAnalyticsResponse(
+    List<DailyStats> DailyStats,
+    int TotalCompleted,
+    int TotalCreated,
+    double CompletionRate
+);
+
+public record DailyStats(
+    DateOnly Date,
+    string DayOfWeek,
+    int TasksCompleted,
+    int TasksCreated
+);

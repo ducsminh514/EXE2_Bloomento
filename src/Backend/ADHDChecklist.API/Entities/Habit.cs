@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ADHDChecklist.API.Entities.Common;
 
 namespace ADHDChecklist.API.Entities;
 
@@ -29,5 +30,5 @@ public partial class Habit
 
     public virtual ICollection<HabitCompletion> HabitCompletions { get; set; } = new List<HabitCompletion>();
 
-    public virtual User User { get; set; } = null!;
+    public virtual ApplicationUser User { get; set; } = null!;
 }

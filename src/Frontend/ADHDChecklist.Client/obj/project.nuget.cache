@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "+pp/nzaMdJI=",
+  "dgSpecHash": "jirLPf0kTxc=",
   "success": true,
   "projectFilePath": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Administrator\\.nuget\\packages\\blazor-apexcharts\\6.1.0\\blazor-apexcharts.6.1.0.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\blazor-dragdrop\\2.6.1\\blazor-dragdrop.2.6.1.nupkg.sha512",
+    "C:\\Users\\Administrator\\.nuget\\packages\\blazored.localstorage\\4.2.0\\blazored.localstorage.4.2.0.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.aspnetcore.authorization\\8.0.23\\microsoft.aspnetcore.authorization.8.0.23.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.aspnetcore.components\\8.0.23\\microsoft.aspnetcore.components.8.0.23.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.aspnetcore.components.analyzers\\8.0.23\\microsoft.aspnetcore.components.analyzers.8.0.23.nupkg.sha512",

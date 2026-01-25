@@ -1,0 +1,126 @@
+﻿@page "/verify-email"
+@using ADHDChecklist.Client.Features.Auth.Services
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@inject ILogger<VerifyEmail> Logger
+<PageTitle>Xác nhận Email - ADHD Checklist</PageTitle>
+
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50 px-4">
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+
+        @if (_isVerifying)
+        {
+            <!-- Loading State -->
+            <div class="text-center">
+                <div class="mx-auto w-16 h-16 mb-6">
+                    <svg class="animate-spin h-16 w-16 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Đang xác nhận email...</h2>
+                <p class="text-gray-600">Vui lòng đợi trong giây lát</p>
+            </div>
+        }
+        else if (_verificationSuccess)
+        {
+            <!-- Success State -->
+            <div class="text-center">
+                <div class="mx-auto w-16 h-16 mb-6 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Email đã được xác nhận! 🎉</h2>
+                <p class="text-gray-600 mb-6">
+                    Tài khoản của bạn đã được kích hoạt thành công. Bạn có thể đăng nhập ngay bây giờ.
+                </p>
+
+                <button @onclick="GoToLogin"
+                        class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 transition-colors">
+                    Đăng nhập ngay
+                </button>
+            </div>
+        }
+        else
+        {
+            <!-- Error State -->
+            <div class="text-center">
+                <div class="mx-auto w-16 h-16 mb-6 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Xác nhận thất bại</h2>
+                <p class="text-gray-600 mb-6">@_errorMessage</p>
+
+                <div class="space-y-3">
+                    <button @onclick="GoToLogin"
+                            class="w-full bg-gray-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-700 transition-colors">
+                        Quay về đăng nhập
+                    </button>
+
+                    <p class="text-sm text-gray-500">
+                        Cần gửi lại email xác nhận?
+                        <a href="/resend-verification" class="text-indigo-600 hover:text-indigo-500 font-medium">
+                            Click vào đây
+                        </a>
+                    </p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery(Name = "token")]
+    public string? Token { get; set; }
+
+    [SupplyParameterFromQuery(Name = "userId")]
+    public string? UserId { get; set; }
+
+    private bool _isVerifying = true;
+    private bool _verificationSuccess = false;
+    private string _errorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await VerifyGmail();
+    }
+
+    private async Task VerifyGmail()
+    {
+        if (string.IsNullOrEmpty(Token) || string.IsNullOrEmpty(UserId))
+        {
+            _isVerifying = false;
+            _errorMessage = "Link xác nhận không hợp lệ. Vui lòng kiểm tra lại email của bạn.";
+            return;
+        }
+
+        try
+        {
+            var success = await AuthService.VerifyEmailAsync(UserId, Token);
+
+            _isVerifying = false;
+            _verificationSuccess = success;
+
+            if (!success)
+            {
+                _errorMessage = "Link xác nhận đã hết hạn hoặc không hợp lệ. Vui lòng yêu cầu gửi lại email xác nhận.";
+            }
+        }
+        catch (Exception)
+        {
+            _isVerifying = false;
+            _verificationSuccess = false;
+            _errorMessage = "Có lỗi xảy ra. Vui lòng thử lại sau.";
+        }
+    }
+
+    private void GoToLogin()
+    {
+        Navigation.NavigateTo("/login");
+    }
+}

@@ -1,5 +1,5 @@
 self.assetsManifest = {
-  "version": "EbDNTNOS",
+  "version": "km4QCs3+",
   "assets": [
     {
       "hash": "sha256-We76yQ6BbUqy3OL7pB4AiChSOtAH/BdDsZ0Z+MzXvD0=",
@@ -198,16 +198,20 @@ self.assetsManifest = {
       "url": "_content/MudBlazor/MudBlazor.min.js"
     },
     {
-      "hash": "sha256-hdG4eoiT73Llsz2TyXqDtF79HgtOcT6/SE1Vud3G3BU=",
+      "hash": "sha256-94zO1AQnCemYzzJefqGLGXW1WCffvX/eFeXERWM7y3Y=",
       "url": "_framework/ADHDChecklist.Client.pdb"
     },
     {
-      "hash": "sha256-rfTddrfU+0/DHf8zCzqJ2cUhX9i90LEoUcfPDiXMG+k=",
+      "hash": "sha256-oB7g6pXd+py6pr42KQJTTlkq9QgBJrVh4emKITAJhIo=",
       "url": "_framework/ADHDChecklist.Client.wasm"
     },
     {
       "hash": "sha256-cYi8ESUAEh1vdu+33SuL5ic5Rshrv7P3ycGTg/+oBqc=",
       "url": "_framework/Blazor-ApexCharts.wasm"
+    },
+    {
+      "hash": "sha256-QrIDftiTupcZwi4MrWifwVNJMM8Uh5LDGQMfR245BH4=",
+      "url": "_framework/Blazored.LocalStorage.wasm"
     },
     {
       "hash": "sha256-xbLgo23zTMksJxjHJFYj8DBTC7JDsI7ndgiw6f8gQHw=",
@@ -1046,7 +1050,7 @@ self.assetsManifest = {
       "url": "_framework/WindowsBase.wasm"
     },
     {
-      "hash": "sha256-Ef1UE4oGAKAmo45IJivbC2xRE8yi1jV9t2noMuhNGpA=",
+      "hash": "sha256-Cu3ENsv1E5HiB6KEUVCjjtRI+0WSCnYbjVMYso0sgIs=",
       "url": "_framework/blazor.boot.json"
     },
     {
@@ -1102,7 +1106,7 @@ self.assetsManifest = {
       "url": "_framework/netstandard.wasm"
     },
     {
-      "hash": "sha256-gwCnIBwkBOlbyZnUTMjJzg8uGDZh6YPM6KbACPk9rus=",
+      "hash": "sha256-dh8wangbJZnaz0LP620I1QBAIpBAfkVv0yfPy2X01ig=",
       "url": "appsettings.json"
     },
     {

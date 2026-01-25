@@ -31,6 +31,22 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Auth/Pages/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = RmVhdHVyZXNcQXV0aFxQYWdlc1xMb2dpbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Auth/Pages/Register.razor]
+build_metadata.AdditionalFiles.TargetPath = RmVhdHVyZXNcQXV0aFxQYWdlc1xSZWdpc3Rlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Auth/Pages/ResendVerification.razor]
+build_metadata.AdditionalFiles.TargetPath = RmVhdHVyZXNcQXV0aFxQYWdlc1xSZXNlbmRWZXJpZmljYXRpb24ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Auth/Pages/VerifyEmail.razor]
+build_metadata.AdditionalFiles.TargetPath = RmVhdHVyZXNcQXV0aFxQYWdlc1xWZXJpZnlFbWFpbC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Layout/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = TGF5b3V0XE1haW5MYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 

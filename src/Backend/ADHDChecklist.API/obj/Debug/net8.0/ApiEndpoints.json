@@ -1,7 +1,7 @@
 [
   {
     "ContainingType": "Program\u002B\u003C\u003Ec",
-    "Method": "\u003C\u003CMain\u003E$\u003Eb__0_2",
+    "Method": "\u003C\u003CMain\u003E$\u003Eb__0_9",
     "RelativePath": "",
     "HttpMethod": "GET",
     "IsController": false,
@@ -18,8 +18,179 @@
     ]
   },
   {
+    "ContainingType": "ADHDChecklist.API.Features.Auth.GoogleLogin.GoogleLoginEndpoint\u002B\u003C\u003Ec",
+    "Method": "\u003CMapGoogleLogin\u003Eb__0_0",
+    "RelativePath": "api/auth/google-login",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "ADHDChecklist.API.Features.Auth.GoogleLogin.GoogleLoginCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "ADHDChecklist.API.Features.Auth.GoogleLogin.GoogleLoginResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "ADHDChecklist.API.Features.Auth.GoogleLogin.GoogleLoginResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 400
+      }
+    ],
+    "Tags": [
+      "Authentication"
+    ],
+    "EndpointName": "GoogleLogin"
+  },
+  {
+    "ContainingType": "ADHDChecklist.API.Features.Auth.Login.LoginEndpoint\u002B\u003C\u003Ec",
+    "Method": "\u003CMapLogin\u003Eb__0_0",
+    "RelativePath": "api/auth/login",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "ADHDChecklist.API.Features.Auth.Login.LoginCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "ADHDChecklist.API.Features.Auth.Login.LoginResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 401
+      }
+    ],
+    "Tags": [
+      "Authentication"
+    ],
+    "EndpointName": "Login"
+  },
+  {
+    "ContainingType": "ADHDChecklist.API.Features.Auth.RefreshToken.RefreshTokenEndpoint\u002B\u003C\u003Ec",
+    "Method": "\u003CMapRefreshToken\u003Eb__0_0",
+    "RelativePath": "api/auth/refresh-token",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "ADHDChecklist.API.Features.Auth.RefreshToken.RefreshTokenCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "ADHDChecklist.API.Features.Auth.RefreshToken.RefreshTokenResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 401
+      }
+    ],
+    "Tags": [
+      "Authentication"
+    ],
+    "EndpointName": "RefreshToken"
+  },
+  {
+    "ContainingType": "ADHDChecklist.API.Features.Auth.Register.RegisterEndpoint\u002B\u003C\u003Ec",
+    "Method": "\u003CMapRegister\u003Eb__0_0",
+    "RelativePath": "api/auth/register",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "ADHDChecklist.API.Features.Auth.Register.RegisterCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "ADHDChecklist.API.Features.Auth.Register.RegisterResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "ADHDChecklist.API.Features.Auth.Register.RegisterResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 400
+      }
+    ],
+    "Tags": [
+      "Authentication"
+    ],
+    "EndpointName": "Register"
+  },
+  {
+    "ContainingType": "ADHDChecklist.API.Features.Auth.VerifyEmail.VerifyEmailEndpoint\u002B\u003C\u003Ec",
+    "Method": "\u003CMapVerifyEmail\u003Eb__0_0",
+    "RelativePath": "api/auth/verify-email",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "ADHDChecklist.API.Features.Auth.VerifyEmail.VerifyEmailCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "ADHDChecklist.API.Features.Auth.VerifyEmail.VerifyEmailResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "ADHDChecklist.API.Features.Auth.VerifyEmail.VerifyEmailResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 400
+      }
+    ],
+    "Tags": [
+      "Authentication"
+    ],
+    "EndpointName": "VerifyEmail"
+  },
+  {
     "ContainingType": "Program\u002B\u003C\u003Ec",
-    "Method": "\u003C\u003CMain\u003E$\u003Eb__0_3",
+    "Method": "\u003C\u003CMain\u003E$\u003Eb__0_10",
     "RelativePath": "health",
     "HttpMethod": "GET",
     "IsController": false,

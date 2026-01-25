@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ADHDChecklist.API.Entities.Common;
 
 namespace ADHDChecklist.API.Entities;
 
@@ -15,11 +16,11 @@ public partial class Category
 
     public string? Icon { get; set; }
 
-    public int? OrderIndex { get; set; }
+    public int OrderIndex { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
     public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
 
-    public virtual User User { get; set; } = null!;
+    public virtual ApplicationUser User { get; set; } = null!;
 }

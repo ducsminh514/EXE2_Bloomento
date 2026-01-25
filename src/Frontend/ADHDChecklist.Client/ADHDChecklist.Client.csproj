@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Blazor-ApexCharts" Version="6.1.0" />
     <PackageReference Include="blazor-dragdrop" Version="2.6.1" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.22" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.23" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.23" PrivateAssets="all" />
@@ -24,17 +25,13 @@
 
   <ItemGroup>
     <Folder Include="Features\Auth\Components\" />
-    <Folder Include="Features\Auth\Services\" />
-    <Folder Include="Features\Auth\Pages\" />
     <Folder Include="Features\Dashboard\Components\" />
     <Folder Include="Features\Dashboard\Services\" />
     <Folder Include="Features\Dashboard\Pages\" />
     <Folder Include="Features\Settings\Pages\" />
     <Folder Include="Infrastructure\Interceptors\" />
     <Folder Include="Infrastructure\Extensions\" />
-    <Folder Include="Infrastructure\Services\" />
     <Folder Include="Shared\Components\" />
-    <Folder Include="Shared\Models\" />
     <Folder Include="wwwroot\audio\" />
   </ItemGroup>
 

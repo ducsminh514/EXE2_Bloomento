@@ -202,4 +202,15 @@ C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\obj\Debug\net8.0\ADHDChecklist.API.genruntimeconfig.cache
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\obj\Debug\net8.0\ref\ADHDChecklist.API.dll
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\obj\Debug\net8.0\ADHDChecklist.API.sourcelink.json
-C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\bin\Debug\net8.0\Google.Apis.dll
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\bin\Debug\net8.0\Google.Apis.Auth.dll
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\bin\Debug\net8.0\Google.Apis.Core.dll
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\bin\Debug\net8.0\MailKit.dll
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\bin\Debug\net8.0\MediatR.Extensions.Microsoft.DependencyInjection.dll
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.Google.dll
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\bin\Debug\net8.0\MimeKit.dll
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\bin\Debug\net8.0\System.Management.dll
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Management.dll
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Backend\ADHDChecklist.API\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
