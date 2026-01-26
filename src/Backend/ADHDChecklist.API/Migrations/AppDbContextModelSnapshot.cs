@@ -65,9 +65,6 @@ namespace ADHDChecklist.API.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("SnapshotDate")
@@ -75,8 +72,6 @@ namespace ADHDChecklist.API.Migrations
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("IX_AnalyticsSnapshots_UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.HasIndex("UserId", "SnapshotDate")
                         .IsUnique()
@@ -118,9 +113,6 @@ namespace ADHDChecklist.API.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ConvertedToTaskId");
@@ -129,8 +121,6 @@ namespace ADHDChecklist.API.Migrations
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("IX_BrainDumpItems_UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.HasIndex("UserId", "CreatedAt")
                         .HasDatabaseName("IX_BrainDumpItems_UserId_CreatedAt");
@@ -176,15 +166,10 @@ namespace ADHDChecklist.API.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("IX_Categories_UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.HasIndex("UserId", "OrderIndex")
                         .HasDatabaseName("IX_Categories_UserId_OrderIndex");
@@ -409,9 +394,6 @@ namespace ADHDChecklist.API.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool>("WasCompleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -429,8 +411,6 @@ namespace ADHDChecklist.API.Migrations
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("IX_FocusSessions_UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.HasIndex("UserId", "StartedAt")
                         .HasDatabaseName("IX_FocusSessions_UserId_StartedAt");
@@ -495,15 +475,10 @@ namespace ADHDChecklist.API.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("IX_Habits_UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.HasIndex("UserId", "IsActive")
                         .HasDatabaseName("IX_Habits_UserId_IsActive");
@@ -597,9 +572,6 @@ namespace ADHDChecklist.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ApplicationUserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
@@ -672,8 +644,6 @@ namespace ADHDChecklist.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
                     b.HasIndex("CategoryId")
                         .HasDatabaseName("IX_Tasks_CategoryId")
                         .HasFilter("[CategoryId] IS NOT NULL");
@@ -693,46 +663,6 @@ namespace ADHDChecklist.API.Migrations
                         .HasDatabaseName("IX_Tasks_UserId_ScheduledDate");
 
                     b.ToTable("Tasks", (string)null);
-                });
-
-            modelBuilder.Entity("ADHDChecklist.API.Entities.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastLoginAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("SubscriptionExpiry")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("SubscriptionTier")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TimeZone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("ADHDChecklist.API.Entities.UserPreference", b =>
@@ -943,10 +873,6 @@ namespace ADHDChecklist.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ADHDChecklist.API.Entities.User", null)
-                        .WithMany("AnalyticsSnapshots")
-                        .HasForeignKey("UserId1");
-
                     b.Navigation("User");
                 });
 
@@ -967,10 +893,6 @@ namespace ADHDChecklist.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ADHDChecklist.API.Entities.User", null)
-                        .WithMany("BrainDumpItems")
-                        .HasForeignKey("UserId1");
-
                     b.Navigation("ConvertedToTask");
 
                     b.Navigation("User");
@@ -983,10 +905,6 @@ namespace ADHDChecklist.API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("ADHDChecklist.API.Entities.User", null)
-                        .WithMany("Categories")
-                        .HasForeignKey("UserId1");
 
                     b.Navigation("User");
                 });
@@ -1019,10 +937,6 @@ namespace ADHDChecklist.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ADHDChecklist.API.Entities.User", null)
-                        .WithMany("FocusSessions")
-                        .HasForeignKey("UserId1");
-
                     b.Navigation("Task");
 
                     b.Navigation("User");
@@ -1035,10 +949,6 @@ namespace ADHDChecklist.API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("ADHDChecklist.API.Entities.User", null)
-                        .WithMany("Habits")
-                        .HasForeignKey("UserId1");
 
                     b.Navigation("User");
                 });
@@ -1066,19 +976,15 @@ namespace ADHDChecklist.API.Migrations
 
             modelBuilder.Entity("ADHDChecklist.API.Entities.Task", b =>
                 {
-                    b.HasOne("ADHDChecklist.API.Entities.Common.ApplicationUser", null)
-                        .WithMany("Tasks")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("ADHDChecklist.API.Entities.Category", "Category")
                         .WithMany("Tasks")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("ADHDChecklist.API.Entities.User", "User")
+                    b.HasOne("ADHDChecklist.API.Entities.Common.ApplicationUser", "User")
                         .WithMany("Tasks")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Category");
@@ -1091,12 +997,6 @@ namespace ADHDChecklist.API.Migrations
                     b.HasOne("ADHDChecklist.API.Entities.Common.ApplicationUser", "User")
                         .WithMany("Preferences")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ADHDChecklist.API.Entities.User", null)
-                        .WithOne("UserPreference")
-                        .HasForeignKey("ADHDChecklist.API.Entities.UserPreference", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1191,23 +1091,6 @@ namespace ADHDChecklist.API.Migrations
                     b.Navigation("FocusSessions");
 
                     b.Navigation("Reminders");
-                });
-
-            modelBuilder.Entity("ADHDChecklist.API.Entities.User", b =>
-                {
-                    b.Navigation("AnalyticsSnapshots");
-
-                    b.Navigation("BrainDumpItems");
-
-                    b.Navigation("Categories");
-
-                    b.Navigation("FocusSessions");
-
-                    b.Navigation("Habits");
-
-                    b.Navigation("Tasks");
-
-                    b.Navigation("UserPreference");
                 });
 #pragma warning restore 612, 618
         }

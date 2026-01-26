@@ -7,7 +7,7 @@ namespace ADHDChecklist.API.Features.Tasks.ToggleTask
     {
         public static void MapToggleTaskCompletion(this IEndpointRouteBuilder app)
         {
-            app.MapPatch("/api/tasks/{id:guid}/toggle-completion", async (
+            app.MapPost("/api/tasks/{id:guid}/toggle-completion", async (
                 Guid id,
                 ClaimsPrincipal user,
                 IMediator mediator,

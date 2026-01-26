@@ -92,7 +92,7 @@ namespace ADHDChecklist.API.Features.Tasks.CreateTask
                 CancellationToken ct) =>
             {
                 var userId = Guid.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
+                Console.WriteLine(userId);
                 var command = new CreateTaskCommand(
                     request.Title,
                     request.Description,

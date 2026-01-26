@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ADHDChecklist.API.Entities.Common;
 
 namespace ADHDChecklist.API.Entities;
 
@@ -46,10 +47,10 @@ public partial class Task
     public virtual ICollection<BrainDumpItem> BrainDumpItems { get; set; } = new List<BrainDumpItem>();
 
     public virtual Category? Category { get; set; }
-
+    
     public virtual ICollection<FocusSession> FocusSessions { get; set; } = new List<FocusSession>();
 
     public virtual ICollection<Reminder> Reminders { get; set; } = new List<Reminder>();
 
-    public virtual User User { get; set; } = null!;
+    public virtual ApplicationUser User { get; set; } = null!;
 }

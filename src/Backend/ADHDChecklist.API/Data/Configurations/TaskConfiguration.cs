@@ -76,7 +76,7 @@ public class TaskConfiguration : IEntityTypeConfiguration<Entities.Task>
         builder.HasOne(t => t.User)
             .WithMany(u => u.Tasks)
             .HasForeignKey(t => t.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(t => t.Category)
             .WithMany(c => c.Tasks)
