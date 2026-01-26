@@ -1,5 +1,5 @@
 self.assetsManifest = {
-  "version": "7RgL8VIx",
+  "version": "UBw/pjCF",
   "assets": [
     {
       "hash": "sha256-We76yQ6BbUqy3OL7pB4AiChSOtAH/BdDsZ0Z+MzXvD0=",
@@ -198,11 +198,11 @@ self.assetsManifest = {
       "url": "_content/MudBlazor/MudBlazor.min.js"
     },
     {
-      "hash": "sha256-UlefYhC/6ejfAuGQRbVU1GoCqTcGlESJufqwvRGBy7I=",
+      "hash": "sha256-Goi431FuA4BFVjYWaZDgjgBum4p7fFIdT8hRakYNtxU=",
       "url": "_framework/ADHDChecklist.Client.pdb"
     },
     {
-      "hash": "sha256-UkNqpsrQqenM52gtalqtBfKVBhyAFTy5HEc3v4iXHKs=",
+      "hash": "sha256-kLulwz3LmZ9LoRi0osDwpPSWuLD5zvBNcBb56Qiy6GY=",
       "url": "_framework/ADHDChecklist.Client.wasm"
     },
     {
@@ -1050,7 +1050,7 @@ self.assetsManifest = {
       "url": "_framework/WindowsBase.wasm"
     },
     {
-      "hash": "sha256-tW82YdQ0cgIj1NEGpCDaw8hbsXjzOvLD3AYeeZ5sFD0=",
+      "hash": "sha256-ATvxuwoVz1a6qw3rpJ6qzcEgnY8sf8lXp3ZRKpMy4e4=",
       "url": "_framework/blazor.boot.json"
     },
     {
@@ -1110,7 +1110,7 @@ self.assetsManifest = {
       "url": "appsettings.json"
     },
     {
-      "hash": "sha256-fFJ+f+fJyq+lsza3N8/seOT1zG1O+E+kc8xwUZHSwTM=",
+      "hash": "sha256-LhNJQG0WoFVCLybOHDnhM4l9lUDFP4Hm4Ei+g37VyUk=",
       "url": "css/app.css"
     },
     {
@@ -1122,7 +1122,7 @@ self.assetsManifest = {
       "url": "icon-512.png"
     },
     {
-      "hash": "sha256-eWXAcU/GQZvZwh95yggpU/LOX5Cbu5D42TWt5zEYUFI=",
+      "hash": "sha256-W/HUmq2mWDi4yiAtPvDOHrrtaYcZOgOvxfUsiPtHP3k=",
       "url": "index.html"
     },
     {
