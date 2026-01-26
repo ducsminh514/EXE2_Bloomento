@@ -2,7 +2,11 @@
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
-using ADHDChecklist.API.Features.Categories;
+using ADHDChecklist.API.Features.Categories.CreateCategory;
+using ADHDChecklist.API.Features.Categories.GetCategories;
+using ADHDChecklist.API.Features.Categories.UpdateCategory;
+using ADHDChecklist.API.Features.Categories.DeleteCategory;
+
 namespace ADHDChecklist.API.Features.Categories
 {
     public static class CategoryEndpoints

@@ -1,17 +1,17 @@
 ﻿@page "/login"
 @using ADHDChecklist.Client.Features.Auth.Services
 @using ADHDChecklist.Client.Shared.Models
-@using System.ComponentModel.DataAnnotations
 @inject IAuthService AuthService
 @inject NavigationManager Navigation
 @inject ILogger<Login> Logger
-
+@using System.ComponentModel.DataAnnotations
+@using ADHDChecklist
 <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50 px-4">
     <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
 
         <!-- Header -->
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold red mb-2">ADHD Checklist</h1>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">ADHD Checklist</h1>
             <p class="text-gray-600">Đăng nhập để quản lý công việc hiệu quả</p>
         </div>
 
@@ -19,6 +19,12 @@
         {
             <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                 <p class="text-sm text-red-600">@_errorMessage</p>
+                @if (_requireEmailVerification)
+                {
+                    <a href="/resend-verification" class="text-sm text-indigo-600 hover:text-indigo-500 font-medium mt-2 inline-block">
+                        Gửi lại email xác nhận →
+                    </a>
+                }
             </div>
         }
 
@@ -114,6 +120,7 @@
     private bool _isLoading;
     private string? _errorMessage;
     private string? _successMessage;
+    private bool _requireEmailVerification;
 
     private class LoginModel
     {
@@ -163,6 +170,7 @@
             else
             {
                 _errorMessage = response.Message;
+                _requireEmailVerification = response.RequireEmailVerification;
             }
         }
         catch (Exception ex)

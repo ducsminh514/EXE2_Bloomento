@@ -1,6 +1,7 @@
 using ADHDChecklist.Client;
 using ADHDChecklist.Client.Features.Auth.Services;
 using ADHDChecklist.Client.Infrastructure.Services;
+using ADHDChecklist.Client.Features.Dashboard.Services;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -31,7 +32,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider =>
     provider.GetRequiredService<CustomAuthStateProvider>());
-
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddAuthorizationCore();
 
 // ============================================

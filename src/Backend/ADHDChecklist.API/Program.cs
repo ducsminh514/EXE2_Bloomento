@@ -6,7 +6,15 @@ using ADHDChecklist.API.Features.Auth.GoogleLogin;
 using ADHDChecklist.API.Features.Auth.Login;
 using ADHDChecklist.API.Features.Auth.RefreshToken;
 using ADHDChecklist.API.Features.Auth.Register;
+using ADHDChecklist.API.Features.Auth.ResendVerification;
 using ADHDChecklist.API.Features.Auth.VerifyEmail;
+using ADHDChecklist.API.Features.Tasks.CreateTask;
+using ADHDChecklist.API.Features.Tasks.DeleteTask;
+using ADHDChecklist.API.Features.Tasks.GetTasksByDate;
+using ADHDChecklist.API.Features.Tasks.ToggleTask;
+using ADHDChecklist.API.Features.Tasks.UpdateTask;
+using ADHDChecklist.API.Features.Categories;
+using ADHDChecklist.API.Features.Analytics.FreeTier;
 using ADHDChecklist.API.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -212,7 +220,18 @@ app.MapGet("/health", async (AppDbContext db) =>
 app.MapRegister();
 app.MapLogin();
 app.MapVerifyEmail();
+app.MapResendVerification();
 app.MapGoogleLogin();
 app.MapRefreshToken();
+app.MapGetTasksByDate();
+app.MapCreateTask();
+app.MapUpdateTask();
+app.MapDeleteTask();
+app.MapToggleTaskCompletion();
 
+// Category endpoints
+app.MapCategoryEndpoints();
+
+// Analytics endpoints
+app.MapAnalyticsEndpoints();
 app.Run();

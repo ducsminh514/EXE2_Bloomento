@@ -1,7 +1,418 @@
 ﻿@page "/"
+@using ADHDChecklist.Client.Features.Dashboard.Services
+@using ADHDChecklist.Client.Features.Dashboard.Components
+@using ADHDChecklist.Client.Shared.Models
+@using ADHDChecklist.Client.Features.Auth.Services
+@inject ITaskService TaskService
+@inject ICategoryService CategoryService
+@inject IAuthService AuthService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@attribute [Authorize]
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Dashboard - ADHD Checklist</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="min-h-screen bg-gray-50">
+    <!-- Top Nav -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-4">
+                    <h1 class="text-2xl font-bold text-gray-900">📝 ADHD Checklist</h1>
+                    <span class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full font-medium">FREE</span>
+                </div>
 
-Welcome to your new app.
+                <div class="flex items-center gap-4">
+                    <span class="text-sm text-gray-600">Xin chào, <strong>@_userName</strong></span>
+                    <button @onclick="HandleLogout"
+                            class="text-sm text-red-600 hover:text-red-700 font-medium">
+                        Đăng xuất
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Date Selector -->
+        <div class="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <button @onclick="PreviousDay"
+                        class="p-2 hover:bg-white rounded-lg transition-colors border border-gray-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        @_selectedDate.ToString("dd/MM/yyyy")
+                    </h2>
+                    <p class="text-sm text-gray-600">
+                        @GetVietnameseDayOfWeek(_selectedDate.DayOfWeek)
+                        @if (_selectedDate == DateOnly.FromDateTime(DateTime.Now))
+                        {
+                            <span class="ml-2 px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs rounded-full">Hôm nay</span>
+                        }
+                    </p>
+                </div>
+
+                <button @onclick="NextDay"
+                        class="p-2 hover:bg-white rounded-lg transition-colors border border-gray-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+
+                <button @onclick="GoToToday"
+                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
+                    📅 Hôm nay
+                </button>
+            </div>
+
+            <button @onclick="ShowCreateTaskModal"
+                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Thêm công việc
+            </button>
+        </div>
+
+        @if (_isLoading)
+        {
+            <div class="flex justify-center items-center py-20">
+                <div class="text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                    <p class="text-gray-600">Đang tải dữ liệu...</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Main Task List -->
+                <div class="lg:col-span-2 space-y-4">
+                    <!-- Time Blocks -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                <span>⏰</span>
+                                <span>Theo thời gian</span>
+                            </h3>
+                            <span class="text-sm text-gray-500">@_scheduledTasks.Count công việc</span>
+                        </div>
+
+                        @if (_scheduledTasks.Any())
+                        {
+                            <div class="space-y-3">
+                                @foreach (var task in _scheduledTasks)
+                                {
+                                    <TaskCard Task="@task"
+                                              OnToggleComplete="ToggleTaskComplete"
+                                              OnEdit="EditTask"
+                                              OnDelete="DeleteTask" />
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-12">
+                                <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <p class="text-gray-500 mb-2">Chưa có công việc nào được lên lịch</p>
+                                <p class="text-sm text-gray-400">Thêm công việc và chọn thời gian để bắt đầu</p>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Inbox -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                <span>📥</span>
+                                <span>Chưa lên lịch</span>
+                            </h3>
+                            <span class="text-sm text-gray-500">@_inboxTasks.Count công việc</span>
+                        </div>
+
+                        @if (_inboxTasks.Any())
+                        {
+                            <div class="space-y-3">
+                                @foreach (var task in _inboxTasks)
+                                {
+                                    <TaskCard Task="@task"
+                                              OnToggleComplete="ToggleTaskComplete"
+                                              OnEdit="EditTask"
+                                              OnDelete="DeleteTask" />
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-12">
+                                <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <p class="text-gray-500">Inbox trống! 🎉</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="space-y-4">
+                    <!-- Quick Stats -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                            <span>📊</span>
+                            <span>Thống kê hôm nay</span>
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                <span class="text-gray-600 text-sm">Tổng công việc:</span>
+                                <span class="font-bold text-gray-900 text-lg">@_allTasks.Count</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                                <span class="text-gray-600 text-sm">Đã hoàn thành:</span>
+                                <span class="font-bold text-green-600 text-lg">@_completedCount</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
+                                <span class="text-gray-600 text-sm">Còn lại:</span>
+                                <span class="font-bold text-orange-600 text-lg">@(_allTasks.Count - _completedCount)</span>
+                            </div>
+                            <div class="pt-3 border-t">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm text-gray-600 font-medium">Tiến độ</span>
+                                    <span class="text-sm font-bold text-indigo-600">@_completionRate%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                                    <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full transition-all duration-500"
+                                         style="width: @(_completionRate)%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                <span>🏷️</span>
+                                <span>Categories</span>
+                            </h3>
+                            <button @onclick="ShowCreateCategoryModal"
+                                    class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+                                + Thêm
+                            </button>
+                        </div>
+
+                        @if (_categories.Any())
+                        {
+                            <div class="space-y-2">
+                                @foreach (var category in _categories)
+                                {
+                                    <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-4 h-4 rounded-full flex-shrink-0"
+                                                 style="background-color: @category.ColorHex"></div>
+                                            <span class="text-sm font-medium">@category.Icon @category.Name</span>
+                                        </div>
+                                        <span class="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">
+                                            @category.TaskCount
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-8">
+                                <p class="text-sm text-gray-500 mb-2">Chưa có category nào</p>
+                                <p class="text-xs text-gray-400">Tạo category để phân loại công việc</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Create Task Modal -->
+@if (_showCreateModal)
+{
+    <CreateTaskModal OnClose="CloseCreateTaskModal"
+                     OnTaskCreated="HandleTaskCreated"
+                     Categories="@_categories"
+                     SelectedDate="@_selectedDate" />
+}
+
+@code {
+    private string _userName = "User";
+    private DateOnly _selectedDate = DateOnly.FromDateTime(DateTime.Now);
+    private bool _isLoading = true;
+    private bool _showCreateModal = false;
+
+    private List<TaskResponse> _allTasks = new();
+    private List<TaskResponse> _scheduledTasks = new();
+    private List<TaskResponse> _inboxTasks = new();
+    private List<CategoryResponse> _categories = new();
+
+    private int _completedCount => _allTasks.Count(t => t.IsCompleted);
+    private int _completionRate => _allTasks.Count > 0
+        ? (int)Math.Round((double)_completedCount / _allTasks.Count * 100)
+        : 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (!user.Identity?.IsAuthenticated ?? true)
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        _userName = user.FindFirst(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value
+                    ?? user.FindFirst(c => c.Type == "name")?.Value
+                    ?? "User";
+
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        _isLoading = true;
+        try
+        {
+            var tasksTask = TaskService.GetTasksByDateAsync(_selectedDate);
+            var categoriesTask = CategoryService.GetCategoriesAsync();
+
+            await Task.WhenAll(tasksTask, categoriesTask);
+
+            _allTasks = tasksTask.Result ?? new List<TaskResponse>();
+            _categories = categoriesTask.Result ?? new List<CategoryResponse>();
+
+            _scheduledTasks = _allTasks.Where(t => t.TimeBlockStart.HasValue)
+                                       .OrderBy(t => t.TimeBlockStart)
+                                       .ToList();
+            _inboxTasks = _allTasks.Where(t => !t.TimeBlockStart.HasValue)
+                                   .OrderBy(t => t.OrderIndex)
+                                   .ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading data: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task PreviousDay()
+    {
+        _selectedDate = _selectedDate.AddDays(-1);
+        await LoadData();
+    }
+
+    private async Task NextDay()
+    {
+        _selectedDate = _selectedDate.AddDays(1);
+        await LoadData();
+    }
+
+    private async Task GoToToday()
+    {
+        _selectedDate = DateOnly.FromDateTime(DateTime.Now);
+        await LoadData();
+    }
+
+    private void ShowCreateTaskModal()
+    {
+        _showCreateModal = true;
+    }
+
+    private void CloseCreateTaskModal()
+    {
+        _showCreateModal = false;
+    }
+
+    private async Task HandleTaskCreated()
+    {
+        _showCreateModal = false;
+        await LoadData();
+    }
+
+    private async Task ToggleTaskComplete(Guid taskId)
+    {
+        try
+        {
+            await TaskService.ToggleTaskCompletionAsync(taskId);
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error toggling task: {ex.Message}");
+        }
+    }
+
+    private void EditTask(Guid taskId)
+    {
+        // TODO: Implement edit modal
+        Console.WriteLine($"Edit task: {taskId}");
+    }
+
+    private async Task DeleteTask(Guid taskId)
+    {
+        var confirmed = await JS.InvokeAsync<bool>("confirm", "Bạn có chắc muốn xóa công việc này?");
+        if (confirmed)
+        {
+            try
+            {
+                await TaskService.DeleteTaskAsync(taskId);
+                await LoadData();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting task: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task HandleLogout()
+    {
+        var confirmed = await JS.InvokeAsync<bool>("confirm", "Bạn có chắc muốn đăng xuất?");
+        if (confirmed)
+        {
+            await AuthService.LogoutAsync();
+            Navigation.NavigateTo("/login", forceLoad: true);
+        }
+    }
+
+    private void ShowCreateCategoryModal()
+    {
+        // TODO: Implement category modal
+        Console.WriteLine("Create category modal");
+    }
+
+    private string GetVietnameseDayOfWeek(DayOfWeek day) => day switch
+    {
+        DayOfWeek.Monday => "Thứ Hai",
+        DayOfWeek.Tuesday => "Thứ Ba",
+        DayOfWeek.Wednesday => "Thứ Tư",
+        DayOfWeek.Thursday => "Thứ Năm",
+        DayOfWeek.Friday => "Thứ Sáu",
+        DayOfWeek.Saturday => "Thứ Bảy",
+        DayOfWeek.Sunday => "Chủ Nhật",
+        _ => ""
+    };
+}

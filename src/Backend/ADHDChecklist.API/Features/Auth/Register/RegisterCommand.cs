@@ -8,4 +8,5 @@ namespace ADHDChecklist.API.Features.Auth.Register
         string FullName
     ) : IRequest<RegisterResponse>;
 
+
 }

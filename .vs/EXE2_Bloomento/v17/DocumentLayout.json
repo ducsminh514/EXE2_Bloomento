@@ -3,16 +3,108 @@
   "WorkspaceRootPath": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\features\\auth\\pages\\resendverification.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\features\\auth\\pages\\resendverification.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\component.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\component.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\features\\auth\\pages\\verifygmail.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\features\\auth\\pages\\verifygmail.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\adhdchecklist.client.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\adhdchecklist.client.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\_imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\_imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\_Imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\Frontend\\_Imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\features\\dashboard\\services\\taskservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\features\\dashboard\\services\\taskservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\features\\dashboard\\services\\analyticsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\features\\dashboard\\services\\analyticsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\features\\dashboard\\services\\categoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\features\\dashboard\\services\\categoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\features\\dashboard\\pages\\createtaskmodal.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\features\\dashboard\\pages\\createtaskmodal.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\features\\dashboard\\pages\\taskcard.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\features\\dashboard\\pages\\taskcard.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\shared\\models\\authmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\shared\\models\\authmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\backend\\adhdchecklist.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|solutionrelative:src\\backend\\adhdchecklist.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\backend\\adhdchecklist.api\\features\\analytics\\freetier\\analyticsendpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|solutionrelative:src\\backend\\adhdchecklist.api\\features\\analytics\\freetier\\analyticsendpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\backend\\adhdchecklist.api\\features\\analytics\\freetier\\getweeklyanalyticsqueryhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|solutionrelative:src\\backend\\adhdchecklist.api\\features\\analytics\\freetier\\getweeklyanalyticsqueryhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\backend\\adhdchecklist.api\\features\\analytics\\freetier\\getweeklyanalyticsquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|solutionrelative:src\\backend\\adhdchecklist.api\\features\\analytics\\freetier\\getweeklyanalyticsquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\backend\\adhdchecklist.api\\features\\analytics\\freetier\\analyticdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|solutionrelative:src\\backend\\adhdchecklist.api\\features\\analytics\\freetier\\analyticdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\backend\\adhdchecklist.api\\features\\categories\\categoryendpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|solutionrelative:src\\backend\\adhdchecklist.api\\features\\categories\\categoryendpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\backend\\adhdchecklist.api\\features\\categories\\deletecategory\\deletecategorycommandhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|solutionrelative:src\\backend\\adhdchecklist.api\\features\\categories\\deletecategory\\deletecategorycommandhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\backend\\adhdchecklist.api\\features\\categories\\createcategory\\createcategorycommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|solutionrelative:src\\backend\\adhdchecklist.api\\features\\categories\\createcategory\\createcategorycommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\features\\auth\\pages\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\features\\auth\\pages\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\backend\\adhdchecklist.api\\adhdchecklist.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|solutionrelative:src\\backend\\adhdchecklist.api\\adhdchecklist.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\backend\\adhdchecklist.api\\features\\auth\\register\\registercommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|solutionrelative:src\\backend\\adhdchecklist.api\\features\\auth\\register\\registercommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\features\\auth\\pages\\resendverification.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\features\\auth\\pages\\resendverification.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\backend\\adhdchecklist.api\\features\\auth\\resendverification\\resendverificationendpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -59,10 +151,6 @@
       "RelativeMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|solutionrelative:src\\backend\\adhdchecklist.api\\features\\auth\\register\\registerresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\backend\\adhdchecklist.api\\features\\auth\\register\\registercommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|solutionrelative:src\\backend\\adhdchecklist.api\\features\\auth\\register\\registercommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\backend\\adhdchecklist.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|solutionrelative:src\\backend\\adhdchecklist.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
@@ -75,24 +163,12 @@
       "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\infrastructure\\services\\apiclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\shared\\models\\authmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\shared\\models\\authmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\features\\auth\\pages\\register.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\features\\auth\\pages\\register.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\features\\auth\\pages\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\features\\auth\\pages\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\infrastructure\\services\\customauthstateprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\infrastructure\\services\\customauthstateprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\wwwroot\\service-worker.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
@@ -113,18 +189,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\backend\\adhdchecklist.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|solutionrelative:src\\backend\\adhdchecklist.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\backend\\adhdchecklist.api\\adhdchecklist.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|solutionrelative:src\\backend\\adhdchecklist.api\\adhdchecklist.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\backend\\adhdchecklist.api\\adhdchecklist.api.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
@@ -203,8 +267,8 @@
       "RelativeMoniker": "D:0:0:{6E8382B1-C014-4E35-ABB1-AE3854A8A691}|src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj|solutionrelative:src\\backend\\adhdchecklist.api\\features\\tasks\\gettasksbydate\\gettasksbydatequery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|c:\\users\\administrator\\source\\repos\\exe2_bloomento\\src\\frontend\\adhdchecklist.client\\adhdchecklist.client.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{49BF09A1-9FD8-4AAB-9F14-33616745A365}|src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj|solutionrelative:src\\frontend\\adhdchecklist.client\\adhdchecklist.client.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\VerifyGmail.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\VerifyGmail.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -214,86 +278,8 @@
       "DocumentGroups": [
         {
           "DockedHeight": 93,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 14,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ResendVerification.razor",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\ResendVerification.razor",
-              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\ResendVerification.razor",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\ResendVerification.razor",
-              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\ResendVerification.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-25T16:06:30.685Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "VerifyGmail.razor",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\VerifyGmail.razor",
-              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\VerifyGmail.razor",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\VerifyGmail.razor*",
-              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\VerifyGmail.razor*",
-              "ViewState": "AgIAAEQAAAAAAAAAAAAkwFcAAAA2AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-25T16:04:49.757Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "ResendVerificationEndpoint.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationEndpoint.cs",
-              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationEndpoint.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationEndpoint.cs",
-              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationEndpoint.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T16:02:22.714Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ResendVerificationCommandHandler.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationCommandHandler.cs",
-              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationCommandHandler.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationCommandHandler.cs",
-              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationCommandHandler.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAQwBgAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T16:01:59.336Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "ResendVerificationCommand.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationCommand.cs",
-              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationCommand.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationCommand.cs",
-              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationCommand.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T16:01:37.122Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "LoginCommandHandler.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommandHandler.cs",
-              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommandHandler.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommandHandler.cs",
-              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommandHandler.cs",
-              "ViewState": "AgIAAD8AAAAAAAAAAAAkwGYAAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T15:59:25.485Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:17:0:{e8034f19-ab72-4f06-83fd-f6832b41aa63}"
@@ -352,52 +338,260 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "LoginCommandValidator.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommandValidator.cs",
-              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommandValidator.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommandValidator.cs",
-              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommandValidator.cs",
+              "DocumentIndex": 0,
+              "Title": "Component.razor",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Component.razor",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Component.razor",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Component.razor",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Component.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-26T07:18:49.957Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "_Imports.razor",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\_Imports.razor",
+              "RelativeDocumentMoniker": "src\\Frontend\\_Imports.razor",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\_Imports.razor*",
+              "RelativeToolTip": "src\\Frontend\\_Imports.razor*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-26T07:15:05.68Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MainLayout.razor",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Layout\\MainLayout.razor",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Layout\\MainLayout.razor",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Layout\\MainLayout.razor",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Layout\\MainLayout.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-26T07:13:10.641Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "_Imports.razor",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\_Imports.razor",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\_Imports.razor",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\_Imports.razor*",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\_Imports.razor*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAA/AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-26T07:07:37.058Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "CreateTaskModal.razor",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Pages\\CreateTaskModal.razor",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Pages\\CreateTaskModal.razor",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Pages\\CreateTaskModal.razor",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Pages\\CreateTaskModal.razor",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAADMAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-26T07:05:02.084Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "TaskCard.razor",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Pages\\TaskCard.razor",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Pages\\TaskCard.razor",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Pages\\TaskCard.razor",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Pages\\TaskCard.razor",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAAAFoAAABJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-26T07:04:24.662Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AnalyticsService.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Services\\AnalyticsService.cs",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Services\\AnalyticsService.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Services\\AnalyticsService.cs",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Services\\AnalyticsService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T15:59:27.036Z",
+              "WhenOpened": "2026-01-26T06:35:51.064Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "CategoryService.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Services\\CategoryService.cs",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Services\\CategoryService.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Services\\CategoryService.cs",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Services\\CategoryService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-26T06:35:26.174Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "LoginEndpoint.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginEndpoint.cs",
-              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginEndpoint.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginEndpoint.cs",
-              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginEndpoint.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
+              "Title": "TaskService.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Services\\TaskService.cs",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Services\\TaskService.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Services\\TaskService.cs",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Features\\Dashboard\\Services\\TaskService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T15:59:25.799Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "LoginCommand.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommand.cs",
-              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommand.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommand.cs",
-              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommand.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T15:58:40.563Z",
+              "WhenOpened": "2026-01-26T06:34:53.427Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "App.razor",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\App.razor",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\App.razor",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\App.razor",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\App.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-25T09:06:45.504Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ADHDChecklist.Client.csproj",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj*",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-25T09:00:12.263Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "AnalyticsEndpoints.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Analytics\\FreeTier\\AnalyticsEndpoints.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Analytics\\FreeTier\\AnalyticsEndpoints.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Analytics\\FreeTier\\AnalyticsEndpoints.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Analytics\\FreeTier\\AnalyticsEndpoints.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-26T06:30:27.541Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "GetWeeklyAnalyticsQueryHandler.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Analytics\\FreeTier\\GetWeeklyAnalyticsQueryHandler.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Analytics\\FreeTier\\GetWeeklyAnalyticsQueryHandler.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Analytics\\FreeTier\\GetWeeklyAnalyticsQueryHandler.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Analytics\\FreeTier\\GetWeeklyAnalyticsQueryHandler.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAQwCAAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-26T06:29:58.017Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "GetWeeklyAnalyticsQuery.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Analytics\\FreeTier\\GetWeeklyAnalyticsQuery.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Analytics\\FreeTier\\GetWeeklyAnalyticsQuery.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Analytics\\FreeTier\\GetWeeklyAnalyticsQuery.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Analytics\\FreeTier\\GetWeeklyAnalyticsQuery.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-26T06:29:38.099Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Program.cs",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Program.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Program.cs*",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Program.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T09:04:39.127Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "AnalyticDto.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Analytics\\FreeTier\\AnalyticDto.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Analytics\\FreeTier\\AnalyticDto.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Analytics\\FreeTier\\AnalyticDto.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Analytics\\FreeTier\\AnalyticDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-26T06:28:59.057Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "CategoryEndpoints.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Categories\\CategoryEndpoints.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Categories\\CategoryEndpoints.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Categories\\CategoryEndpoints.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Categories\\CategoryEndpoints.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACsAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T19:21:36.588Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "AuthModel.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Shared\\Models\\AuthModel.cs",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Shared\\Models\\AuthModel.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Shared\\Models\\AuthModel.cs",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Shared\\Models\\AuthModel.cs",
+              "ViewState": "AgIAAHcAAAAAAAAAAAAswBwAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T08:57:54.129Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "DeleteCategoryCommandHandler.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Categories\\DeleteCategory\\DeleteCategoryCommandHandler.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Categories\\DeleteCategory\\DeleteCategoryCommandHandler.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Categories\\DeleteCategory\\DeleteCategoryCommandHandler.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Categories\\DeleteCategory\\DeleteCategoryCommandHandler.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T19:21:29.474Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Program.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Program.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Program.cs*",
-              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Program.cs*",
-              "ViewState": "AgIAALoAAAAAAAAAAAAcwOMAAAAeAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Program.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-25T09:30:17.239Z",
               "EditorCaption": ""
@@ -405,215 +599,91 @@
             {
               "$type": "Document",
               "DocumentIndex": 13,
-              "Title": "RegisterResponse.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterResponse.cs",
-              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterResponse.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterResponse.cs",
-              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterResponse.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T15:56:57.961Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\appsettings.json",
-              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\appsettings.json",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\appsettings.json",
-              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-01-25T11:22:37.569Z",
+              "Title": "Home.razor",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Pages\\Home.razor",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Pages\\Home.razor",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Pages\\Home.razor*",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Pages\\Home.razor*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAD4BAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-25T09:51:35.665Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 21,
-              "Title": "CustomAuthStateProvider.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Infrastructure\\Services\\CustomAuthStateProvider.cs",
-              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Infrastructure\\Services\\CustomAuthStateProvider.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Infrastructure\\Services\\CustomAuthStateProvider.cs",
-              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Infrastructure\\Services\\CustomAuthStateProvider.cs",
-              "ViewState": "AgIAAB0AAAAAAAAAAAAhwBAAAAAlAAAAAAAAAA==",
+              "Title": "CreateCategoryCommand.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Categories\\CreateCategory\\CreateCategoryCommand.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Categories\\CreateCategory\\CreateCategoryCommand.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Categories\\CreateCategory\\CreateCategoryCommand.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Categories\\CreateCategory\\CreateCategoryCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T09:02:35.975Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "RegisterCommandValidator.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommandValidator.cs",
-              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommandValidator.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommandValidator.cs",
-              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommandValidator.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T10:00:46.023Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "Register.razor",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\Register.razor",
-              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\Register.razor",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\Register.razor",
-              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\Register.razor",
-              "ViewState": "AgIAAHsAAAAAAAAAAAAAAJQAAAA6AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-25T09:04:14.968Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "Login.razor",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\Login.razor",
-              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\Login.razor",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\Login.razor",
-              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\Login.razor",
-              "ViewState": "AgIAAG0AAAAAAAAAAAAkwLIAAAAoAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-25T09:03:25.738Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "AuthModel.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Shared\\Models\\AuthModel.cs",
-              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Shared\\Models\\AuthModel.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Shared\\Models\\AuthModel.cs",
-              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Shared\\Models\\AuthModel.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAcwBwAAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T08:57:54.129Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "RegisterCommandHandler.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommandHandler.cs",
-              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommandHandler.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommandHandler.cs",
-              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommandHandler.cs",
-              "ViewState": "AgIAAD8AAAAAAAAAAAAowFUAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T10:01:08.79Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "RegisterEndpoint.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterEndpoint.cs",
-              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterEndpoint.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterEndpoint.cs",
-              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterEndpoint.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T10:00:46.99Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "AuthService.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Services\\AuthService.cs",
-              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Services\\AuthService.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Services\\AuthService.cs",
-              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Services\\AuthService.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAIwCkAAAA1AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T09:01:03.33Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "ApiClient.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Infrastructure\\Services\\ApiClient.cs",
-              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Infrastructure\\Services\\ApiClient.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Infrastructure\\Services\\ApiClient.cs",
-              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Infrastructure\\Services\\ApiClient.cs",
-              "ViewState": "AgIAABUAAAAAAAAAAAAmwAoAAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T08:58:38.57Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "RegisterCommand.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommand.cs",
-              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommand.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommand.cs*",
-              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommand.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T10:01:07.866Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 22,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Program.cs",
-              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Program.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Program.cs",
-              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACcAAAA2AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T09:04:39.127Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "service-worker.js",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\wwwroot\\service-worker.js",
-              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\wwwroot\\service-worker.js",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\wwwroot\\service-worker.js",
-              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\wwwroot\\service-worker.js",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2026-01-25T10:31:48.356Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\wwwroot\\appsettings.json",
-              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\wwwroot\\appsettings.json",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\wwwroot\\appsettings.json",
-              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\wwwroot\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-01-25T10:31:41.589Z"
+              "WhenOpened": "2026-01-25T19:21:31.201Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 25,
-              "Title": "launchSettings.json",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Properties\\launchSettings.json",
-              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Properties\\launchSettings.json",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Properties\\launchSettings.json",
-              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Properties\\launchSettings.json",
+              "Title": "ResendVerification.razor",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\ResendVerification.razor",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\ResendVerification.razor",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\ResendVerification.razor",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\ResendVerification.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-01-25T10:28:38.669Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 26,
-              "Title": "ADHDChecklist.Client",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj",
-              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj",
-              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-01-25T10:28:36.451Z"
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-25T16:06:30.685Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 28,
+              "Title": "ResendVerificationCommand.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationCommand.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationCommand.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationCommand.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T16:01:37.122Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "LoginCommandHandler.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommandHandler.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommandHandler.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommandHandler.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommandHandler.cs",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAkwGYAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T15:59:25.485Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "LoginCommandValidator.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommandValidator.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommandValidator.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommandValidator.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommandValidator.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T15:59:27.036Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "RegisterCommand.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommand.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommand.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommand.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T10:01:07.866Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
               "Title": "ADHDChecklist.API.csproj",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj",
@@ -625,7 +695,234 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "Login.razor",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\Login.razor",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\Login.razor",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\Login.razor",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\Login.razor",
+              "ViewState": "AgIAAFsAAAAAAAAAAAAkwLIAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-25T09:03:25.738Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 27,
+              "Title": "ResendVerificationCommandHandler.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationCommandHandler.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationCommandHandler.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationCommandHandler.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationCommandHandler.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAQwBgAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T16:01:59.336Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "ResendVerificationEndpoint.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationEndpoint.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationEndpoint.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationEndpoint.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\ResendVerification\\ResendVerificationEndpoint.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T16:02:22.714Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 66,
+              "Title": "VerifyGmail.razor",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\VerifyGmail.razor",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\VerifyGmail.razor",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\VerifyGmail.razor",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\VerifyGmail.razor",
+              "ViewState": "AgIAAEQAAAAAAAAAAAAkwFcAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-25T16:04:49.757Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "LoginEndpoint.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginEndpoint.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginEndpoint.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginEndpoint.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginEndpoint.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T15:59:25.799Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "LoginCommand.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommand.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommand.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommand.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Login\\LoginCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T15:58:40.563Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "RegisterResponse.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterResponse.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterResponse.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterResponse.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T15:56:57.961Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\appsettings.json",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\appsettings.json",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\appsettings.json",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-01-25T11:22:37.569Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "CustomAuthStateProvider.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Infrastructure\\Services\\CustomAuthStateProvider.cs",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Infrastructure\\Services\\CustomAuthStateProvider.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Infrastructure\\Services\\CustomAuthStateProvider.cs",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Infrastructure\\Services\\CustomAuthStateProvider.cs",
+              "ViewState": "AgIAAB0AAAAAAAAAAAAhwBAAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T09:02:35.975Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "RegisterCommandValidator.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommandValidator.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommandValidator.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommandValidator.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommandValidator.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T10:00:46.023Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "Register.razor",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\Register.razor",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\Register.razor",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\Register.razor",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Pages\\Register.razor",
+              "ViewState": "AgIAAHsAAAAAAAAAAAAAAJQAAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-25T09:04:14.968Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "RegisterCommandHandler.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommandHandler.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommandHandler.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommandHandler.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterCommandHandler.cs",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAowFUAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T10:01:08.79Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "RegisterEndpoint.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterEndpoint.cs",
+              "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterEndpoint.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterEndpoint.cs",
+              "RelativeToolTip": "src\\Backend\\ADHDChecklist.API\\Features\\Auth\\Register\\RegisterEndpoint.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T10:00:46.99Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Services\\AuthService.cs",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Services\\AuthService.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Services\\AuthService.cs",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Features\\Auth\\Services\\AuthService.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAIwCkAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T09:01:03.33Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "ApiClient.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Infrastructure\\Services\\ApiClient.cs",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Infrastructure\\Services\\ApiClient.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Infrastructure\\Services\\ApiClient.cs",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Infrastructure\\Services\\ApiClient.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAmwAoAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T08:58:38.57Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "service-worker.js",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\wwwroot\\service-worker.js",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\wwwroot\\service-worker.js",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\wwwroot\\service-worker.js",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\wwwroot\\service-worker.js",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-01-25T10:31:48.356Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\wwwroot\\appsettings.json",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\wwwroot\\appsettings.json",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\wwwroot\\appsettings.json",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\wwwroot\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-01-25T10:31:41.589Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Properties\\launchSettings.json",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-01-25T10:28:38.669Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "ADHDChecklist.Client",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj",
+              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj",
+              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-25T10:28:36.451Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 46,
               "Title": "launchSettings.json",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Properties\\launchSettings.json",
@@ -637,7 +934,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 47,
               "Title": "ADHDChecklist.API",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\ADHDChecklist.API.csproj",
@@ -648,19 +945,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
-              "Title": "Home.razor",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Pages\\Home.razor",
-              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\Pages\\Home.razor",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\Pages\\Home.razor",
-              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\Pages\\Home.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-25T09:51:35.665Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 48,
               "Title": "ToggleTaskCompletionEndpoint.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\ToggleTask\\ToggleTaskCompletionEndpoint.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\ToggleTask\\ToggleTaskCompletionEndpoint.cs",
@@ -672,7 +957,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 49,
               "Title": "ToggleTaskCompletionCommandHandler.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\ToggleTask\\ToggleTaskCompletionCommandHandler.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\ToggleTask\\ToggleTaskCompletionCommandHandler.cs",
@@ -684,7 +969,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 51,
               "Title": "ToggleTaskCompletionCommand.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\ToggleTask\\ToggleTaskCompletionCommand.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\ToggleTask\\ToggleTaskCompletionCommand.cs",
@@ -696,19 +981,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
-              "Title": "App.razor",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\App.razor",
-              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\App.razor",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\App.razor",
-              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\App.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-25T09:06:45.504Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 52,
               "Title": "DeleteTaskEndpoint.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\DeleteTask\\DeleteTaskEndpoint.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\DeleteTask\\DeleteTaskEndpoint.cs",
@@ -720,7 +993,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 53,
               "Title": "DeleteTaskCommandHandler.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\DeleteTask\\DeleteTaskCommandHandler.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\DeleteTask\\DeleteTaskCommandHandler.cs",
@@ -732,7 +1005,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 54,
               "Title": "DeleteTaskCommand.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\DeleteTask\\DeleteTaskCommand.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\DeleteTask\\DeleteTaskCommand.cs",
@@ -744,7 +1017,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 55,
               "Title": "UpdateTaskEndpoint.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\UpdateTask\\UpdateTaskEndpoint.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\UpdateTask\\UpdateTaskEndpoint.cs",
@@ -756,7 +1029,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 50,
               "Title": "Task.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Entities\\Task.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Entities\\Task.cs",
@@ -768,7 +1041,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 56,
               "Title": "UpdateTaskCommandHandler.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\UpdateTask\\UpdateTaskCommandHandler.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\UpdateTask\\UpdateTaskCommandHandler.cs",
@@ -780,7 +1053,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 58,
               "Title": "UpdateTaskCommandValidator.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\UpdateTask\\UpdateTaskCommandValidator.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\UpdateTask\\UpdateTaskCommandValidator.cs",
@@ -792,7 +1065,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 57,
               "Title": "UpdateTaskCommand.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\UpdateTask\\UpdateTaskCommand.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\UpdateTask\\UpdateTaskCommand.cs",
@@ -804,7 +1077,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 61,
               "Title": "CreateTaskCommandHandler.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\CreateTask\\CreateTaskCommandHandler.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\CreateTask\\CreateTaskCommandHandler.cs",
@@ -816,7 +1089,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 63,
               "Title": "CreateTaskCommandValidator.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\CreateTask\\CreateTaskCommandValidator.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\CreateTask\\CreateTaskCommandValidator.cs",
@@ -828,7 +1101,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 62,
               "Title": "CreateTaskCommand.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\CreateTask\\CreateTaskCommand.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\CreateTask\\CreateTaskCommand.cs",
@@ -840,7 +1113,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 60,
               "Title": "GetTasksByDateEndpoint.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\GetTasksByDate\\GetTasksByDateEndpoint.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\GetTasksByDate\\GetTasksByDateEndpoint.cs",
@@ -852,7 +1125,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 59,
               "Title": "GetTasksByDateQueryHandler.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\GetTasksByDate\\GetTasksByDateQueryHandler.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\GetTasksByDate\\GetTasksByDateQueryHandler.cs",
@@ -864,7 +1137,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 49,
+              "DocumentIndex": 65,
               "Title": "GetTasksByDateQuery.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\GetTasksByDate\\GetTasksByDateQuery.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Features\\Tasks\\GetTasksByDate\\GetTasksByDateQuery.cs",
@@ -876,7 +1149,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 48,
+              "DocumentIndex": 64,
               "Title": "TaskDTOs.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Backend\\ADHDChecklist.API\\Shared\\DTOs\\TaskDTOs.cs",
               "RelativeDocumentMoniker": "src\\Backend\\ADHDChecklist.API\\Shared\\DTOs\\TaskDTOs.cs",
@@ -885,18 +1158,6 @@
               "ViewState": "AgIAAB0AAAAAAAAAAIA1wDgAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-25T09:07:50.299Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 50,
-              "Title": "ADHDChecklist.Client.csproj",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj",
-              "RelativeDocumentMoniker": "src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\EXE2_Bloomento\\src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj",
-              "RelativeToolTip": "src\\Frontend\\ADHDChecklist.Client\\ADHDChecklist.Client.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-01-25T09:00:12.263Z"
             },
             {
               "$type": "Bookmark",
