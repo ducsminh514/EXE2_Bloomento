@@ -16,7 +16,7 @@
 
 <div class="min-h-screen bg-gray-50">
     <!-- Top Nav -->
-    <nav class="bg-white shadow-sm border-b border-gray-200">
+    <nav class="bg-white shadow-sm border-b border-gray-200 transition-all duration-300 @(_focusedTaskId.HasValue ? "blur-sm grayscale opacity-30 pointer-events-none" : "")">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-4">
@@ -37,7 +37,7 @@
 
     <div class="max-w-full mx-auto px-3 py-4 h-screen flex flex-col overflow-hidden">
         <!-- Date Selector & Header -->
-        <div class="mb-4 flex flex-col sm:flex-row items-center justify-between gap-4 flex-shrink-0">
+        <div class="mb-4 flex flex-col sm:flex-row items-center justify-between gap-4 flex-shrink-0 transition-all duration-300 @(_focusedTaskId.HasValue ? "blur-sm grayscale opacity-30 pointer-events-none" : "")">
             <div class="flex items-center gap-4">
                 <button @onclick="PreviousDay" class="p-1.5 hover:bg-white rounded-lg border border-gray-200 text-gray-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
                 <div class="text-center">
@@ -60,27 +60,50 @@
             <!-- Main Content Area - 40/60 Split -->
             <div class="flex-1 flex gap-4 min-h-0">
                 
-                <!-- Left Section: TIMELINE (40%) -->
-                <div class="w-[40%] flex flex-col bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-3 flex justify-between items-center shadow-md z-10">
-                        <div class="flex items-center gap-2">
-                            <span class="text-lg">⏱️</span>
-                            <h3 class="font-bold text-sm uppercase tracking-wider">Lịch trình</h3>
+                <!-- Left Section: TIMELINE (30%) -->
+                <div class="w-[30%] flex flex-col min-w-[300px] gap-4 min-h-0">
+                    
+                    <!-- Date Navigation (Floating) -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-2 flex items-center justify-between flex-shrink-0 @(_focusedTaskId.HasValue ? "blur-sm grayscale opacity-30 pointer-events-none" : "")">
+                        <button class="p-2 hover:bg-gray-50 rounded-lg text-gray-500 transition-colors" @onclick="() => _selectedDate = _selectedDate.AddDays(-1)">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <div class="flex flex-col items-center">
+                            <span class="text-lg font-black text-gray-800 leading-none">@_selectedDate.ToString("dd/MM/2026")</span>
+                            <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-0.5">
+                                @if (_selectedDate == DateOnly.FromDateTime(DateTime.Now)) { <span class="bg-indigo-50 px-2 rounded">Hôm nay</span> } 
+                                else { <span>@_selectedDate.ToString("dddd")</span> }
+                            </span>
                         </div>
-                        <span class="bg-white/20 px-2 py-0.5 rounded text-[11px] font-bold">@_scheduledTasks.Count Tasks</span>
+                        <button class="p-2 hover:bg-gray-50 rounded-lg text-gray-500 transition-colors" @onclick="() => _selectedDate = _selectedDate.AddDays(1)">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
                     </div>
-                    <div class="flex-1 min-h-0">
-                        <TimeBlocksGrid Tasks="@_scheduledTasks"
-                                        _selectedDate="@_selectedDate"
-                                        OnToggleComplete="ToggleTaskComplete"
-                                        OnEdit="EditTask"
-                                        OnDelete="DeleteTask"
-                                        OnTaskDropped="HandleTaskTimeBlockDrop" />
+
+                    <!-- Timeline Grid area -->
+                    <div class="flex-1 min-h-0 bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative flex flex-col">
+                        <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-3 flex justify-between items-center shadow-md z-10">
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg">⏱️</span>
+                                <h3 class="font-bold text-sm uppercase tracking-wider">Lịch trình</h3>
+                            </div>
+                            <span class="bg-white/20 px-2 py-0.5 rounded text-[11px] font-bold">@_scheduledTasks.Count Tasks</span>
+                        </div>
+                        <div class="flex-1 min-h-0">
+                             <TimeBlocksGrid Tasks="@_scheduledTasks"
+                                            _selectedDate="@_selectedDate"
+                                            OnToggleComplete="ToggleTaskComplete"
+                                            OnEdit="EditTask"
+                                            OnDelete="DeleteTask"
+                                            OnTaskDropped="HandleTaskTimeBlockDrop"
+                                            OnTaskClick="ShowTaskQuickView" 
+                                            FocusedTaskId="@_focusedTaskId" />
+                        </div>
                     </div>
                 </div>
 
-                <!-- Right Section: WORKSPACE (60%) -->
-                <div class="w-[60%] flex flex-col gap-4 min-h-0">
+                <!-- Right Section: WORKSPACE (70%) -->
+                <div class="w-[70%] flex flex-col gap-4 min-h-0 @(_focusedTaskId.HasValue ? "opacity-30 blur-sm grayscale pointer-events-none transition-all duration-500" : "transition-all duration-300")">
                     
                     <!-- Stats Header -->
                     <div class="flex items-center justify-between bg-white rounded-xl p-2 px-4 shadow-sm border border-gray-200 flex-shrink-0">
@@ -105,7 +128,7 @@
                     </div>
 
                     <!-- Workspace Grid (Inbox & Brain Dump/Categories) -->
-                    <div class="flex-1 grid grid-cols-2 gap-4 min-h-0">
+                    <div class="flex-1 grid grid-cols-[30%_1fr] gap-4 min-h-0">
                         
                         <!-- Col 1: INBOX (Full Height) -->
                         <div class="flex flex-col bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden">
@@ -149,16 +172,52 @@
                         <!-- Col 2: BRAIN DUMP & CATEGORIES -->
                         <div class="flex flex-col gap-4 min-h-0">
                             
-                            <!-- Top: Brain Dump (Larger) -->
-                            <div class="flex-1 bg-indigo-50/50 rounded-2xl border border-indigo-100 overflow-hidden flex flex-col">
-                                <div class="p-3 border-b border-indigo-100/50 bg-white/50 flex justify-between items-center">
-                                    <h4 class="font-black text-xs text-indigo-600 uppercase tracking-widest flex items-center gap-2">
-                                        <span class="text-base">🧠</span> Brain Dump
+                            <!-- Top: Free Tier Analytics -->
+                            <div class="flex-1 bg-white rounded-2xl border border-gray-200 overflow-hidden flex flex-col">
+                                <div class="p-3 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                                    <h4 class="font-black text-xs text-gray-700 uppercase tracking-widest flex items-center gap-2">
+                                        <span class="text-base">📊</span> Thống kê (Hôm nay)
                                     </h4>
+                                    <span class="text-[9px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded font-bold uppercase">Free Tier</span>
                                 </div>
-                                <div class="flex-1 p-4 flex flex-col items-center justify-center text-center opacity-60 hover:opacity-100 transition-opacity cursor-dashed border-2 border-transparent hover:border-indigo-200 m-2 rounded-xl">
-                                    <p class="text-sm font-bold text-indigo-400">Khu vực đang phát triển</p>
-                                    <p class="text-[10px] text-indigo-300">Nơi xả ý tưởng nhanh</p>
+                                <div class="flex-1 p-4 flex flex-col gap-4 overflow-y-auto">
+                                    <!-- Summary Row -->
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div class="bg-gray-50 rounded-lg p-3 text-center border border-gray-100">
+                                            <span class="block text-2xl font-black text-gray-800">@_allTasks.Count</span>
+                                            <span class="text-[10px] text-gray-500 font-bold uppercase">Tổng task</span>
+                                        </div>
+                                         <div class="bg-green-50 rounded-lg p-3 text-center border border-green-100">
+                                            <span class="block text-2xl font-black text-green-600">@_completedCount</span>
+                                            <span class="text-[10px] text-green-600/70 font-bold uppercase">Hoàn thành</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Category Breakdown (Mini Chart) -->
+                                    <div>
+                                        <h5 class="text-[10px] font-bold text-gray-400 uppercase mb-2">Phân bổ danh mục</h5>
+                                        <div class="space-y-2">
+                                            @foreach(var cat in _categories.Take(3)) 
+                                            {
+                                                var count = _allTasks.Count(t => t.CategoryId == cat.Id);
+                                                var percent = _allTasks.Count > 0 ? (double)count / _allTasks.Count * 100 : 0;
+                                                if (count > 0) {
+                                                    <div class="flex items-center gap-2 text-xs">
+                                                        <span class="flex-1 truncate font-medium text-gray-600">@cat.Name</span>
+                                                        <div class="w-24 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                                            <div class="h-full rounded-full" style="width: @percent%; background-color: @cat.ColorHex"></div>
+                                                        </div>
+                                                        <span class="text-[10px] text-gray-400 w-4 text-right">@count</span>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Upgrade Teaser -->
+                                   <div class="mt-auto pt-4 text-center">
+                                       <button class="text-[10px] font-bold text-indigo-500 hover:text-indigo-700 underline">Xem báo cáo chi tiết &rarr;</button>
+                                   </div>
                                 </div>
                             </div>
 
@@ -222,6 +281,35 @@
                    Categories="@_categories" />
 }
 
+<!-- Task Quick View Popover -->
+@if (_selectedTaskForQuickView != null)
+{
+    <TaskDetailPopover Task="@_selectedTaskForQuickView"
+                       X="@_quickViewX"
+                       Y="@_quickViewY"
+                       OnClose="CloseTaskQuickView"
+                       OnEdit="EditTask"
+                       OnDelete="DeleteTask"
+                       OnToggleComplete="ToggleTaskComplete"
+                       OnFocus="HandleFocusTask" />
+}
+
+<!-- Focus Mode Overlay / Controls -->
+@if (_focusedTaskId.HasValue)
+{
+    <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in-up">
+        <div class="bg-indigo-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-4 border border-indigo-700">
+            <div class="flex flex-col">
+                <span class="text-[10px] text-indigo-300 font-bold uppercase tracking-widest">Đang tập trung</span>
+                <span class="text-sm font-bold">@(_allTasks.FirstOrDefault(t => t.Id == _focusedTaskId)?.Title ?? "Task")</span>
+            </div>
+            <button @onclick="ExitFocusMode" class="bg-white/20 hover:bg-white/30 p-1.5 rounded-full transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+    </div>
+}
+
 @code {
     private string _userName = "User";
     private DateOnly _selectedDate = DateOnly.FromDateTime(DateTime.Now);
@@ -229,6 +317,37 @@
     private bool _showCreateModal = false;
     private bool _showEditModal = false;
     private Guid? _editingTaskId;
+    
+    // Quick View State
+    private TaskResponse? _selectedTaskForQuickView;
+    private double _quickViewX;
+    private double _quickViewY;
+
+    // Focus Mode State
+    private Guid? _focusedTaskId;
+
+    private void ShowTaskQuickView((TaskResponse task, double x, double y) data)
+    {
+        _selectedTaskForQuickView = data.task;
+        _quickViewX = data.x;
+        _quickViewY = data.y;
+    }
+
+    private void CloseTaskQuickView()
+    {
+        _selectedTaskForQuickView = null;
+    }
+
+    private void HandleFocusTask(Guid taskId)
+    {
+        _focusedTaskId = taskId;
+        _selectedTaskForQuickView = null; // Close popover to focus
+    }
+
+    private void ExitFocusMode()
+    {
+        _focusedTaskId = null;
+    }
 
     private List<TaskResponse> _allTasks = new();
     private List<TaskResponse> _scheduledTasks = new();
@@ -337,6 +456,7 @@
 
     private void EditTask(Guid taskId)
     {
+        _selectedTaskForQuickView = null; // Close Quick View to prevent overlap
         _editingTaskId = taskId;
         _showEditModal = true;
     }

@@ -40,7 +40,7 @@
             }
 
             <!-- 1. Background Grid & Drop Zones -->
-            <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 z-0 @(FocusedTaskId.HasValue ? "blur-sm grayscale opacity-40 transition-all duration-500" : "transition-all duration-300")">
                 @for (int i = 0; i < (endHour - startHour) * 2; i++) // 30-min chunks
                 {
                     var minutesFromStart = i * 30;
@@ -96,7 +96,7 @@
 
                 @foreach (var task in Tasks.Where(t => t.TimeBlockStart.HasValue))
                 {
-                    // Calculate precise position
+                     // Calculate precise position
                     var start = task.TimeBlockStart.Value;
                     if (start.Hour < startHour) continue; // Skip if before 6am (or handle gracefully)
 
@@ -105,17 +105,22 @@
                     
                     var top = taskStartMinutes * pixelsPerMinute;
                     var height = taskDuration * pixelsPerMinute;
-
-                    // Calculate overlap index (simple version) mechanism can be improved later
-                    // For now, we render full width or we could create 'lanes'. 
-                    // Let's stick to full width but with some transparency/z-index.
                     
-                    <div class="absolute w-full px-1 pointer-events-auto transition-all"
+                    // FOCUS MODE LOGIC
+                    var isFocused = FocusedTaskId.HasValue && FocusedTaskId == task.Id;
+                    var isBlurred = FocusedTaskId.HasValue && FocusedTaskId != task.Id;
+
+                    var focusClass = isFocused ? "z-50 ring-4 ring-indigo-500/50 shadow-2xl scale-105" : "";
+                    var blurClass = isBlurred ? "opacity-30 blur-sm grayscale pointer-events-none" : "pointer-events-auto";
+                    var baseClass = "absolute w-full px-1 transition-all duration-500 ease-in-out transform";
+
+                    <div class="@baseClass @focusClass @blurClass"
                          style="top: @(top)px; height: @(height)px; min-height: 24px;"
-                         draggable="true"
-                         @ondragstart="() => HandleDragStart(task)">
+                         draggable="@(FocusedTaskId == null ? "true" : "false")"
+                         @ondragstart="() => HandleDragStart(task)"
+                         @onclick="(e) => HandleTaskClick(task, e)">
                         
-                        <div class="h-full w-full rounded-md border-l-4 shadow-sm @GetTaskBorderColor(task) @GetTaskBgColor(task) bg-opacity-90 backdrop-blur-sm border border-gray-200/60 p-2 overflow-hidden flex flex-col group/card hover:z-50 hover:shadow-md transition-all cursor-grab active:cursor-grabbing">
+                        <div class="h-full w-full rounded-md border-l-4 shadow-sm @GetTaskBorderColor(task) @GetTaskBgColor(task) bg-opacity-90 backdrop-blur-sm border border-gray-200/60 p-2 overflow-hidden flex flex-col group/card hover:shadow-md cursor-pointer active:scale-[0.98]">
                             
                             <!-- Header: Title & Priority -->
                             <div class="flex justify-between items-start gap-1">
@@ -128,32 +133,27 @@
                             </div>
 
                             <!-- Meta: Time Range & Category -->
-                            <div class="flex items-center gap-2 mt-0.5 text-[10px] opacity-80">
-                                <span class="font-medium text-indigo-700 bg-indigo-50/80 px-1 rounded">
-                                    @start.ToString("HH:mm") - @start.AddMinutes(taskDuration).ToString("HH:mm")
-                                </span>
-                                @if (!string.IsNullOrEmpty(task.CategoryName))
-                                {
-                                    <span class="flex items-center gap-1 truncate text-gray-600">
-                                        <span class="w-1.5 h-1.5 rounded-full" style="background-color: @task.CategoryColor"></span>
-                                        @task.CategoryName
+                            @if (!isBlurred) {
+                                <div class="flex items-center gap-2 mt-0.5 text-[10px] opacity-80">
+                                    <span class="font-medium text-indigo-700 bg-indigo-50/80 px-1 rounded">
+                                        @start.ToString("HH:mm") - @start.AddMinutes(taskDuration).ToString("HH:mm")
                                     </span>
-                                }
-                            </div>
-
-                            <!-- Hover Actions -->
-                             <div class="absolute top-1 right-1 flex flex-col gap-1 opacity-0 group-hover/card:opacity-100 transition-opacity bg-white/60 p-0.5 rounded backdrop-blur-sm">
-                                <button @onclick="() => OnEdit.InvokeAsync(task.Id)" class="p-0.5 hover:text-indigo-600 rounded hover:bg-white" title="Sửa"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>
-                                <button @onclick="() => OnToggleComplete.InvokeAsync(task.Id)" class="p-0.5 hover:text-green-600 rounded hover:bg-white" title="Xong"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg></button>
-                            </div>
+                                    @if (!string.IsNullOrEmpty(task.CategoryName))
+                                    {
+                                        <span class="flex items-center gap-1 truncate text-gray-600">
+                                            <span class="w-1.5 h-1.5 rounded-full" style="background-color: @task.CategoryColor"></span>
+                                            @task.CategoryName
+                                        </span>
+                                    }
+                                </div>
+                            }
                         </div>
                     </div>
                 }
 
-                <!-- Drag Preview (Ghost) - could implement precise positioning here too -->
+                <!-- Drag Preview (Ghost) -->
                  @if (_dragState.DraggedTask != null)
                  {
-                     <!-- This would need mouse tracking for precise Y, dropping this for now as user just wants output precise -->
                  }
             </div>
         </div>
@@ -165,11 +165,18 @@
 
     [Parameter] public List<TaskResponse> Tasks { get; set; } = new();
     [Parameter] public DateOnly _selectedDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+    [Parameter] public Guid? FocusedTaskId { get; set; } // New Param
     [Parameter] public EventCallback<Guid> OnToggleComplete { get; set; }
     [Parameter] public EventCallback<Guid> OnEdit { get; set; }
     [Parameter] public EventCallback<Guid> OnDelete { get; set; }
     [Parameter] public EventCallback<(TaskResponse task, TimeOnly startTime)> OnTaskDropped { get; set; }
+    [Parameter] public EventCallback<(TaskResponse task, double x, double y)> OnTaskClick { get; set; }
 
+    private async Task HandleTaskClick(TaskResponse task, MouseEventArgs e)
+    {
+        if (FocusedTaskId.HasValue && FocusedTaskId != task.Id) return; // Prevent clicking others when focused
+        await OnTaskClick.InvokeAsync((task, e.ClientX, e.ClientY));
+    }
     private void HandleDragStart(TaskResponse task)
     {
         _dragState.DraggedTask = task;
