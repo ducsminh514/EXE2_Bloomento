@@ -9,6 +9,7 @@ public interface IEmailService
     Task SendEmailVerificationAsync(string toEmail, string userName, string verificationLink);
     Task SendPasswordResetAsync(string toEmail, string userName, string resetLink);
     Task SendWelcomeEmailAsync(string toEmail, string userName);
+    Task SendEmailAsync(string toEmail, string subject, string htmlBody);
 }
 
 public class EmailService : IEmailService
@@ -112,7 +113,7 @@ public class EmailService : IEmailService
         await SendEmailAsync(toEmail, subject, body);
     }
 
-    private async Task SendEmailAsync(string toEmail, string subject, string htmlBody)
+    public async Task SendEmailAsync(string toEmail, string subject, string htmlBody)
     {
         try
         {

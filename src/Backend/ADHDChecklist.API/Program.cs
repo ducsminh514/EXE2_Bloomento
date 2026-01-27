@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Hangfire;
 using ADHDChecklist.API.Data;
 using ADHDChecklist.API.Entities;
 using ADHDChecklist.API.Entities.Common;
@@ -140,6 +141,19 @@ builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 // ============================================
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<ADHDChecklist.API.Services.BackgroundJobs.CleanupService>();
+builder.Services.AddScoped<ADHDChecklist.API.Services.BackgroundJobs.ReminderJob>();
+
+// ============================================
+// 6.1 HANGFIRE
+// ============================================
+builder.Services.AddHangfire(configuration => configuration
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddHangfireServer();
 
 // ============================================
 // 7. SWAGGER
@@ -246,4 +260,22 @@ app.MapCategoryEndpoints();
 
 // Analytics endpoints
 app.MapAnalyticsEndpoints();
+
+// ============================================
+// 10. BACKGROUND JOBS
+// ============================================
+app.UseHangfireDashboard();
+
+// Schedule Cleanup Job (Daily at 2 AM)
+RecurringJob.AddOrUpdate<ADHDChecklist.API.Services.BackgroundJobs.CleanupService>(
+    "free-tier-cleanup",
+    service => service.DeleteOldFreeTierTasks(),
+    Cron.Daily(2));
+
+// Schedule Reminder Job (Every 15 minutes)
+RecurringJob.AddOrUpdate<ADHDChecklist.API.Services.BackgroundJobs.ReminderJob>(
+    "task-reminders",
+    service => service.CheckAndSendReminders(),
+    "*/15 * * * *");
+
 app.Run();
