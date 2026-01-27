@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ADHDChecklist.Client")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9d5321225f0a5043d9f7c8446739dc9acfe7cd0c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a12c42f506b46cca2e1da071d135e9cf0ac7566e")]
 [assembly: System.Reflection.AssemblyProductAttribute("ADHDChecklist.Client")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ADHDChecklist.Client")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

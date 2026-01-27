@@ -98,7 +98,8 @@
                     <TimeBlocksGrid Tasks="@_scheduledTasks"
                                     OnToggleComplete="ToggleTaskComplete"
                                     OnEdit="EditTask"
-                                    OnDelete="DeleteTask" />
+                                    OnDelete="DeleteTask"
+                                    OnTaskDropped="HandleTaskTimeBlockDrop" />
 
                     <!-- Inbox -->
                     <div class="bg-white rounded-lg shadow-sm p-6">
@@ -110,29 +111,30 @@
                             <span class="text-sm text-gray-500">@_inboxTasks.Count công việc</span>
                         </div>
                         
-                        @if (_inboxTasks.Any())
-                        {
-                            <div class="space-y-3">
-                                @foreach (var task in _inboxTasks)
-                                {
-                                    <TaskCard Task="@task" 
+                        <!-- Inbox Dropzone -->
+                        <div class="relative min-h-[100px]">
+                            <Dropzone Items="_inboxTasks" TItem="TaskResponse" OnItemDrop="HandleInboxDrop" Class="min-h-[100px] transition-colors rounded-lg border-2 border-dashed border-transparent hover:border-indigo-300 hover:bg-indigo-50 w-full block">
+                                <div class="cursor-move mb-3 last:mb-0">
+                                    <TaskCard Task="@context" 
                                               OnToggleComplete="ToggleTaskComplete"
                                               OnEdit="EditTask"
                                               OnDelete="DeleteTask" />
-                                }
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="text-center py-12">
-                                <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                    </svg>
                                 </div>
-                                <p class="text-gray-500">Inbox trống! 🎉</p>
-                            </div>
-                        }
+                            </Dropzone>
+
+                            @if (!_inboxTasks.Any())
+                            {
+                                <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-300 pointer-events-none">
+                                    <div class="w-16 h-16 mb-2 bg-gray-100 rounded-full flex items-center justify-center">
+                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm font-medium text-gray-500">Inbox trống! 🎉</p>
+                                    <p class="text-xs text-gray-400 mt-1">Kéo công việc vào đây để bỏ lịch</p>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
 
@@ -389,6 +391,67 @@
         {
             await AuthService.LogoutAsync();
             Navigation.NavigateTo("/login", forceLoad: true);
+        }
+    }
+
+    private async Task HandleTaskTimeBlockDrop((TaskResponse task, int hour) dropData)
+    {
+        var task = dropData.task;
+        var hour = dropData.hour;
+
+        // If dropping into same hour, ignore
+        if (task.TimeBlockStart.HasValue && task.TimeBlockStart.Value.Hour == hour)
+            return;
+
+        try
+        {
+            var updateRequest = new UpdateTaskRequest(
+                task.Title,
+                task.Description,
+                task.CategoryId,
+                _selectedDate,
+                new TimeOnly(hour, 0),
+                new TimeOnly(hour + 1, 0),
+                task.Duration,
+                task.Priority,
+                task.IsCompleted
+            );
+
+            await TaskService.UpdateTaskAsync(task.Id, updateRequest);
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating task time block: {ex.Message}");
+        }
+    }
+
+    private async Task HandleInboxDrop(TaskResponse task)
+    {
+        // If already in inbox (no time block), ignore
+        if (!task.TimeBlockStart.HasValue)
+            return;
+
+        try
+        {
+            var updateRequest = new UpdateTaskRequest(
+                task.Title,
+                task.Description,
+                task.CategoryId,
+                _selectedDate,
+                null,
+                null,
+                task.Duration,
+                task.Priority,
+                task.IsCompleted
+            );
+
+            await TaskService.UpdateTaskAsync(task.Id, updateRequest);
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error moving task to inbox: {ex.Message}");
         }
     }
 

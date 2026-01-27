@@ -1,0 +1,157 @@
+﻿@using ADHDChecklist.Client.Shared.Models
+@using Plk.Blazor.DragDrop
+
+<div class="bg-white rounded-lg shadow-sm p-6">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <span>⏰</span>
+            <span>Lịch trình trong ngày</span>
+        </h3>
+        <span class="text-sm text-gray-500">@Tasks.Count công việc</span>
+    </div>
+
+    <div class="space-y-1">
+        @for (int hour = 6; hour < 24; hour++)
+        {
+            var currentHour = hour;
+            var hourTasks = GetTasksForHour(currentHour);
+            var slotId = $"slot-{currentHour}";
+
+            <div class="flex items-stretch border-b border-gray-100 hover:bg-gray-50 transition-colors min-h-[60px]">
+                <!-- Time Label -->
+                <div class="w-20 flex-shrink-0 py-3 px-2 text-right border-r border-gray-200">
+                    <span class="text-sm font-medium text-gray-600">
+                        @currentHour.ToString("00"):00
+                    </span>
+                </div>
+
+                <!-- Task Slot (The Dropzone) -->
+                <div class="flex-1 py-2 px-3 relative">
+                     <Dropzone TItem="TaskResponse"
+                              Items="hourTasks"
+                              OnItemDrop="@(item => HandleDrop(item, currentHour))"
+                              Class="h-full min-h-[60px] w-full block">
+                        <div class="mb-2 last:mb-0 cursor-move">
+                            <div class="flex items-center gap-2 p-3 rounded-lg border-l-4 @GetTaskBorderColor(context) @(context.IsCompleted ? "bg-gray-50 opacity-60" : "bg-white shadow-sm hover:shadow-md")">
+                                <!-- Drag Handle -->
+                                <div class="flex-shrink-0 text-gray-400">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                                    </svg>
+                                </div>
+
+                                <!-- Checkbox -->
+                                <button @onclick="() => OnToggleComplete.InvokeAsync(context.Id)"
+                                        @onclick:stopPropagation
+                                        class="flex-shrink-0">
+                                    @if (context.IsCompleted)
+                                    {
+                                        <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    }
+                                    else
+                                    {
+                                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                                        </svg>
+                                    }
+                                </button>
+
+                                <!-- Task Info -->
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="font-medium text-gray-900 text-sm truncate @(context.IsCompleted ? "line-through" : "")">
+                                            @context.Title
+                                        </h4>
+                                        @if (context.Priority > 1)
+                                        {
+                                            <span class="flex-shrink-0 text-red-600 text-xs font-bold">
+                                                @for (int i = 0; i < context.Priority; i++)
+                                                {
+                                                    <span>!</span>
+                                                }
+                                            </span>
+                                        }
+                                    </div>
+                                    <div class="flex items-center gap-2 mt-1 text-xs text-gray-500">
+                                        <span>
+                                            @context.TimeBlockStart?.ToString("HH:mm") - @context.TimeBlockEnd?.ToString("HH:mm")
+                                        </span>
+                                        @if (!string.IsNullOrEmpty(context.CategoryName))
+                                        {
+                                            <span class="flex items-center gap-1">
+                                                <span class="w-2 h-2 rounded-full" style="background-color: @context.CategoryColor"></span>
+                                                @context.CategoryName
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="flex gap-1 flex-shrink-0">
+                                    <button @onclick="() => OnEdit.InvokeAsync(context.Id)"
+                                            @onclick:stopPropagation
+                                            class="p-1.5 text-gray-400 hover:text-indigo-600 rounded">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                        </svg>
+                                    </button>
+                                    <button @onclick="() => OnDelete.InvokeAsync(context.Id)"
+                                            @onclick:stopPropagation
+                                            class="p-1.5 text-gray-400 hover:text-red-600 rounded">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </Dropzone>
+
+                    @if (!hourTasks.Any())
+                    {
+                        <!-- Empty Slot Hint (Pointer events none so it doesn't block drop) -->
+                        <div class="absolute inset-0 flex items-center justify-center text-gray-300 pointer-events-none">
+                            <span class="text-xs">Kéo task vào đây</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<TaskResponse> Tasks { get; set; } = new();
+    [Parameter] public EventCallback<Guid> OnToggleComplete { get; set; }
+    [Parameter] public EventCallback<Guid> OnEdit { get; set; }
+    [Parameter] public EventCallback<Guid> OnDelete { get; set; }
+    [Parameter] public EventCallback<(TaskResponse task, int hour)> OnTaskDropped { get; set; }
+
+    private List<TaskResponse> GetTasksForHour(int hour)
+    {
+        return Tasks
+            .Where(t => t.TimeBlockStart.HasValue && t.TimeBlockStart.Value.Hour == hour)
+            .OrderBy(t => t.TimeBlockStart)
+            .ToList();
+    }
+
+    private async Task HandleDrop(TaskResponse task, int hour)
+    {
+        await OnTaskDropped.InvokeAsync((task, hour));
+    }
+
+    private string GetTaskBorderColor(TaskResponse task)
+    {
+        if (task.IsCompleted)
+            return "border-green-400";
+        
+        return task.Priority switch
+        {
+            3 => "border-red-500",
+            2 => "border-orange-400",
+            _ => "border-indigo-400"
+        };
+    }
+}
