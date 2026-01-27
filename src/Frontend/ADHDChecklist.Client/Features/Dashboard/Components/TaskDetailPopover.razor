@@ -1,0 +1,119 @@
+@using ADHDChecklist.Client.Shared.Models
+@inject IJSRuntime JS
+
+@if (Task != null)
+{
+    <!-- Invisible overlay to close when clicking outside -->
+    <div class="fixed inset-0 z-40" @onclick="OnClose"></div>
+
+    <div class="fixed z-50 w-[350px] bg-white rounded-xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden animate-fade-in-up"
+         style="top: @(AdjustedTop)px; left: @(AdjustedLeft)px;">
+        
+        <!-- Header -->
+        <div class="bg-gray-50/50 p-3 flex justify-between items-center border-b border-gray-100">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-indigo-100 text-indigo-700 border border-indigo-200">
+                Task
+            </span>
+            <div class="flex items-center gap-1">
+                <button @onclick="() => OnEdit.InvokeAsync(Task.Id)" class="p-1.5 hover:bg-white rounded-md text-gray-500 hover:text-indigo-600 transition-colors" title="Chỉnh sửa toàn bộ">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                </button>
+                <button @onclick="() => OnDelete.InvokeAsync(Task.Id)" class="p-1.5 hover:bg-white rounded-md text-gray-500 hover:text-red-600 transition-colors" title="Xóa">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+                <button @onclick="OnClose" class="p-1.5 hover:bg-white rounded-md text-gray-400 hover:text-gray-700 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="p-5">
+            <div class="flex items-start gap-3 mb-4">
+                <div class="mt-1">
+                    <div class="w-5 h-5 rounded-full border-2 cursor-pointer flex items-center justify-center transition-colors @(Task.IsCompleted ? "border-green-500 bg-green-500" : "border-gray-300 hover:border-indigo-500")"
+                         @onclick="() => OnToggleComplete.InvokeAsync(Task.Id)">
+                        @if (Task.IsCompleted)
+                        {
+                            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        }
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-900 text-lg leading-tight @(Task.IsCompleted ? "line-through text-gray-400" : "")">@Task.Title</h3>
+                    @if (!string.IsNullOrEmpty(Task.Description))
+                    {
+                        <p class="text-sm text-gray-500 mt-1 line-clamp-3">@Task.Description</p>
+                    }
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <!-- Time Info -->
+                <div class="flex items-center gap-3 text-sm text-gray-700 bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div class="flex-1 font-medium">
+                        @if (Task.TimeBlockStart.HasValue)
+                        {
+                            <span>@Task.TimeBlockStart.Value.ToString("HH:mm")</span>
+                            <span class="mx-1 text-gray-400">-</span>
+                            <span>@Task.TimeBlockStart.Value.AddMinutes(Task.Duration ?? 30).ToString("HH:mm")</span>
+                        }
+                        else
+                        {
+                            <span class="italic text-gray-400">Chưa xếp lịch</span>
+                        }
+                    </div>
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">@(Task.Duration ?? 30) phút</span>
+                </div>
+
+                <!-- Category -->
+                @if (!string.IsNullOrEmpty(Task.CategoryName))
+                {
+                    <div class="flex items-center gap-3 text-sm text-gray-600 px-2">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full" style="background-color: @Task.CategoryColor"></span>
+                            <span>@Task.CategoryName</span>
+                        </div>
+                    </div>
+                }
+            </div>
+
+    <!-- Footer / More Actions -->
+            <div class="mt-5 pt-3 border-t border-gray-50 flex justify-between gap-2">
+                 <button @onclick="() => OnFocus.InvokeAsync(Task.Id)" class="flex-1 px-3 py-1.5 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-lg hover:bg-indigo-100 transition-colors flex items-center justify-center gap-1 group/btn">
+                    <span class="group-hover/btn:scale-110 transition-transform">🎯</span> Tập trung
+                </button>
+                <button @onclick="() => OnEdit.InvokeAsync(Task.Id)" class="px-3 py-1.5 bg-white border border-gray-200 text-gray-600 text-xs font-bold rounded-lg hover:bg-gray-50 transition-colors">
+                    Chi tiết
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public TaskResponse? Task { get; set; }
+    [Parameter] public double X { get; set; }
+    [Parameter] public double Y { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback<Guid> OnToggleComplete { get; set; }
+    [Parameter] public EventCallback<Guid> OnEdit { get; set; }
+    [Parameter] public EventCallback<Guid> OnDelete { get; set; }
+    [Parameter] public EventCallback<Guid> OnFocus { get; set; }
+
+    // Clamp to screen
+    private double AdjustedLeft => Math.Min(Math.Max(X + 20, 10), 1920 - 370); // 370 = width + padding roughly
+    private double AdjustedTop => Math.Min(Math.Max(Y - 100, 10), 900); // Rough clamping
+}
+
+<style>
+    .animate-fade-in-up {
+        animation: fadeInUp 0.2s ease-out forwards;
+    }
+    @@keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+</style>

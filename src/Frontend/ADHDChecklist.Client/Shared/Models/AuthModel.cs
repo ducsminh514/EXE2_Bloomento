@@ -3,6 +3,9 @@
 // ============================================
 // AUTH REQUEST MODELS
 // ============================================
+// ============================================
+// AUTH REQUEST MODELS
+// ============================================
 public record RegisterRequest(
     string Email,
     string Password,
@@ -22,6 +25,27 @@ public record GoogleLoginRequest(
 public record RefreshTokenRequest(
     string RefreshToken
 );
+
+public record UpdateProfileRequest(
+    string FullName
+);
+
+public record UpgradeRequest(
+    SubscriptionTier Tier
+);
+
+public record UpdateProfileResponse(
+    bool Success,
+    string Message,
+    string? NewFullName = null
+);
+
+public record UpgradeResponse(
+    bool Success,
+    string Message,
+    DateTime? ExpiryDate
+);
+
 
 // ============================================
 // AUTH RESPONSE MODELS
@@ -193,3 +217,12 @@ public record DailyStats(
     int TasksCompleted,
     int TasksCreated
 );
+
+// ============================================
+// ENUMS
+// ============================================
+public enum SubscriptionTier
+{
+    Free = 0,
+    Premium = 1
+}

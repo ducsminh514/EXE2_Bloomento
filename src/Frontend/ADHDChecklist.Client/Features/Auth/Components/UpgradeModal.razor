@@ -1,0 +1,180 @@
+@using ADHDChecklist.Client.Shared.Models
+@using ADHDChecklist.Client.Features.Auth.Services
+@inject IAuthService AuthService
+
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in" @onclick="HandleBackdropClick">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden animate-scale-up border border-gray-100" @onclick:stopPropagation>
+        
+        <!-- Header -->
+        <div class="flex justify-between items-center p-6 border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-purple-50">
+            <div>
+                <h2 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
+                    Nâng cấp gói tài khoản
+                </h2>
+                <p class="text-gray-500 text-sm mt-1">Mở khóa toàn bộ tiềm năng của bạn</p>
+            </div>
+            <button @onclick="CloseModal" class="p-2 hover:bg-white/50 rounded-full transition-colors text-gray-500 hover:text-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-8 bg-gray-50">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Free Plan -->
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Miễn phí</h3>
+                            <div class="text-3xl font-bold text-gray-900 mt-2">0đ<span class="text-base text-gray-500 font-normal">/tháng</span></div>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center text-gray-600">
+                            <span class="mr-2 text-green-500">✓</span> Tối đa 50 công việc
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <span class="mr-2 text-green-500">✓</span> Quản lý danh mục cơ bản
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <span class="mr-2 text-green-500">✓</span> Session tập trung (Pomodoro)
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <span class="mr-2 text-green-500">✓</span> Thống kê 7 ngày
+                        </li>
+                    </ul>
+                    <button class="w-full py-3 px-4 rounded-xl bg-gray-100 text-gray-500 font-medium cursor-not-allowed" disabled>
+                        Gói hiện tại
+                    </button>
+                </div>
+
+                <!-- Premium Plan -->
+                <div class="bg-white p-6 rounded-xl border-2 border-purple-500 shadow-xl relative overflow-hidden transform md:-translate-y-2 transition-transform">
+                    <div class="absolute top-0 right-0 bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-bl-xl">
+                        KHUYÊN DÙNG
+                    </div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Premium</h3>
+                            <div class="text-3xl font-bold text-purple-600 mt-2">99.000đ<span class="text-base text-gray-500 font-normal">/tháng</span></div>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center text-gray-700 font-medium">
+                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Không giới hạn công việc
+                        </li>
+                        <li class="flex items-center text-gray-700 font-medium">
+                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Trợ lý AI thông minh
+                        </li>
+                        <li class="flex items-center text-gray-700 font-medium">
+                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Thống kê nâng cao trọn đời
+                        </li>
+                        <li class="flex items-center text-gray-700 font-medium">
+                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Tùy chỉnh giao diện & Theme
+                        </li>
+                        <li class="flex items-center text-gray-700 font-medium">
+                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Hỗ trợ ưu tiên 24/7
+                        </li>
+                    </ul>
+                    <button @onclick="HandleUpgrade" disabled="@_isProcessing" 
+                            class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold shadow-lg hover:shadow-purple-500/30 transition-all hover:scale-[1.02] flex justify-center items-center">
+                        @if (_isProcessing)
+                        {
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>Đang xử lý...</span>
+                        }
+                        else
+                        {
+                            <span>Nâng cấp ngay</span>
+                        }
+                    </button>
+                    <p class="text-center text-xs text-gray-400 mt-3">Thanh toán an toàn (Mock)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (_successMessage != null)
+{
+    <div class="fixed top-4 right-4 z-[60] bg-green-500 text-white px-6 py-4 rounded-xl shadow-xl animate-fade-in flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        @_successMessage
+    </div>
+}
+
+@if (_errorMessage != null)
+{
+    <div class="fixed top-4 right-4 z-[60] bg-red-500 text-white px-6 py-4 rounded-xl shadow-xl animate-fade-in flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        @_errorMessage
+    </div>
+}
+
+@code {
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnUpgradeSuccess { get; set; }
+
+    private bool _isProcessing = false;
+    private string? _successMessage;
+    private string? _errorMessage;
+
+    private async Task CloseModal()
+    {
+        await OnClose.InvokeAsync();
+    }
+
+    private async Task HandleBackdropClick()
+    {
+        await CloseModal();
+    }
+
+    private async Task HandleUpgrade()
+    {
+        _isProcessing = true;
+        _errorMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            // Simulate payment delay
+            await Task.Delay(1500);
+
+            var request = new UpgradeRequest(SubscriptionTier.Premium);
+            var response = await AuthService.UpgradeAccountAsync(request);
+
+            if (response.Success)
+            {
+                _successMessage = "Nâng cấp thành công! Chào mừng Premium Member.";
+                StateHasChanged();
+                await Task.Delay(2000); // Show success message for a bit
+                await OnUpgradeSuccess.InvokeAsync();
+                await CloseModal();
+            }
+            else
+            {
+                _errorMessage = response.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = "Có lỗi xảy ra: " + ex.Message;
+        }
+        finally
+        {
+            _isProcessing = false;
+            StateHasChanged();
+        }
+    }
+}

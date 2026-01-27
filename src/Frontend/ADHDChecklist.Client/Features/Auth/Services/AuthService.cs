@@ -15,6 +15,8 @@ public interface IAuthService
     Task<bool> RefreshTokenAsync();
     Task LogoutAsync();
     Task<CurrentUser?> GetCurrentUserAsync();
+    Task<ApiResponse<UpdateProfileResponse>> UpdateProfileAsync(UpdateProfileRequest request);
+    Task<ApiResponse<UpgradeResponse>> UpgradeAccountAsync(UpgradeRequest request);
 }
 
 public class AuthService : IAuthService
@@ -210,6 +212,107 @@ public class AuthService : IAuthService
         catch
         {
             return null;
+        }
+    }
+
+    public async Task<ApiResponse<UpdateProfileResponse>> UpdateProfileAsync(UpdateProfileRequest request)
+    {
+        try
+        {
+            var response = await _apiClient.PutAsync<UpdateProfileResponse>(
+                "/api/users/profile",
+                request
+            );
+
+            if (response?.Success == true)
+            {
+                // Update local storage with new info
+                var userInfo = await _localStorage.GetItemAsync<UserInfo>("userInfo");
+                if (userInfo != null)
+                {
+                    // Create new record with updated Name
+                    var updatedUser = userInfo with { FullName = request.FullName };
+                    await SaveUserInfoAsync(updatedUser);
+                    
+                    // Notify State Provider (optional, might need a refresh)
+                     await _authStateProvider.GetAuthenticationStateAsync();
+                }
+                
+                return new ApiResponse<UpdateProfileResponse> 
+                { 
+                    Success = true, 
+                    Data = response,
+                    Message = "Cập nhật thành công" 
+                };
+            }
+
+            return new ApiResponse<UpdateProfileResponse> 
+            { 
+                Success = false, 
+                Message = response?.Message ?? "Cập nhật hồ sơ thất bại" 
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Update profile failed");
+            return new ApiResponse<UpdateProfileResponse> 
+            { 
+                Success = false, 
+                Message = "Có lỗi kết nối máy chủ" 
+            };
+        }
+    }
+
+    public async Task<ApiResponse<UpgradeResponse>> UpgradeAccountAsync(UpgradeRequest request)
+    {
+        try
+        {
+            var response = await _apiClient.PostAsync<UpgradeResponse>(
+                "/api/users/upgrade",
+                request
+            );
+
+            if (response?.Success == true)
+            {
+                // Update local storage
+                var userInfo = await _localStorage.GetItemAsync<UserInfo>("userInfo");
+                if (userInfo != null)
+                {
+                    // Update tier and premium status
+                    var updatedUser = userInfo with 
+                    { 
+                        SubscriptionTier = request.Tier.ToString(),
+                        IsPremium = request.Tier == SubscriptionTier.Premium 
+                    };
+                    
+                    await SaveUserInfoAsync(updatedUser);
+                    
+                     // Force refresh state
+                     await _authStateProvider.GetAuthenticationStateAsync();
+                }
+
+                return new ApiResponse<UpgradeResponse>
+                {
+                    Success = true,
+                    Data = response,
+                    Message = response.Message
+                };
+            }
+
+            return new ApiResponse<UpgradeResponse>
+            {
+                Success = false,
+                Message = response?.Message ?? "Nâng cấp thất bại"
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Upgrade failed");
+            return new ApiResponse<UpgradeResponse>
+            {
+                Success = false,
+                Message = "Lỗi kết nối máy chủ"
+            };
         }
     }
 

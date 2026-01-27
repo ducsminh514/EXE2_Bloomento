@@ -1,0 +1,181 @@
+@using ADHDChecklist.Client.Shared.Models
+@using ADHDChecklist.Client.Features.Auth.Services
+@inject IAuthService AuthService
+@using System.ComponentModel.DataAnnotations
+
+<!-- Modal Overlay -->
+<div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" @onclick="Close">
+    <!-- Card Content -->
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden flex flex-col animate-scale-up border border-gray-100" @onclick:stopPropagation>
+        
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+            <h3 class="font-black text-gray-800 text-lg flex items-center gap-2">
+                <span>👤</span> Hồ sơ cá nhân
+            </h3>
+            <button @onclick="Close" class="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <EditForm Model="@_model" OnValidSubmit="HandleSubmit" class="flex flex-col h-full">
+            <DataAnnotationsValidator />
+
+            <!-- Body -->
+            <div class="px-6 py-6 space-y-6">
+                
+                <!-- Avatar Section (Center) -->
+                <div class="flex flex-col items-center gap-3">
+                    <div class="w-20 h-20 rounded-full bg-indigo-100 flex items-center justify-center text-3xl shadow-inner border-2 border-white ring-2 ring-indigo-50">
+                        @GetInitials(_model.FullName)
+                    </div>
+                    <div class="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                        @_model.SubscriptionTier Tier
+                        @if (_model.SubscriptionTier == "Free")
+                        {
+                            <button type="button" @onclick="Upgrade" class="text-indigo-600 hover:text-indigo-800 underline cursor-pointer hover:scale-105 transition-transform">
+                                Nâng cấp
+                            </button>
+                        }
+                    </div>
+               </div>
+
+                <!-- Fields -->
+                <div class="space-y-4">
+                    <!-- Email (ReadOnly) -->
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">Email</label>
+                         <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 text-gray-500 text-sm select-none">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            @_model.Email
+                        </div>
+                    </div>
+
+                    <!-- Full Name (Editable) -->
+                    <div class="space-y-1">
+                         <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">Tên hiển thị</label>
+                        <InputText @bind-Value="_model.FullName"
+                                   class="w-full text-sm font-bold text-gray-800 bg-white border-gray-200 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 shadow-sm"
+                                   placeholder="Nhập tên của bạn" />
+                        <ValidationMessage For="@(() => _model.FullName)" class="text-red-500 text-xs mt-1" />
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(_message))
+                {
+                    <div class="text-xs font-bold p-2 rounded text-center @(_isSuccess ? "bg-green-50 text-green-600" : "bg-red-50 text-red-500")">
+                        @_message
+                    </div>
+                }
+            </div>
+
+            <!-- Footer: Actions -->
+            <div class="bg-gray-50 px-6 py-4 flex justify-between items-center border-t border-gray-100">
+                <div class="flex gap-2">
+                     <button type="button" class="text-xs font-medium text-gray-400 hover:text-red-500 hover:underline transition-colors">Đổi mật khẩu</button>
+                </div>
+                <button type="submit" disabled="@_isSubmitting"
+                        class="text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl px-6 py-2 shadow-lg shadow-indigo-200 hover:shadow-indigo-300 transition-all disabled:opacity-50 flex items-center gap-2">
+                    @if(_isSubmitting) { 
+                        <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <span>Đang lưu...</span>
+                    } else { 
+                        <span>Lưu thay đổi</span>
+                    }
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+<style>
+    .animate-fade-in { animation: fadeIn 0.15s ease-out; }
+    .animate-scale-up { animation: scaleUp 0.15s ease-out; }
+    @@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @@keyframes scaleUp { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+</style>
+
+@code {
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback<string> OnProfileUpdated { get; set; }
+    [Parameter] public EventCallback OnUpgradeClicked { get; set; }
+    [Parameter] public CurrentUser InitialUser { get; set; } = new();
+
+    private ProfileFormModel _model = new();
+    private bool _isSubmitting;
+    private string? _message;
+    private bool _isSuccess;
+
+    protected override void OnInitialized()
+    {
+        if (InitialUser != null)
+        {
+            _model.FullName = InitialUser.FullName;
+            _model.Email = InitialUser.Email;
+            _model.SubscriptionTier = InitialUser.SubscriptionTier;
+        }
+    }
+
+    private class ProfileFormModel
+    {
+        [Required(ErrorMessage = "Tên không được để trống")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Tên từ 2-50 ký tự")]
+        public string FullName { get; set; } = string.Empty;
+        
+        public string Email { get; set; } = string.Empty;
+        public string SubscriptionTier { get; set; } = "Free";
+    }
+
+    private async Task HandleSubmit()
+    {
+        _isSubmitting = true;
+        _message = null;
+
+        try
+        {
+            var request = new UpdateProfileRequest(_model.FullName);
+            var result = await AuthService.UpdateProfileAsync(request);
+
+            if (result.Success)
+            {
+                _isSuccess = true;
+                _message = "Đã cập nhật thông tin!";
+                await OnProfileUpdated.InvokeAsync(_model.FullName);
+                await Task.Delay(1000); // Show success message briefly
+                await Close();
+            }
+            else
+            {
+                _isSuccess = false;
+                _message = result.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            _isSuccess = false;
+            _message = "Lỗi: " + ex.Message;
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
+
+    private async Task Close()
+    {
+        await OnClose.InvokeAsync();
+    }
+
+    private string GetInitials(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "U";
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 1) return parts[0][0].ToString().ToUpper();
+        return (parts[0][0].ToString() + parts[^1][0].ToString()).ToUpper();
+    }
+
+    private async Task Upgrade()
+    {
+        await OnUpgradeClicked.InvokeAsync();
+    }
+}
