@@ -39,6 +39,7 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
             task.TimeBlockEnd = request.TimeBlockEnd;
             task.Duration = request.Duration;
             task.Priority = request.Priority;
+            task.IsCompleted = request.IsCompleted;
             task.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync(cancellationToken);

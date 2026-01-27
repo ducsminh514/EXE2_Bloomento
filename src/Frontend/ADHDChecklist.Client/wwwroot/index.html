@@ -7,8 +7,32 @@
     <title>ADHDChecklist.Client</title>
     <base href="/" />
     <link rel="stylesheet" href="css/app.css" />
-     <!-- If you add any scoped CSS files, uncomment the following to load them
-    <link href="ADHDChecklist.Client.styles.css" rel="stylesheet" /> --> 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        indigo: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- If you add any scoped CSS files, uncomment the following to load them
+    <link href="ADHDChecklist.Client.styles.css" rel="stylesheet" /> -->
+    <link href="_content/Plk.Blazor.DragDrop/dragdrop.css" rel="stylesheet" />
     <link href="manifest.webmanifest" rel="manifest" />
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />

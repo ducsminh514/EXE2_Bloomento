@@ -27,6 +27,7 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
                     request.TimeBlockEnd,
                     request.Duration,
                     request.Priority,
+                    request.IsCompleted,
                     userId
                 );
 

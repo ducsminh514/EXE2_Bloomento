@@ -9,6 +9,7 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
+@inject DragDropState _dragState
 @attribute [Authorize]
 
 <PageTitle>Dashboard - ADHD Checklist</PageTitle>
@@ -34,185 +35,171 @@
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Date Selector -->
-        <div class="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div class="max-w-full mx-auto px-3 py-4 h-screen flex flex-col overflow-hidden">
+        <!-- Date Selector & Header -->
+        <div class="mb-4 flex flex-col sm:flex-row items-center justify-between gap-4 flex-shrink-0">
             <div class="flex items-center gap-4">
-                <button @onclick="PreviousDay" 
-                        class="p-2 hover:bg-white rounded-lg transition-colors border border-gray-200">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                </button>
-                
+                <button @onclick="PreviousDay" class="p-1.5 hover:bg-white rounded-lg border border-gray-200 text-gray-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
                 <div class="text-center">
-                    <h2 class="text-2xl font-bold text-gray-900">
-                        @_selectedDate.ToString("dd/MM/yyyy")
-                    </h2>
-                    <p class="text-sm text-gray-600">
-                        @GetVietnameseDayOfWeek(_selectedDate.DayOfWeek)
-                        @if (_selectedDate == DateOnly.FromDateTime(DateTime.Now))
-                        {
-                            <span class="ml-2 px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs rounded-full">Hôm nay</span>
-                        }
-                    </p>
+                    <h2 class="text-xl font-bold text-gray-900 leading-none">@_selectedDate.ToString("dd/MM/yyyy")</h2>
+                    <p class="text-xs text-gray-500 font-medium">@GetVietnameseDayOfWeek(_selectedDate.DayOfWeek) @if(_selectedDate == DateOnly.FromDateTime(DateTime.Now)){<span class="text-indigo-600 font-bold ml-1">(Hôm nay)</span>}</p>
                 </div>
-                
-                <button @onclick="NextDay" 
-                        class="p-2 hover:bg-white rounded-lg transition-colors border border-gray-200">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
-                
-                <button @onclick="GoToToday" 
-                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
-                    📅 Hôm nay
-                </button>
+                <button @onclick="NextDay" class="p-1.5 hover:bg-white rounded-lg border border-gray-200 text-gray-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+                <button @onclick="GoToToday" class="px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-bold hover:bg-indigo-100 transition-colors">📅 Hôm nay</button>
             </div>
-
-            <button @onclick="ShowCreateTaskModal" 
-                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                Thêm công việc
-            </button>
         </div>
 
         @if (_isLoading)
         {
-            <div class="flex justify-center items-center py-20">
-                <div class="text-center">
-                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-                    <p class="text-gray-600">Đang tải dữ liệu...</p>
-                </div>
+            <div class="flex-1 flex justify-center items-center">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
             </div>
         }
         else
         {
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Main Task List -->
-                <div class="lg:col-span-2 space-y-4">
-                    <!-- Time Blocks Visual -->
-                    <TimeBlocksGrid Tasks="@_scheduledTasks"
-                                    OnToggleComplete="ToggleTaskComplete"
-                                    OnEdit="EditTask"
-                                    OnDelete="DeleteTask"
-                                    OnTaskDropped="HandleTaskTimeBlockDrop" />
-
-                    <!-- Inbox -->
-                    <div class="bg-white rounded-lg shadow-sm p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                                <span>📥</span>
-                                <span>Chưa lên lịch</span>
-                            </h3>
-                            <span class="text-sm text-gray-500">@_inboxTasks.Count công việc</span>
+            <!-- Main Content Area - 40/60 Split -->
+            <div class="flex-1 flex gap-4 min-h-0">
+                
+                <!-- Left Section: TIMELINE (40%) -->
+                <div class="w-[40%] flex flex-col bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-3 flex justify-between items-center shadow-md z-10">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg">⏱️</span>
+                            <h3 class="font-bold text-sm uppercase tracking-wider">Lịch trình</h3>
                         </div>
-                        
-                        <!-- Inbox Dropzone -->
-                        <div class="relative min-h-[100px]">
-                            <Dropzone Items="_inboxTasks" TItem="TaskResponse" OnItemDrop="HandleInboxDrop" Class="min-h-[100px] transition-colors rounded-lg border-2 border-dashed border-transparent hover:border-indigo-300 hover:bg-indigo-50 w-full block">
-                                <div class="cursor-move mb-3 last:mb-0">
-                                    <TaskCard Task="@context" 
-                                              OnToggleComplete="ToggleTaskComplete"
-                                              OnEdit="EditTask"
-                                              OnDelete="DeleteTask" />
-                                </div>
-                            </Dropzone>
-
-                            @if (!_inboxTasks.Any())
-                            {
-                                <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-300 pointer-events-none">
-                                    <div class="w-16 h-16 mb-2 bg-gray-100 rounded-full flex items-center justify-center">
-                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </div>
-                                    <p class="text-sm font-medium text-gray-500">Inbox trống! 🎉</p>
-                                    <p class="text-xs text-gray-400 mt-1">Kéo công việc vào đây để bỏ lịch</p>
-                                </div>
-                            }
-                        </div>
+                        <span class="bg-white/20 px-2 py-0.5 rounded text-[11px] font-bold">@_scheduledTasks.Count Tasks</span>
+                    </div>
+                    <div class="flex-1 min-h-0">
+                        <TimeBlocksGrid Tasks="@_scheduledTasks"
+                                        _selectedDate="@_selectedDate"
+                                        OnToggleComplete="ToggleTaskComplete"
+                                        OnEdit="EditTask"
+                                        OnDelete="DeleteTask"
+                                        OnTaskDropped="HandleTaskTimeBlockDrop" />
                     </div>
                 </div>
 
-                <!-- Sidebar -->
-                <div class="space-y-4">
-                    <!-- Quick Stats -->
-                    <div class="bg-white rounded-lg shadow-sm p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                            <span>📊</span>
-                            <span>Thống kê hôm nay</span>
-                        </h3>
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                                <span class="text-gray-600 text-sm">Tổng công việc:</span>
-                                <span class="font-bold text-gray-900 text-lg">@_allTasks.Count</span>
-                            </div>
-                            <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                                <span class="text-gray-600 text-sm">Đã hoàn thành:</span>
-                                <span class="font-bold text-green-600 text-lg">@_completedCount</span>
-                            </div>
-                            <div class="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
-                                <span class="text-gray-600 text-sm">Còn lại:</span>
-                                <span class="font-bold text-orange-600 text-lg">@(_allTasks.Count - _completedCount)</span>
-                            </div>
-                            <div class="pt-3 border-t">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-sm text-gray-600 font-medium">Tiến độ</span>
-                                    <span class="text-sm font-bold text-indigo-600">@_completionRate%</span>
+                <!-- Right Section: WORKSPACE (60%) -->
+                <div class="w-[60%] flex flex-col gap-4 min-h-0">
+                    
+                    <!-- Stats Header -->
+                    <div class="flex items-center justify-between bg-white rounded-xl p-2 px-4 shadow-sm border border-gray-200 flex-shrink-0">
+                        <div class="flex items-center gap-6">
+                            <div class="flex items-center gap-3">
+                                <div class="relative w-10 h-10">
+                                    <svg class="w-full h-full transform -rotate-90">
+                                        <circle cx="20" cy="20" r="16" stroke="#f3f4f6" stroke-width="4" fill="none" />
+                                        <circle cx="20" cy="20" r="16" stroke="#6366f1" stroke-width="4" fill="none" stroke-dasharray="100" stroke-dashoffset="@(100 - _completionRate)" />
+                                    </svg>
+                                    <span class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-indigo-600">@_completionRate%</span>
                                 </div>
-                                <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                                    <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full transition-all duration-500" 
-                                         style="width: @(_completionRate)%"></div>
+                                <div>
+                                    <p class="text-[10px] text-gray-400 font-bold uppercase">Tiến độ ngày</p>
+                                    <p class="text-sm font-black text-gray-800">@_completedCount <span class="text-gray-400 font-normal">/ @_allTasks.Count xong</span></p>
                                 </div>
                             </div>
                         </div>
+                        <button @onclick="ShowCreateTaskModal" class="btn-premium flex items-center gap-2 shadow-indigo-200 shadow-lg">
+                            <span>➕</span> <span class="hidden sm:inline">VIỆC MỚI</span>
+                        </button>
                     </div>
 
-                    <!-- Categories -->
-                    <div class="bg-white rounded-lg shadow-sm p-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                                <span>🏷️</span>
-                                <span>Categories</span>
-                            </h3>
-                            <button @onclick="ShowCreateCategoryModal" 
-                                    class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
-                                + Thêm
-                            </button>
-                        </div>
+                    <!-- Workspace Grid (Inbox & Brain Dump/Categories) -->
+                    <div class="flex-1 grid grid-cols-2 gap-4 min-h-0">
                         
-                        @if (_categories.Any())
-                        {
-                            <div class="space-y-2">
-                                @foreach (var category in _categories)
-                                {
-                                    <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-4 h-4 rounded-full flex-shrink-0" 
-                                                 style="background-color: @category.ColorHex"></div>
-                                            <span class="text-sm font-medium">@category.Icon @category.Name</span>
+                        <!-- Col 1: INBOX (Full Height) -->
+                        <div class="flex flex-col bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden">
+                            <div class="p-3 border-b border-gray-200 bg-white flex justify-between items-center">
+                                <h4 class="font-black text-xs text-gray-700 uppercase tracking-widest flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-orange-500"></span> Inbox
+                                </h4>
+                                <span class="text-[10px] bg-gray-100 px-2 py-0.5 rounded-full font-bold text-gray-600">@_inboxTasks.Count</span>
+                            </div>
+                            <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2 transition-colors @(_dragState.DraggedTask != null ? "bg-indigo-50/30" : "")"
+                                 ondragover="event.preventDefault();"
+                                 @ondrop="HandleInboxDropWrapper">
+                                @if (_inboxTasks.Any()) {
+                                    @foreach (var task in _inboxTasks) {
+                                        <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing group"
+                                             draggable="true" @ondragstart="() => HandleDragStart(task)">
+                                            <div class="flex justify-between items-start gap-2">
+                                                <h5 class="text-sm font-bold text-gray-800 line-clamp-2">@task.Title</h5>
+                                                @if(task.Priority > 1) { <span class="text-xs text-red-500 font-black">@string.Concat(Enumerable.Repeat("!", task.Priority-1))</span> }
+                                            </div>
+                                            <div class="flex items-center justify-between mt-2">
+                                                <div class="flex items-center gap-2">
+                                                    @if(!string.IsNullOrEmpty(task.CategoryName)) { <span class="text-[10px] px-1.5 py-0.5 bg-gray-100 rounded text-gray-600 font-medium">@task.CategoryName</span> }
+                                                    <span class="text-[10px] text-gray-400 font-bold">@task.Duration m</span>
+                                                </div>
+                                                <div class="opacity-0 group-hover:opacity-100 flex gap-1 transition-opacity">
+                                                    <button @onclick="() => EditTask(task.Id)" class="p-1 hover:bg-indigo-50 text-indigo-600 rounded"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <span class="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">
-                                            @category.TaskCount
-                                        </span>
+                                    }
+                                } else {
+                                    <div class="h-full flex flex-col items-center justify-center text-gray-400 opacity-60">
+                                        <span class="text-2xl mb-2">📥</span>
+                                        <span class="text-xs font-medium">Trống</span>
                                     </div>
                                 }
                             </div>
-                        }
-                        else
-                        {
-                            <div class="text-center py-8">
-                                <p class="text-sm text-gray-500 mb-2">Chưa có category nào</p>
-                                <p class="text-xs text-gray-400">Tạo category để phân loại công việc</p>
+                        </div>
+
+                        <!-- Col 2: BRAIN DUMP & CATEGORIES -->
+                        <div class="flex flex-col gap-4 min-h-0">
+                            
+                            <!-- Top: Brain Dump (Larger) -->
+                            <div class="flex-1 bg-indigo-50/50 rounded-2xl border border-indigo-100 overflow-hidden flex flex-col">
+                                <div class="p-3 border-b border-indigo-100/50 bg-white/50 flex justify-between items-center">
+                                    <h4 class="font-black text-xs text-indigo-600 uppercase tracking-widest flex items-center gap-2">
+                                        <span class="text-base">🧠</span> Brain Dump
+                                    </h4>
+                                </div>
+                                <div class="flex-1 p-4 flex flex-col items-center justify-center text-center opacity-60 hover:opacity-100 transition-opacity cursor-dashed border-2 border-transparent hover:border-indigo-200 m-2 rounded-xl">
+                                    <p class="text-sm font-bold text-indigo-400">Khu vực đang phát triển</p>
+                                    <p class="text-[10px] text-indigo-300">Nơi xả ý tưởng nhanh</p>
+                                </div>
                             </div>
-                        }
+
+                            <!-- Bottom: Categories (Smaller) -->
+                            <div class="h-[40%] bg-white rounded-2xl border border-gray-200 overflow-hidden flex flex-col">
+                                <div class="p-2 px-3 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                                     <h4 class="font-bold text-xs text-gray-500 uppercase">Danh mục</h4>
+                                     <button @onclick="ShowCreateCategoryModal" class="text-[10px] bg-white border border-gray-200 px-2 py-0.5 rounded hover:bg-gray-50 text-indigo-600 font-bold">+</button>
+                                </div>
+                                <div class="flex-1 overflow-y-auto custom-scrollbar p-2">
+                                    <div class="flex flex-wrap gap-2">
+                                        @foreach(var cat in _categories) {
+                                            <div class="flex items-center gap-2 p-1.5 pr-3 bg-white border border-gray-100 rounded-lg shadow-sm hover:border-indigo-100 transition-colors w-full sm:w-auto">
+                                                <div class="w-6 h-6 rounded-md flex items-center justify-center text-xs text-white shadow-sm" style="background-color: @cat.ColorHex">@cat.Icon</div>
+                                                <span class="text-xs font-bold text-gray-700">@cat.Name</span>
+                                            </div>
+                                        }
+                                        @if(!_categories.Any()) { <span class="text-xs text-gray-400 italic p-2">Chưa có danh mục</span>}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
+            
+            <style>
+                .btn-premium {
+                    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+                    color: white;
+                    padding: 0.5rem 1rem;
+                    border-radius: 0.75rem;
+                    font-size: 0.75rem;
+                    font-weight: 900;
+                    letter-spacing: 0.05em;
+                    border: none;
+                    transition: all 0.2s;
+                }
+                .btn-premium:hover { transform: translateY(-1px); }
+            </style>
         }
     </div>
 </div>
@@ -394,25 +381,53 @@
         }
     }
 
-    private async Task HandleTaskTimeBlockDrop((TaskResponse task, int hour) dropData)
+    private async Task HandleTaskTimeBlockDrop((TaskResponse task, TimeOnly startTime) dropData)
     {
         var task = dropData.task;
-        var hour = dropData.hour;
+        var startTime = dropData.startTime;
 
-        // If dropping into same hour, ignore
-        if (task.TimeBlockStart.HasValue && task.TimeBlockStart.Value.Hour == hour)
+        // If dropping into same slot, ignore
+        if (task.TimeBlockStart.HasValue && task.TimeBlockStart.Value == startTime)
             return;
 
         try
         {
+            var durationMinutes = task.Duration ?? 30; // 30 mins default
+            var endTime = startTime.AddMinutes(durationMinutes);
+
+            // 1. Check for Overlaps
+            var overlappingTasks = _scheduledTasks
+                .Where(t => t.Id != task.Id) // Exclude self
+                .Where(t => 
+                    t.TimeBlockStart.HasValue && 
+                    t.TimeBlockEnd.HasValue &&
+                    t.TimeBlockStart.Value < endTime && 
+                    t.TimeBlockEnd.Value > startTime)
+                .ToList();
+
+            if (overlappingTasks.Any())
+            {
+                var conflictNames = string.Join(", ", overlappingTasks.Select(t => $"'{t.Title}'"));
+                var confirmed = await JS.InvokeAsync<bool>("confirm", 
+                    $"⚠️ Trùng lịch!\n\nKhung giờ {startTime:HH:mm} - {endTime:HH:mm} đang bị trùng với:\n{conflictNames}\n\nBạn có muốn VẪN TIẾP TỤC chèn vào không?\n(Nhấn Cancel để mở hộp thoại chỉnh sửa)");
+
+                if (!confirmed)
+                {
+                    // Open Edit Modal so user can adjust time manually
+                    EditTask(task.Id); 
+                    return;
+                }
+            }
+
+            // 2. Proceed if Valid or Confirmed
             var updateRequest = new UpdateTaskRequest(
                 task.Title,
                 task.Description,
                 task.CategoryId,
                 _selectedDate,
-                new TimeOnly(hour, 0),
-                new TimeOnly(hour + 1, 0),
-                task.Duration,
+                startTime,
+                endTime,
+                durationMinutes,
                 task.Priority,
                 task.IsCompleted
             );
@@ -423,6 +438,20 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Error updating task time block: {ex.Message}");
+        }
+    }
+
+    private void HandleDragStart(TaskResponse task)
+    {
+        _dragState.DraggedTask = task;
+    }
+
+    private async Task HandleInboxDropWrapper()
+    {
+        if (_dragState.DraggedTask != null)
+        {
+            await HandleInboxDrop(_dragState.DraggedTask);
+            _dragState.DraggedTask = null;
         }
     }
 
@@ -439,9 +468,9 @@
                 task.Description,
                 task.CategoryId,
                 _selectedDate,
+                null, 
                 null,
-                null,
-                task.Duration,
+                task.Duration, // Preserve duration or set to null? Usually preserve or reset.
                 task.Priority,
                 task.IsCompleted
             );

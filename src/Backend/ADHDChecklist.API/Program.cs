@@ -10,6 +10,7 @@ using ADHDChecklist.API.Features.Auth.RefreshToken;
 using ADHDChecklist.API.Features.Auth.Register;
 using ADHDChecklist.API.Features.Auth.ResendVerification;
 using ADHDChecklist.API.Features.Auth.VerifyEmail;
+using System.Text.Json.Serialization;
 using ADHDChecklist.API.Features.Categories;
 using ADHDChecklist.API.Features.Tasks.CreateTask;
 using ADHDChecklist.API.Features.Tasks.DeleteTask;
@@ -137,7 +138,12 @@ builder.Services.AddMediatR(cfg => {
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
 // ============================================
+// ============================================
 // 6. SERVICES
+
+builder.Services.AddExceptionHandler<ADHDChecklist.API.Shared.Middleware.GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 // ============================================
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
@@ -208,6 +214,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseExceptionHandler();
 //app.UseHttpsRedirection();
 app.UseCors("AllowBlazorClient");
 app.UseAuthentication();

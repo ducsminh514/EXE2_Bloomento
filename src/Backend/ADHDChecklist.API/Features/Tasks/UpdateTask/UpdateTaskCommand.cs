@@ -13,6 +13,7 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
       TimeOnly? TimeBlockEnd,
       int? Duration,
       int Priority,
+      bool IsCompleted,
       Guid UserId
   ) : IRequest<TaskResponse?>;
 }

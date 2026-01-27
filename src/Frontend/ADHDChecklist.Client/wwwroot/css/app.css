@@ -1350,3 +1350,49 @@ video {
     padding-right: 2rem;
   }
 }
+
+/* ==========================================================================
+   Plk.Blazor.DragDrop Manual CSS Override
+   (Fix for missing static asset loading)
+   ========================================================================== */
+
+/* The main dropzone container */
+.plk-dd-dropzone {
+    /* Ensures the dropzone has layout */
+    display: block;
+    width: 100%;
+}
+
+/* While dragging an item over a valid dropzone */
+.plk-dd-dragged-over {
+    background-color: rgba(99, 102, 241, 0.1); /* indigo-100 with opacity */
+    transition: background-color 0.2s ease;
+}
+
+/* The item being dragged (in the list) */
+.plk-dd-inprogess {
+    opacity: 0.5;
+    cursor: grabbing !important;
+}
+
+/* The drag handle (if used) */
+.plk-dd-drag-handle {
+    cursor: grab !important;
+}
+
+/* The placeholder that shows where item will drop */
+.plk-dd-spacing {
+    height: 10px;
+    background: transparent;
+}
+
+/* Disable selection while dragging */
+.plk-dd-noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Safari */
+    -khtml-user-select: none;    /* Konqueror HTML */
+    -moz-user-select: none;      /* Old versions of Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+

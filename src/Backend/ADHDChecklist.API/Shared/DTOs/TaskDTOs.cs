@@ -24,7 +24,8 @@ public record UpdateTaskRequest(
     TimeOnly? TimeBlockStart,
     TimeOnly? TimeBlockEnd,
     int? Duration,
-    int Priority
+    int Priority,
+    bool IsCompleted
 );
 
 public record MoveTaskRequest(
