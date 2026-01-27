@@ -1146,6 +1146,7 @@ C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Cl
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\bin\Debug\net8.0\Blazored.LocalStorage.dll
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\webcil\Blazored.LocalStorage.wasm
 C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\compressed\nmvq82sv3x-ux02l71ii3.gz
-C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\compressed\rb6nzcyc8n-14sgttsena.gz
-C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\compressed\raszrubx8v-cvhnqcfuio.gz
-C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\compressed\lgvy06n7ho-onggmytqu3.gz
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\bin\Debug\net8.0\libman.json
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\compressed\rb6nzcyc8n-nbcmsambyf.gz
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\compressed\raszrubx8v-mflx6773zv.gz
+C:\Users\Administrator\source\repos\EXE2_Bloomento\src\Frontend\ADHDChecklist.Client\obj\Debug\net8.0\compressed\lgvy06n7ho-fihwad67yi.gz

@@ -1,11 +1,12 @@
 using ADHDChecklist.Client;
 using ADHDChecklist.Client.Features.Auth.Services;
-using ADHDChecklist.Client.Infrastructure.Services;
 using ADHDChecklist.Client.Features.Dashboard.Services;
+using ADHDChecklist.Client.Infrastructure.Services;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Plk.Blazor.DragDrop;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -23,6 +24,7 @@ builder.Services.AddScoped(sp => new HttpClient
 // LOCAL STORAGE
 // ============================================
 builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddBlazorDragDrop();
 
 // ============================================
 // AUTH SERVICES

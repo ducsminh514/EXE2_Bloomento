@@ -53,4 +53,6 @@ public partial class Task
     public virtual ICollection<Reminder> Reminders { get; set; } = new List<Reminder>();
 
     public virtual ApplicationUser User { get; set; } = null!;
+    public virtual Task? ParentTask { get; set; }
+    public virtual ICollection<Task> SubTasks { get; set; } = new List<Task>();
 }

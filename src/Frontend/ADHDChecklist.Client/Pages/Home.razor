@@ -22,10 +22,10 @@
                     <h1 class="text-2xl font-bold text-gray-900">📝 ADHD Checklist</h1>
                     <span class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full font-medium">FREE</span>
                 </div>
-
+                
                 <div class="flex items-center gap-4">
                     <span class="text-sm text-gray-600">Xin chào, <strong>@_userName</strong></span>
-                    <button @onclick="HandleLogout"
+                    <button @onclick="HandleLogout" 
                             class="text-sm text-red-600 hover:text-red-700 font-medium">
                         Đăng xuất
                     </button>
@@ -38,13 +38,13 @@
         <!-- Date Selector -->
         <div class="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div class="flex items-center gap-4">
-                <button @onclick="PreviousDay"
+                <button @onclick="PreviousDay" 
                         class="p-2 hover:bg-white rounded-lg transition-colors border border-gray-200">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
                 </button>
-
+                
                 <div class="text-center">
                     <h2 class="text-2xl font-bold text-gray-900">
                         @_selectedDate.ToString("dd/MM/yyyy")
@@ -57,21 +57,21 @@
                         }
                     </p>
                 </div>
-
-                <button @onclick="NextDay"
+                
+                <button @onclick="NextDay" 
                         class="p-2 hover:bg-white rounded-lg transition-colors border border-gray-200">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
                 </button>
-
-                <button @onclick="GoToToday"
+                
+                <button @onclick="GoToToday" 
                         class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
                     📅 Hôm nay
                 </button>
             </div>
 
-            <button @onclick="ShowCreateTaskModal"
+            <button @onclick="ShowCreateTaskModal" 
                     class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -94,41 +94,11 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Main Task List -->
                 <div class="lg:col-span-2 space-y-4">
-                    <!-- Time Blocks -->
-                    <div class="bg-white rounded-lg shadow-sm p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                                <span>⏰</span>
-                                <span>Theo thời gian</span>
-                            </h3>
-                            <span class="text-sm text-gray-500">@_scheduledTasks.Count công việc</span>
-                        </div>
-
-                        @if (_scheduledTasks.Any())
-                        {
-                            <div class="space-y-3">
-                                @foreach (var task in _scheduledTasks)
-                                {
-                                    <TaskCard Task="@task"
-                                              OnToggleComplete="ToggleTaskComplete"
-                                              OnEdit="EditTask"
-                                              OnDelete="DeleteTask" />
-                                }
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="text-center py-12">
-                                <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
-                                <p class="text-gray-500 mb-2">Chưa có công việc nào được lên lịch</p>
-                                <p class="text-sm text-gray-400">Thêm công việc và chọn thời gian để bắt đầu</p>
-                            </div>
-                        }
-                    </div>
+                    <!-- Time Blocks Visual -->
+                    <TimeBlocksGrid Tasks="@_scheduledTasks"
+                                    OnToggleComplete="ToggleTaskComplete"
+                                    OnEdit="EditTask"
+                                    OnDelete="DeleteTask" />
 
                     <!-- Inbox -->
                     <div class="bg-white rounded-lg shadow-sm p-6">
@@ -139,13 +109,13 @@
                             </h3>
                             <span class="text-sm text-gray-500">@_inboxTasks.Count công việc</span>
                         </div>
-
+                        
                         @if (_inboxTasks.Any())
                         {
                             <div class="space-y-3">
                                 @foreach (var task in _inboxTasks)
                                 {
-                                    <TaskCard Task="@task"
+                                    <TaskCard Task="@task" 
                                               OnToggleComplete="ToggleTaskComplete"
                                               OnEdit="EditTask"
                                               OnDelete="DeleteTask" />
@@ -193,7 +163,7 @@
                                     <span class="text-sm font-bold text-indigo-600">@_completionRate%</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                                    <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full transition-all duration-500"
+                                    <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full transition-all duration-500" 
                                          style="width: @(_completionRate)%"></div>
                                 </div>
                             </div>
@@ -207,12 +177,12 @@
                                 <span>🏷️</span>
                                 <span>Categories</span>
                             </h3>
-                            <button @onclick="ShowCreateCategoryModal"
+                            <button @onclick="ShowCreateCategoryModal" 
                                     class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
                                 + Thêm
                             </button>
                         </div>
-
+                        
                         @if (_categories.Any())
                         {
                             <div class="space-y-2">
@@ -220,7 +190,7 @@
                                 {
                                     <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-4 h-4 rounded-full flex-shrink-0"
+                                            <div class="w-4 h-4 rounded-full flex-shrink-0" 
                                                  style="background-color: @category.ColorHex"></div>
                                             <span class="text-sm font-medium">@category.Icon @category.Name</span>
                                         </div>
@@ -248,10 +218,19 @@
 <!-- Create Task Modal -->
 @if (_showCreateModal)
 {
-    <CreateTaskModal OnClose="CloseCreateTaskModal"
+    <CreateTaskModal OnClose="CloseCreateTaskModal" 
                      OnTaskCreated="HandleTaskCreated"
                      Categories="@_categories"
                      SelectedDate="@_selectedDate" />
+}
+
+<!-- Edit Task Modal -->
+@if (_showEditModal && _editingTaskId.HasValue)
+{
+    <EditTaskModal TaskId="@_editingTaskId.Value"
+                   OnClose="CloseEditTaskModal"
+                   OnTaskUpdated="HandleTaskUpdated"
+                   Categories="@_categories" />
 }
 
 @code {
@@ -259,6 +238,8 @@
     private DateOnly _selectedDate = DateOnly.FromDateTime(DateTime.Now);
     private bool _isLoading = true;
     private bool _showCreateModal = false;
+    private bool _showEditModal = false;
+    private Guid? _editingTaskId;
 
     private List<TaskResponse> _allTasks = new();
     private List<TaskResponse> _scheduledTasks = new();
@@ -266,8 +247,8 @@
     private List<CategoryResponse> _categories = new();
 
     private int _completedCount => _allTasks.Count(t => t.IsCompleted);
-    private int _completionRate => _allTasks.Count > 0
-        ? (int)Math.Round((double)_completedCount / _allTasks.Count * 100)
+    private int _completionRate => _allTasks.Count > 0 
+        ? (int)Math.Round((double)_completedCount / _allTasks.Count * 100) 
         : 0;
 
     protected override async Task OnInitializedAsync()
@@ -281,8 +262,8 @@
             return;
         }
 
-        _userName = user.FindFirst(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value
-                    ?? user.FindFirst(c => c.Type == "name")?.Value
+        _userName = user.FindFirst(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value 
+                    ?? user.FindFirst(c => c.Type == "name")?.Value 
                     ?? "User";
 
         await LoadData();
@@ -367,8 +348,21 @@
 
     private void EditTask(Guid taskId)
     {
-        // TODO: Implement edit modal
-        Console.WriteLine($"Edit task: {taskId}");
+        _editingTaskId = taskId;
+        _showEditModal = true;
+    }
+
+    private void CloseEditTaskModal()
+    {
+        _showEditModal = false;
+        _editingTaskId = null;
+    }
+
+    private async Task HandleTaskUpdated()
+    {
+        _showEditModal = false;
+        _editingTaskId = null;
+        await LoadData();
     }
 
     private async Task DeleteTask(Guid taskId)

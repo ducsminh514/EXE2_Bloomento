@@ -32,10 +32,10 @@ namespace ADHDChecklist.API.Features.Tasks.CreateTask
                 TimeBlockEnd = request.TimeBlockEnd,
                 Duration = request.Duration,
                 Priority = request.Priority,
-                //Priority = (Priority)request.Priority,
                 IsRecurring = request.IsRecurring,
                 RecurrencePattern = request.RecurrencePattern,
                 IsCompleted = false,
+                OrderIndex = 0,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -66,17 +66,18 @@ namespace ADHDChecklist.API.Features.Tasks.CreateTask
                 task.Duration,
                 task.IsCompleted,
                 task.CompletedAt,
-                (int)task.Priority,
-                task.IsRecurring,
+                task.Priority ?? 1,
+                task.IsRecurring ?? false,
                 task.RecurrencePattern,
                 task.ParentTaskId,
                 new List<TaskResponse>(),
-                task.OrderIndex,
+                task.OrderIndex ?? 0,
                 task.CreatedAt,
                 task.UpdatedAt
             );
         }
     }
+
 
     // ============================================
     // ENDPOINT
@@ -92,7 +93,6 @@ namespace ADHDChecklist.API.Features.Tasks.CreateTask
                 CancellationToken ct) =>
             {
                 var userId = Guid.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier)!);
-                Console.WriteLine(userId);
                 var command = new CreateTaskCommand(
                     request.Title,
                     request.Description,

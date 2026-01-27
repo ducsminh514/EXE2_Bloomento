@@ -2,20 +2,23 @@
 using ADHDChecklist.API.Data;
 using ADHDChecklist.API.Entities;
 using ADHDChecklist.API.Entities.Common;
+using ADHDChecklist.API.Features.Analytics.FreeTier;
 using ADHDChecklist.API.Features.Auth.GoogleLogin;
 using ADHDChecklist.API.Features.Auth.Login;
 using ADHDChecklist.API.Features.Auth.RefreshToken;
 using ADHDChecklist.API.Features.Auth.Register;
 using ADHDChecklist.API.Features.Auth.ResendVerification;
 using ADHDChecklist.API.Features.Auth.VerifyEmail;
+using ADHDChecklist.API.Features.Categories;
 using ADHDChecklist.API.Features.Tasks.CreateTask;
 using ADHDChecklist.API.Features.Tasks.DeleteTask;
+using ADHDChecklist.API.Features.Tasks.GetTaskById;
 using ADHDChecklist.API.Features.Tasks.GetTasksByDate;
+using ADHDChecklist.API.Features.Tasks.MoveTask;
 using ADHDChecklist.API.Features.Tasks.ToggleTask;
 using ADHDChecklist.API.Features.Tasks.UpdateTask;
-using ADHDChecklist.API.Features.Categories;
-using ADHDChecklist.API.Features.Analytics.FreeTier;
 using ADHDChecklist.API.Services;
+using ADHDChecklist.API.Shared.Behaviors;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -106,11 +109,14 @@ builder.Services.AddAuthorization();
 // ============================================
 // 4. CORS
 // ============================================
+var allowedOrigins = builder.Configuration.GetSection("CorsSettings:AllowedOrigins").Get<string[]>() 
+    ?? new[] { "http://localhost:7002", "https://localhost:7002" };
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorClient", policy =>
     {
-        policy.WithOrigins("http://localhost:7002", "https://localhost:7002")
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
@@ -124,6 +130,7 @@ builder.Services.AddCors(options =>
 // ============================================
 builder.Services.AddMediatR(cfg => {
     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
 });
 
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
@@ -223,12 +230,17 @@ app.MapVerifyEmail();
 app.MapResendVerification();
 app.MapGoogleLogin();
 app.MapRefreshToken();
+
+// Task endpoints
+app.MapGetTaskById();
 app.MapGetTasksByDate();
 app.MapCreateTask();
 app.MapUpdateTask();
 app.MapDeleteTask();
 app.MapToggleTaskCompletion();
-
+app.MapMoveTaskToTimeSlot();
+app.MapMoveTaskToInbox();
+app.MapUpdateTaskOrder();
 // Category endpoints
 app.MapCategoryEndpoints();
 

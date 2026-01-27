@@ -38,7 +38,6 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
             task.TimeBlockStart = request.TimeBlockStart;
             task.TimeBlockEnd = request.TimeBlockEnd;
             task.Duration = request.Duration;
-            //task.Priority = (Entities.Priority)request.Priority;
             task.Priority = request.Priority;
             task.UpdatedAt = DateTime.UtcNow;
 
@@ -55,27 +54,28 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
             _logger.LogInformation("Task {TaskId} updated by user {UserId}", task.Id, request.UserId);
 
             return new TaskResponse(
-                task.Id,
-                task.Title,
-                task.Description,
-                task.CategoryId,
-                task.Category?.Name,
-                task.Category?.ColorHex,
-                task.ScheduledDate,
-                task.TimeBlockStart,
-                task.TimeBlockEnd,
-                task.Duration,
-                task.IsCompleted,
-                task.CompletedAt,
-                (int)task.Priority,
-                task.IsRecurring,
-                task.RecurrencePattern,
-                task.ParentTaskId,
-                new List<TaskResponse>(),
-                task.OrderIndex,
-                task.CreatedAt,
-                task.UpdatedAt
-            );
+            task.Id,
+            task.Title,
+            task.Description,
+            task.CategoryId,
+            task.Category?.Name,
+            task.Category?.ColorHex,
+            task.ScheduledDate,
+            task.TimeBlockStart,
+            task.TimeBlockEnd,
+            task.Duration,
+            task.IsCompleted,
+            task.CompletedAt,
+            task.Priority ?? 1,
+            task.IsRecurring ?? false,
+            task.RecurrencePattern,
+            task.ParentTaskId,
+            new List<TaskResponse>(),
+            task.OrderIndex ?? 0,
+            task.CreatedAt,
+            task.UpdatedAt
+        );
         }
     }
+
 }
