@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using ADHDChecklist.API.Features.Tasks.AutoAdjust;
 using Hangfire;
 using ADHDChecklist.API.Data;
 using ADHDChecklist.API.Entities;
@@ -19,7 +20,13 @@ using ADHDChecklist.API.Features.Tasks.GetTasksByDate;
 using ADHDChecklist.API.Features.Tasks.MoveTask;
 using ADHDChecklist.API.Features.Tasks.ToggleTask;
 using ADHDChecklist.API.Features.Tasks.UpdateTask;
-using ADHDChecklist.API.Features.Tasks.AutoAdjust;
+using ADHDChecklist.API.Features.Preferences.GetPreferences;
+using ADHDChecklist.API.Features.Preferences.UpdatePreferences;
+
+// ...
+
+// Register Endpoints
+
 using ADHDChecklist.API.Features.Tasks.GetOverdueCount;
 using ADHDChecklist.API.Features.Users.UpdateProfile;
 using ADHDChecklist.API.Features.Users.Upgrade;
@@ -276,7 +283,10 @@ app.MapCategoryEndpoints();
 
 // User endpoints
 app.MapUpdateProfile();
+
 app.MapUpgrade();
+app.MapGetPreferences();
+app.MapUpdatePreferences();
 
 // Analytics endpoints
 app.MapAnalyticsEndpoints();

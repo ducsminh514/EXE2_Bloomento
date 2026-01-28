@@ -254,3 +254,16 @@ public class CreateHabitRequest
 public record ToggleHabitRequest(
     DateOnly Date
 );
+
+// ============================================
+// PREFERENCE MODELS
+// ============================================
+public record PreferencesResponse(
+    string? ThemeColor,
+    string? ThemeMode
+);
+
+public record UpdatePreferencesRequest(
+    string? ThemeColor,
+    string? ThemeMode
+);

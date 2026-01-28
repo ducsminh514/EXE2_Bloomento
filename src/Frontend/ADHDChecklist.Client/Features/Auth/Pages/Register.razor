@@ -6,7 +6,7 @@
 @inject NavigationManager Navigation
 @inject ILogger<Register> Logger
 
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50 px-4">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-purple-50 px-4">
     <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
 
         <!-- Header -->
@@ -31,7 +31,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Họ và tên</label>
                     <InputText @bind-Value="_registerModel.FullName"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                placeholder="Nguyễn Văn A" />
                     <ValidationMessage For="@(() => _registerModel.FullName)" class="text-red-500 text-sm mt-1" />
                 </div>
@@ -41,7 +41,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
                     <InputText @bind-Value="_registerModel.Email"
                                type="email"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                placeholder="email@example.com" />
                     <ValidationMessage For="@(() => _registerModel.Email)" class="text-red-500 text-sm mt-1" />
                 </div>
@@ -51,7 +51,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Mật khẩu</label>
                     <InputText @bind-Value="_registerModel.Password"
                                type="password"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                placeholder="••••••••" />
                     <ValidationMessage For="@(() => _registerModel.Password)" class="text-red-500 text-sm mt-1" />
                     <p class="text-xs text-gray-500 mt-1">
@@ -64,7 +64,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Xác nhận mật khẩu</label>
                     <InputText @bind-Value="_registerModel.ConfirmPassword"
                                type="password"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                placeholder="••••••••" />
                     <ValidationMessage For="@(() => _registerModel.ConfirmPassword)" class="text-red-500 text-sm mt-1" />
                 </div>
@@ -72,10 +72,10 @@
                 <!-- Terms -->
                 <div class="flex items-start">
                     <InputCheckbox @bind-Value="_registerModel.AcceptTerms"
-                                   class="w-4 h-4 mt-1 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                                   class="w-4 h-4 mt-1 text-primary-600 border-gray-300 rounded focus:ring-primary-500" />
                     <label class="ml-2 text-sm text-gray-700">
-                        Tôi đồng ý với <a href="/terms" class="text-indigo-600 hover:text-indigo-500">Điều khoản sử dụng</a> và
-                        <a href="/privacy" class="text-indigo-600 hover:text-indigo-500">Chính sách bảo mật</a>
+                        Tôi đồng ý với <a href="/terms" class="text-primary-600 hover:text-primary-500">Điều khoản sử dụng</a> và
+                        <a href="/privacy" class="text-primary-600 hover:text-primary-500">Chính sách bảo mật</a>
                     </label>
                 </div>
                 <ValidationMessage For="@(() => _registerModel.AcceptTerms)" class="text-red-500 text-sm" />
@@ -83,7 +83,7 @@
                 <!-- Submit Button -->
                 <button type="submit"
                         disabled="@_isLoading"
-                        class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                        class="w-full bg-primary-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                     @if (_isLoading)
                     {
                         <span>Đang đăng ký...</span>
@@ -99,7 +99,7 @@
         <!-- Login Link -->
         <p class="mt-6 text-center text-sm text-gray-600">
             Đã có tài khoản?
-            <a href="/login" class="font-medium text-indigo-600 hover:text-indigo-500">Đăng nhập ngay</a>
+            <a href="/login" class="font-medium text-primary-600 hover:text-primary-500">Đăng nhập ngay</a>
         </p>
     </div>
 </div>

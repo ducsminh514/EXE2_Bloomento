@@ -1,12 +1,12 @@
 using ADHDChecklist.Client;
 using ADHDChecklist.Client.Features.Auth.Services;
 using ADHDChecklist.Client.Features.Dashboard.Services;
+using ADHDChecklist.Client.Features.Preferences.Services;
 using ADHDChecklist.Client.Features.Habits.Services;
 using ADHDChecklist.Client.Infrastructure.Services;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -25,7 +25,7 @@ builder.Services.AddScoped(sp => new HttpClient
 // LOCAL STORAGE
 // ============================================
 builder.Services.AddBlazoredLocalStorage();
-builder.Services.AddBlazoredLocalStorage();
+
 builder.Services.AddScoped<DragDropState>();
 
 // ============================================
@@ -38,6 +38,7 @@ builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IHabitService, HabitService>();
+builder.Services.AddScoped<IPreferencesService, PreferencesService>();
 builder.Services.AddAuthorizationCore();
 
 // ============================================

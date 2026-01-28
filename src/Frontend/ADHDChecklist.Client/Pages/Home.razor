@@ -20,14 +20,14 @@
 
 <div class="min-h-screen bg-gray-50">
     <!-- Top Nav -->
-    <nav class="bg-white shadow-sm border-b border-gray-200 transition-all duration-300 @(_focusedTaskId.HasValue ? "blur-sm grayscale opacity-30 pointer-events-none" : "")">
+    <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 transition-all duration-300 @(_focusedTaskId.HasValue ? "blur-sm grayscale opacity-30 pointer-events-none" : "")">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-4">
-                    <h1 class="text-2xl font-bold text-gray-900">📝 ADHD Checklist</h1>
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">📝 ADHD Checklist</h1>
                     @if (_currentUser?.IsPremium == true)
                     {
-                        <span class="px-3 py-1 bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-xs rounded-full font-bold shadow-sm flex items-center gap-1">
+                        <span class="px-3 py-1 bg-gradient-to-r from-purple-500 to-primary-600 text-white text-xs rounded-full font-bold shadow-sm flex items-center gap-1">
                              <span>👑</span> PREMIUM
                         </span>
                     }
@@ -40,9 +40,9 @@
                 </div>
                 
                 <div class="flex items-center gap-4">
-                    <button @onclick="ShowProfileModal" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors flex items-center gap-2 group">
-                        <span>Xin chào, <strong class="group-hover:text-indigo-700">@_userName</strong></span>
-                        <div class="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600 border border-indigo-200">
+                    <button @onclick="ShowProfileModal" class="text-sm text-gray-600 hover:text-primary-600 transition-colors flex items-center gap-2 group">
+                        <span>Xin chào, <strong class="group-hover:text-primary-700">@_userName</strong></span>
+                        <div class="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center text-xs font-bold text-primary-600 border border-primary-200">
                             @(!string.IsNullOrEmpty(_userName) ? _userName[0].ToString().ToUpper() : "U")
                         </div>
                     </button>
@@ -59,20 +59,20 @@
         <!-- Date Selector & Header -->
         <div class="mb-4 flex flex-col sm:flex-row items-center justify-between gap-4 flex-shrink-0 transition-all duration-300 @(_focusedTaskId.HasValue ? "blur-sm grayscale opacity-30 pointer-events-none" : "")">
             <div class="flex items-center gap-4">
-                <button @onclick="PreviousDay" class="p-1.5 hover:bg-white rounded-lg border border-gray-200 text-gray-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                <button @onclick="PreviousDay" class="p-1.5 hover:bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
                 <div class="text-center">
-                    <h2 class="text-xl font-bold text-gray-900 leading-none">@_selectedDate.ToString("dd/MM/yyyy")</h2>
-                    <p class="text-xs text-gray-500 font-medium">@GetVietnameseDayOfWeek(_selectedDate.DayOfWeek) @if(_selectedDate == DateOnly.FromDateTime(DateTime.Now)){<span class="text-indigo-600 font-bold ml-1">(Hôm nay)</span>}</p>
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white leading-none">@_selectedDate.ToString("dd/MM/yyyy")</h2>
+                    <p class="text-xs text-gray-500 font-medium">@GetVietnameseDayOfWeek(_selectedDate.DayOfWeek) @if(_selectedDate == DateOnly.FromDateTime(DateTime.Now)){<span class="text-primary-600 font-bold ml-1">(Hôm nay)</span>}</p>
                 </div>
-                <button @onclick="NextDay" class="p-1.5 hover:bg-white rounded-lg border border-gray-200 text-gray-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
-                <button @onclick="GoToToday" class="px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-bold hover:bg-indigo-100 transition-colors">📅 Hôm nay</button>
+                <button @onclick="NextDay" class="p-1.5 hover:bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+                <button @onclick="GoToToday" class="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-lg text-xs font-bold hover:bg-primary-100 transition-colors">📅 Hôm nay</button>
             </div>
         </div>
 
         @if (_isLoading)
         {
             <div class="flex-1 flex justify-center items-center">
-                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600"></div>
             </div>
         }
         else
@@ -91,7 +91,7 @@
                             </div>
                         </div>
                         <button @onclick="HandleAutoAdjust" 
-                                class="px-4 py-2 bg-white text-orange-600 font-bold text-xs rounded-lg border border-orange-200 shadow-sm hover:shadow-md hover:scale-105 transition-all flex items-center gap-2">
+                                class="px-4 py-2 bg-white dark:bg-gray-800 text-orange-600 font-bold text-xs rounded-lg border border-orange-200 shadow-sm hover:shadow-md hover:scale-105 transition-all flex items-center gap-2">
                             <span>✨</span> Dời sang hôm nay
                             @if (_currentUser?.IsPremium != true) { <span class="opacity-50 text-[9px]">PREMIUM</span> }
                         </button>
@@ -104,14 +104,14 @@
                 <div class="w-[30%] flex flex-col min-w-[300px] gap-4 min-h-0">
                     
                     <!-- Date Navigation (Floating) -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-2 flex items-center justify-between flex-shrink-0 @(_focusedTaskId.HasValue ? "blur-sm grayscale opacity-30 pointer-events-none" : "")">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-2 flex items-center justify-between flex-shrink-0 @(_focusedTaskId.HasValue ? "blur-sm grayscale opacity-30 pointer-events-none" : "")">
                         <button class="p-2 hover:bg-gray-50 rounded-lg text-gray-500 transition-colors" @onclick="() => _selectedDate = _selectedDate.AddDays(-1)">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                         </button>
                         <div class="flex flex-col items-center">
                             <span class="text-lg font-black text-gray-800 leading-none">@_selectedDate.ToString("dd/MM/2026")</span>
-                            <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-0.5">
-                                @if (_selectedDate == DateOnly.FromDateTime(DateTime.Now)) { <span class="bg-indigo-50 px-2 rounded">Hôm nay</span> } 
+                            <span class="text-[10px] font-bold text-primary-500 uppercase tracking-widest mt-0.5">
+                                @if (_selectedDate == DateOnly.FromDateTime(DateTime.Now)) { <span class="bg-primary-50 px-2 rounded">Hôm nay</span> } 
                                 else { <span>@_selectedDate.ToString("dddd")</span> }
                             </span>
                         </div>
@@ -121,13 +121,13 @@
                     </div>
 
                     <!-- Timeline Grid area -->
-                    <div class="flex-1 min-h-0 bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative flex flex-col">
-                        <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-3 flex justify-between items-center shadow-md z-10">
+                    <div class="flex-1 min-h-0 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden relative flex flex-col">
+                        <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white p-3 flex justify-between items-center shadow-md z-10">
                             <div class="flex items-center gap-2">
                                 <span class="text-lg">⏱️</span>
                                 <h3 class="font-bold text-sm uppercase tracking-wider">Lịch trình</h3>
                             </div>
-                            <span class="bg-white/20 px-2 py-0.5 rounded text-[11px] font-bold">@_scheduledTasks.Count Tasks</span>
+                            <span class="bg-white dark:bg-gray-800/20 px-2 py-0.5 rounded text-[11px] font-bold">@_scheduledTasks.Count Tasks</span>
                         </div>
                         <div class="flex-1 min-h-0">
                              <TimeBlocksGrid Tasks="@_scheduledTasks"
@@ -148,7 +148,7 @@
                 <div class="w-[70%] flex flex-col gap-4 min-h-0 @(_focusedTaskId.HasValue ? "opacity-30 blur-sm grayscale pointer-events-none transition-all duration-500" : "transition-all duration-300")">
                     
                     <!-- Stats Header -->
-                    <div class="flex items-center justify-between bg-white rounded-xl p-2 px-4 shadow-sm border border-gray-200 flex-shrink-0">
+                    <div class="flex items-center justify-between bg-white dark:bg-gray-800 rounded-xl p-2 px-4 shadow-sm border border-gray-200 dark:border-gray-700 flex-shrink-0">
                         <div class="flex items-center gap-6">
                             <div class="flex items-center gap-3">
                                 <div class="relative w-10 h-10">
@@ -156,7 +156,7 @@
                                         <circle cx="20" cy="20" r="16" stroke="#f3f4f6" stroke-width="4" fill="none" />
                                         <circle cx="20" cy="20" r="16" stroke="#6366f1" stroke-width="4" fill="none" stroke-dasharray="100" stroke-dashoffset="@(100 - _completionRate)" />
                                     </svg>
-                                    <span class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-indigo-600">@_completionRate%</span>
+                                    <span class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-primary-600">@_completionRate%</span>
                                 </div>
                                 <div>
                                     <p class="text-[10px] text-gray-400 font-bold uppercase">Tiến độ ngày</p>
@@ -164,7 +164,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button @onclick="ShowCreateTaskModal" class="btn-premium flex items-center gap-2 shadow-indigo-200 shadow-lg">
+                        <button @onclick="ShowCreateTaskModal" class="btn-premium flex items-center gap-2 shadow-primary-200 shadow-lg">
                             <span>➕</span> <span class="hidden sm:inline">VIỆC MỚI</span>
                         </button>
                     </div>
@@ -179,19 +179,19 @@
                     <div class="flex-1 grid grid-cols-[30%_1fr] gap-4 min-h-0">
                         
                         <!-- Col 1: INBOX (Full Height) -->
-                        <div class="flex flex-col bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden">
-                            <div class="p-3 border-b border-gray-200 bg-white flex justify-between items-center">
+                        <div class="flex flex-col bg-gray-50 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                            <div class="p-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex justify-between items-center">
                                 <h4 class="font-black text-xs text-gray-700 uppercase tracking-widest flex items-center gap-2">
                                     <span class="w-2 h-2 rounded-full bg-orange-500"></span> Inbox
                                 </h4>
                                 <span class="text-[10px] bg-gray-100 px-2 py-0.5 rounded-full font-bold text-gray-600">@_inboxTasks.Count</span>
                             </div>
-                            <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2 transition-colors @(_dragState.DraggedTask != null ? "bg-indigo-50/30" : "")"
+                            <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2 transition-colors @(_dragState.DraggedTask != null ? "bg-primary-50/30" : "")"
                                  ondragover="event.preventDefault();"
                                  @ondrop="HandleInboxDropWrapper">
                                 @if (_inboxTasks.Any()) {
                                     @foreach (var task in _inboxTasks) {
-                                        <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing group"
+                                        <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing group"
                                              draggable="true" @ondragstart="() => HandleDragStart(task)">
                                             <div class="flex justify-between items-start gap-2">
                                                 <h5 class="text-sm font-bold text-gray-800 line-clamp-2">@task.Title</h5>
@@ -203,7 +203,7 @@
                                                     <span class="text-[10px] text-gray-400 font-bold">@task.Duration m</span>
                                                 </div>
                                                 <div class="opacity-0 group-hover:opacity-100 flex gap-1 transition-opacity">
-                                                    <button @onclick="() => EditTask(task.Id)" class="p-1 hover:bg-indigo-50 text-indigo-600 rounded"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
+                                                    <button @onclick="() => EditTask(task.Id)" class="p-1 hover:bg-primary-50 text-primary-600 rounded"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -221,12 +221,12 @@
                         <div class="flex flex-col gap-4 min-h-0">
                             
                             <!-- Top: Free Tier Analytics -->
-                            <div class="flex-1 bg-white rounded-2xl border border-gray-200 overflow-hidden flex flex-col">
+                            <div class="flex-1 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
                                 <div class="p-3 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                                     <h4 class="font-black text-xs text-gray-700 uppercase tracking-widest flex items-center gap-2">
                                         <span class="text-base">📊</span> Thống kê (Hôm nay)
                                     </h4>
-                                    <span class="text-[9px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded font-bold uppercase">Free Tier</span>
+                                    <span class="text-[9px] bg-primary-50 text-primary-600 px-2 py-0.5 rounded font-bold uppercase">Free Tier</span>
                                 </div>
                                 <div class="flex-1 p-4 flex flex-col gap-4 overflow-y-auto">
                                     <!-- Summary Row -->
@@ -264,21 +264,21 @@
                                     
                                     <!-- Upgrade Teaser -->
                                    <div class="mt-auto pt-4 text-center">
-                                       <button class="text-[10px] font-bold text-indigo-500 hover:text-indigo-700 underline">Xem báo cáo chi tiết &rarr;</button>
+                                       <button class="text-[10px] font-bold text-primary-500 hover:text-primary-700 underline">Xem báo cáo chi tiết &rarr;</button>
                                    </div>
                                 </div>
                             </div>
 
                             <!-- Bottom: Categories (Smaller) -->
-                            <div class="h-[40%] bg-white rounded-2xl border border-gray-200 overflow-hidden flex flex-col">
+                            <div class="h-[40%] bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
                                 <div class="p-2 px-3 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                                      <h4 class="font-bold text-xs text-gray-500 uppercase">Danh mục</h4>
-                                     <button @onclick="ShowCreateCategoryModal" class="text-[10px] bg-white border border-gray-200 px-2 py-0.5 rounded hover:bg-gray-50 text-indigo-600 font-bold">+</button>
+                                     <button @onclick="ShowCreateCategoryModal" class="text-[10px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-0.5 rounded hover:bg-gray-50 text-primary-600 font-bold">+</button>
                                 </div>
                                 <div class="flex-1 overflow-y-auto custom-scrollbar p-2">
                                     <div class="flex flex-wrap gap-2">
                                         @foreach(var cat in _categories) {
-                                            <div class="flex items-center gap-2 p-1.5 pr-3 bg-white border border-gray-100 rounded-lg shadow-sm hover:border-indigo-100 transition-colors w-full sm:w-auto">
+                                            <div class="flex items-center gap-2 p-1.5 pr-3 bg-white dark:bg-gray-800 border border-gray-100 rounded-lg shadow-sm hover:border-primary-100 transition-colors w-full sm:w-auto">
                                                 <div class="w-6 h-6 rounded-md flex items-center justify-center text-xs text-white shadow-sm" style="background-color: @cat.ColorHex">@cat.Icon</div>
                                                 <span class="text-xs font-bold text-gray-700">@cat.Name</span>
                                             </div>
@@ -354,16 +354,16 @@
         if (_currentUser?.IsPremium == true)
         {
             <!-- PREMIUM: Fullscreen Deep Work Mode -->
-            <div class="fixed inset-0 z-[60] bg-indigo-900/95 backdrop-blur-md flex flex-col items-center justify-center animate-fade-in text-white p-4">
+            <div class="fixed inset-0 z-[60] bg-primary-900/95 backdrop-blur-md flex flex-col items-center justify-center animate-fade-in text-white p-4">
                 <!-- Header -->
                 <div class="absolute top-6 left-6 flex items-center gap-4">
                     <div class="flex flex-col">
-                        <span class="text-xs font-bold text-indigo-300 uppercase tracking-widest">ĐANG TẬP TRUNG (PREMIUM)</span>
+                        <span class="text-xs font-bold text-primary-300 uppercase tracking-widest">ĐANG TẬP TRUNG (PREMIUM)</span>
                         <h2 class="text-2xl font-black max-w-2xl line-clamp-1">@focusedTask.Title</h2>
                     </div>
                 </div>
 
-                <button @onclick="ExitFocusMode" class="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white">
+                <button @onclick="ExitFocusMode" class="absolute top-6 right-6 p-2 rounded-full bg-white dark:bg-gray-800/10 hover:bg-white dark:bg-gray-800/20 transition-colors text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -376,12 +376,12 @@
                          <WhiteNoisePlayer IsPremium="true" OnUpgradeClicked="ShowUpgradeModal" />
                     </div>
                     <button @onclick="() => HandleCompleteFocusTask(focusedTask.Id)" 
-                            class="mt-16 group relative px-8 py-4 bg-white text-indigo-900 rounded-full font-black text-lg shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_-10px_rgba(255,255,255,0.5)] transition-all hover:scale-105 active:scale-95">
+                            class="mt-16 group relative px-8 py-4 bg-white dark:bg-gray-800 text-primary-900 rounded-full font-black text-lg shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_-10px_rgba(255,255,255,0.5)] transition-all hover:scale-105 active:scale-95">
                         <span class="relative z-10 flex items-center gap-2">
                             HOÀN THÀNH
                             <svg class="w-5 h-5 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                         </span>
-                        <div class="absolute inset-0 rounded-full bg-indigo-50 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                        <div class="absolute inset-0 rounded-full bg-primary-50 opacity-0 group-hover:opacity-20 transition-opacity"></div>
                     </button>
                 </div>
             </div>
@@ -393,13 +393,13 @@
              <div class="fixed bottom-6 right-6 z-[60] flex flex-col gap-3 animate-fade-in-up">
                  
                  <!-- Upgrade Nudge -->
-                 <div class="bg-white/90 backdrop-blur text-xs p-2 rounded-lg shadow-lg border border-indigo-100 max-w-[200px] text-center">
+                 <div class="bg-white dark:bg-gray-800/90 backdrop-blur text-xs p-2 rounded-lg shadow-lg border border-primary-100 max-w-[200px] text-center">
                      <p class="mb-1 text-gray-500">Muốn tập trung sâu hơn?</p>
-                     <button @onclick="ShowUpgradeModal" class="text-indigo-600 font-bold hover:underline">Nâng cấp Fullscreen Focus &rarr;</button>
+                     <button @onclick="ShowUpgradeModal" class="text-primary-600 font-bold hover:underline">Nâng cấp Fullscreen Focus &rarr;</button>
                  </div>
 
                  <!-- Controls -->
-                 <div class="flex items-center gap-2 bg-indigo-900 text-white p-2 rounded-full shadow-2xl pl-4 pr-2">
+                 <div class="flex items-center gap-2 bg-primary-900 text-white p-2 rounded-full shadow-2xl pl-4 pr-2">
                      <span class="text-xs font-bold uppercase tracking-wider animate-pulse">Soft Focus</span>
                      <div class="h-4 w-px bg-white/20 mx-1"></div>
                      <button @onclick="() => HandleCompleteFocusTask(focusedTask.Id)" class="p-2 hover:bg-white/10 rounded-full text-green-400 font-bold transition-colors" title="Hoàn thành">

@@ -13,7 +13,7 @@
         @if (_isPlaying)
         {
             <div class="flex items-center gap-1">
-                 <span class="animate-pulse w-1 h-3 bg-indigo-400 rounded-full"></span>
+                 <span class="animate-pulse w-1 h-3 bg-primary-400 rounded-full"></span>
                  <span class="animate-pulse w-1 h-5 bg-purple-400 rounded-full animation-delay-75"></span>
                  <span class="animate-pulse w-1 h-2 bg-pink-400 rounded-full animation-delay-150"></span>
             </div>
@@ -26,7 +26,7 @@
             @foreach (var sound in _sounds)
             {
                 <button @onclick="() => ToggleSound(sound)" 
-                        class="aspect-square rounded-xl flex flex-col items-center justify-center gap-1 transition-all @(_currentSound == sound && _isPlaying ? "bg-white text-indigo-900 shadow-lg scale-105" : "bg-white/5 text-white/70 hover:bg-white/10")">
+                        class="aspect-square rounded-xl flex flex-col items-center justify-center gap-1 transition-all @(_currentSound == sound && _isPlaying ? "bg-white text-primary-900 shadow-lg scale-105" : "bg-white/5 text-white/70 hover:bg-white/10")">
                     <span class="text-xl">@sound.Icon</span>
                     <span class="text-[9px] font-bold">@sound.Name</span>
                 </button>

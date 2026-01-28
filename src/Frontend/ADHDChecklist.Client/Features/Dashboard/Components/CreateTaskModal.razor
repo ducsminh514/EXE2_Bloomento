@@ -5,7 +5,7 @@
 <!-- Modal Overlay -->
 <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" @onclick="Close">
     <!-- Card Content -->
-    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden flex flex-col animate-scale-up" @onclick:stopPropagation>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden flex flex-col animate-scale-up" @onclick:stopPropagation>
         
         <EditForm Model="@_model" OnValidSubmit="HandleSubmit" class="flex flex-col h-full">
             <DataAnnotationsValidator />
@@ -26,18 +26,18 @@
                     <div class="flex-1 space-y-1">
                         <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Ngày</label>
                         <InputText @bind-Value="_model.ScheduledDate" type="date"
-                                   class="w-full text-sm font-medium text-gray-700 bg-gray-50 border-gray-100 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" />
+                                   class="w-full text-sm font-medium text-gray-700 bg-gray-50 border-gray-100 rounded-lg focus:ring-primary-500 focus:border-primary-500" />
                     </div>
                     <div class="flex-[1.5] flex gap-2">
                         <div class="flex-1 space-y-1">
                             <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Bắt đầu</label>
                             <InputText @bind-Value="_model.TimeStart" type="time"
-                                       class="w-full text-sm font-medium text-gray-700 bg-gray-50 border-gray-100 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" />
+                                       class="w-full text-sm font-medium text-gray-700 bg-gray-50 border-gray-100 rounded-lg focus:ring-primary-500 focus:border-primary-500" />
                         </div>
                         <div class="flex-1 space-y-1">
                             <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Kết thúc</label>
                             <InputText @bind-Value="_model.TimeEnd" type="time"
-                                       class="w-full text-sm font-medium text-gray-700 bg-gray-50 border-gray-100 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" />
+                                       class="w-full text-sm font-medium text-gray-700 bg-gray-50 border-gray-100 rounded-lg focus:ring-primary-500 focus:border-primary-500" />
                         </div>
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                 <div>
                      <InputTextArea @bind-Value="_model.Description"
                                    rows="2"
-                                   class="w-full text-sm text-gray-600 border-gray-200 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 resize-none placeholder-gray-400"
+                                   class="w-full text-sm text-gray-600 border-gray-200 rounded-lg focus:ring-primary-500 focus:border-primary-500 resize-none placeholder-gray-400"
                                    placeholder="Thêm mô tả ngắn gọn..." />
                 </div>
 
@@ -55,7 +55,7 @@
                     <!-- Category -->
                     <div class="flex-1">
                         <InputSelect @bind-Value="_model.CategoryId"
-                                     class="w-full text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-full px-3 py-1.5 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                                     class="w-full text-xs font-medium text-gray-700 bg-white dark:bg-gray-800 border border-gray-200 rounded-full px-3 py-1.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
                             <option value="">-- Chọn danh mục --</option>
                             @foreach (var category in Categories)
                             {
@@ -90,7 +90,7 @@
             <div class="bg-gray-50 px-6 py-3 flex justify-end gap-3 border-t border-gray-100">
                 <button type="button" @onclick="Close" class="text-sm font-bold text-gray-500 hover:text-gray-700 px-4 py-2">Hủy</button>
                 <button type="submit" disabled="@_isSubmitting"
-                        class="text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-full px-6 py-2 shadow-sm hover:shadow-indigo-200/50 transition-all disabled:opacity-50">
+                        class="text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-full px-6 py-2 shadow-sm hover:shadow-primary-200/50 transition-all disabled:opacity-50">
                     @if(_isSubmitting) { <span>Đang lưu...</span> } else { <span>Tạo công việc</span> }
                 </button>
             </div>
@@ -195,6 +195,6 @@
     {
         3 => "bg-red-100 text-red-700 shadow-sm",
         2 => "bg-orange-100 text-orange-700 shadow-sm",
-        _ => "bg-indigo-100 text-indigo-700 shadow-sm"
+        _ => "bg-primary-100 text-primary-700 shadow-sm"
     };
 }

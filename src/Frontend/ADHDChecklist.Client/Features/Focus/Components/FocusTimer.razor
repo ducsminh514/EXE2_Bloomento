@@ -24,7 +24,7 @@
     <div class="flex gap-4 mb-8">
         @if (!_isRunning)
         {
-            <button @onclick="StartTimer" class="bg-white text-indigo-900 rounded-full p-4 hover:scale-110 transition-transform shadow-lg hover:shadow-white/20">
+            <button @onclick="StartTimer" class="bg-white text-primary-900 rounded-full p-4 hover:scale-110 transition-transform shadow-lg hover:shadow-white/20">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
                 </svg>
@@ -48,13 +48,13 @@
 
     <!-- Presets -->
     <div class="flex gap-2 bg-black/20 p-1 rounded-xl backdrop-blur-sm">
-        <button @onclick="() => SetTime(25)" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors @(_initialMinutes == 25 ? "bg-white text-indigo-900 shadow" : "text-white/60 hover:text-white hover:bg-white/5")">
+        <button @onclick="() => SetTime(25)" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors @(_initialMinutes == 25 ? "bg-white text-primary-900 shadow" : "text-white/60 hover:text-white hover:bg-white/5")">
             Pomodoro (25m)
         </button>
-        <button @onclick="() => SetTime(5)" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors @(_initialMinutes == 5 ? "bg-white text-indigo-900 shadow" : "text-white/60 hover:text-white hover:bg-white/5")">
+        <button @onclick="() => SetTime(5)" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors @(_initialMinutes == 5 ? "bg-white text-primary-900 shadow" : "text-white/60 hover:text-white hover:bg-white/5")">
             Short Break (5m)
         </button>
-         <button @onclick="() => SetTime(15)" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors @(_initialMinutes == 15 ? "bg-white text-indigo-900 shadow" : "text-white/60 hover:text-white hover:bg-white/5")">
+         <button @onclick="() => SetTime(15)" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors @(_initialMinutes == 15 ? "bg-white text-primary-900 shadow" : "text-white/60 hover:text-white hover:bg-white/5")">
             Long Break (15m)
         </button>
     </div>
