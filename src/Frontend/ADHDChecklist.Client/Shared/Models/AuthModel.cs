@@ -226,3 +226,31 @@ public enum SubscriptionTier
     Free = 0,
     Premium = 1
 }
+
+// ============================================
+// HABIT MODELS
+// ============================================
+public record HabitResponse(
+    Guid Id,
+    string Title,
+    string? Description,
+    string? ColorHex,
+    string? Icon,
+    string Frequency, // "daily", "weekly"
+    int CurrentStreak,
+    int LongestStreak,
+    List<DateOnly> CompletedDates
+);
+
+public class CreateHabitRequest
+{
+    public string Title { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public string? ColorHex { get; set; }
+    public string? Icon { get; set; }
+    public string Frequency { get; set; } = "daily";
+}
+
+public record ToggleHabitRequest(
+    DateOnly Date
+);

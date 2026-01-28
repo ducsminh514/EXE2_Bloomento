@@ -84,6 +84,7 @@
             <div class="mt-5 pt-3 border-t border-gray-50 flex justify-between gap-2">
                  <button @onclick="() => OnFocus.InvokeAsync(Task.Id)" class="flex-1 px-3 py-1.5 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-lg hover:bg-indigo-100 transition-colors flex items-center justify-center gap-1 group/btn">
                     <span class="group-hover/btn:scale-110 transition-transform">🎯</span> Tập trung
+                    @if (!IsPremium) { <span class="ml-1 text-[9px] bg-white px-1 rounded border border-indigo-200">SOFT</span> }
                 </button>
                 <button @onclick="() => OnEdit.InvokeAsync(Task.Id)" class="px-3 py-1.5 bg-white border border-gray-200 text-gray-600 text-xs font-bold rounded-lg hover:bg-gray-50 transition-colors">
                     Chi tiết
@@ -102,6 +103,8 @@
     [Parameter] public EventCallback<Guid> OnEdit { get; set; }
     [Parameter] public EventCallback<Guid> OnDelete { get; set; }
     [Parameter] public EventCallback<Guid> OnFocus { get; set; }
+    [Parameter] public bool IsPremium { get; set; }
+    [Parameter] public EventCallback OnUpgradeClicked { get; set; }
 
     // Clamp to screen
     private double AdjustedLeft => Math.Min(Math.Max(X + 20, 10), 1920 - 370); // 370 = width + padding roughly

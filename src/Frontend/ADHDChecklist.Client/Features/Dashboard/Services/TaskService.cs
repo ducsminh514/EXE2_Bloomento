@@ -2,20 +2,7 @@
 using ADHDChecklist.Client.Shared.Models;
 namespace ADHDChecklist.Client.Features.Dashboard.Services
 {
-    public interface ITaskService
-    {
-        Task<TaskResponse?> GetTaskByIdAsync(Guid id);
-        Task<List<TaskResponse>> GetTasksByDateAsync(DateOnly date);
-        Task<TaskResponse> CreateTaskAsync(CreateTaskRequest request);
-        Task<TaskResponse> UpdateTaskAsync(Guid id, UpdateTaskRequest request);
-        Task<bool> DeleteTaskAsync(Guid id);
-        Task<bool> ToggleTaskCompletionAsync(Guid id);
-        Task<bool> MoveTaskToTimeSlotAsync(Guid id, TimeOnly start, TimeOnly end);
-        Task<bool> MoveTaskToInboxAsync(Guid id);
-        Task<bool> UpdateTaskOrderAsync(Guid id, int orderIndex);
-
-    }
-
+ 
     public class TaskService : ITaskService
     {
         private readonly IApiClient _apiClient;
@@ -134,6 +121,31 @@ namespace ADHDChecklist.Client.Features.Dashboard.Services
             catch
             {
                 return false;
+            }
+        }
+
+        public async Task<int> AutoAdjustTasksAsync()
+        {
+            try
+            {
+                // api/tasks/auto-adjust returns int
+                return await _apiClient.PostAsync<int>("/api/tasks/auto-adjust");
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
+        public async Task<int> GetOverdueCountAsync()
+        {
+            try
+            {
+                return await _apiClient.GetAsync<int>("/api/tasks/overdue/count");
+            }
+            catch
+            {
+                return 0;
             }
         }
     }

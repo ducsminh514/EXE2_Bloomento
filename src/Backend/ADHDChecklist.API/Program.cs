@@ -19,8 +19,13 @@ using ADHDChecklist.API.Features.Tasks.GetTasksByDate;
 using ADHDChecklist.API.Features.Tasks.MoveTask;
 using ADHDChecklist.API.Features.Tasks.ToggleTask;
 using ADHDChecklist.API.Features.Tasks.UpdateTask;
+using ADHDChecklist.API.Features.Tasks.AutoAdjust;
+using ADHDChecklist.API.Features.Tasks.GetOverdueCount;
 using ADHDChecklist.API.Features.Users.UpdateProfile;
 using ADHDChecklist.API.Features.Users.Upgrade;
+using ADHDChecklist.API.Features.Habits.GetHabits;
+using ADHDChecklist.API.Features.Habits.CreateHabit;
+using ADHDChecklist.API.Features.Habits.ToggleHabit;
 using ADHDChecklist.API.Services;
 using ADHDChecklist.API.Shared.Behaviors;
 using FluentValidation;
@@ -264,6 +269,8 @@ app.MapToggleTaskCompletion();
 app.MapMoveTaskToTimeSlot();
 app.MapMoveTaskToInbox();
 app.MapUpdateTaskOrder();
+app.MapAutoAdjustTasks();
+app.MapGetOverdueCount();
 // Category endpoints
 app.MapCategoryEndpoints();
 
@@ -273,6 +280,11 @@ app.MapUpgrade();
 
 // Analytics endpoints
 app.MapAnalyticsEndpoints();
+
+// Habit endpoints
+app.MapGetHabits();
+app.MapCreateHabit();
+app.MapToggleHabit();
 
 // ============================================
 // 10. BACKGROUND JOBS

@@ -7,6 +7,19 @@
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
     
+    .resize-handle {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 8px;
+        cursor: ns-resize;
+        z-index: 20;
+    }
+    .resize-handle:hover {
+        background: rgba(99, 102, 241, 0.2);
+    }
+    
     .timeline-container {
         position: relative;
         /* Start mapping: 06:00 to 24:00 = 18 hours */
@@ -147,6 +160,15 @@
                                     }
                                 </div>
                             }
+                            
+                            @if (!isBlurred && IsPremium)
+                            {
+                                 <div class="resize-handle" 
+                                      draggable="true" 
+                                      @ondragstart="() => HandleResizeStart(task)"
+                                      @onclick:stopPropagation>
+                                 </div>
+                            }
                         </div>
                     </div>
                 }
@@ -166,11 +188,15 @@
     [Parameter] public List<TaskResponse> Tasks { get; set; } = new();
     [Parameter] public DateOnly _selectedDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
     [Parameter] public Guid? FocusedTaskId { get; set; } // New Param
+    [Parameter] public bool IsPremium { get; set; } = false; // New Param
     [Parameter] public EventCallback<Guid> OnToggleComplete { get; set; }
     [Parameter] public EventCallback<Guid> OnEdit { get; set; }
     [Parameter] public EventCallback<Guid> OnDelete { get; set; }
     [Parameter] public EventCallback<(TaskResponse task, TimeOnly startTime)> OnTaskDropped { get; set; }
+    [Parameter] public EventCallback<(TaskResponse task, int newDuration)> OnTaskResized { get; set; }
     [Parameter] public EventCallback<(TaskResponse task, double x, double y)> OnTaskClick { get; set; }
+
+    private TaskResponse? _resizingTask; // Track resizing task
 
     private async Task HandleTaskClick(TaskResponse task, MouseEventArgs e)
     {
@@ -180,11 +206,36 @@
     private void HandleDragStart(TaskResponse task)
     {
         _dragState.DraggedTask = task;
+        _resizingTask = null; // Ensure not resizing
+    }
+
+    private void HandleResizeStart(TaskResponse task)
+    {
+        _resizingTask = task;
+        _dragState.DraggedTask = null; // Ensure not moving
     }
 
     private async Task HandleDrop(TimeOnly time)
     {
-        if (_dragState.DraggedTask != null)
+        if (_resizingTask != null && _resizingTask.TimeBlockStart.HasValue)
+        {
+            // Calculate new duration
+            // Duration = DropTime - StartTime
+            var start = _resizingTask.TimeBlockStart.Value;
+            var end = time;
+
+            // Handle day wrap? Assuming single day for now.
+            var diff = (end - start).TotalMinutes;
+            
+            // If dragging UP (negative), ignore or handle move? Ignore for resize.
+            if (diff >= 15) // Minimum 15 mins
+            {
+                await OnTaskResized.InvokeAsync((_resizingTask, (int)diff));
+            }
+            
+            _resizingTask = null;
+        }
+        else if (_dragState.DraggedTask != null)
         {
             await OnTaskDropped.InvokeAsync((_dragState.DraggedTask, time));
             _dragState.DraggedTask = null;

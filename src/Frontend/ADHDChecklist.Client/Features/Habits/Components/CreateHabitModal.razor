@@ -1,0 +1,137 @@
+@using ADHDChecklist.Client.Shared.Models
+@using ADHDChecklist.Client.Features.Habits.Services
+@inject IHabitService HabitService
+
+@if (IsOpen)
+{
+    <div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-sm animate-fade-in" @onclick="Close"></div>
+
+        <!-- Modal -->
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-scale-up border border-gray-100">
+            
+            <!-- Header -->
+            <div class="bg-indigo-600 p-4 text-white flex justify-between items-center">
+                <h3 class="font-bold text-lg">🌱 Thói quen mới</h3>
+                <button @onclick="Close" class="p-1 hover:bg-white/20 rounded-full transition-colors text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="p-6 space-y-4">
+                
+                <!-- Title Input -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tên thói quen</label>
+                    <input @bind="_request.Title" 
+                           class="w-full text-lg font-bold border-b-2 border-gray-200 focus:border-indigo-500 outline-none py-2 bg-transparent transition-colors placeholder-gray-300"
+                           placeholder="Vd: Uống nước, Chạy bộ..." autofocus />
+                </div>
+
+                <!-- Color Picker -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Màu sắc</label>
+                    <div class="flex gap-2 flex-wrap">
+                        @foreach (var color in _colors)
+                        {
+                            <button @onclick="() => _request.ColorHex = color"
+                                    class="w-8 h-8 rounded-full border-2 transition-all hover:scale-110 @(_request.ColorHex == color ? "border-indigo-600 scale-110" : "border-transparent")"
+                                    style="background-color: @color">
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <!-- Frequency -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Tần suất</label>
+                    <div class="flex bg-gray-100 rounded-lg p-1">
+                        <button @onclick='() => _request.Frequency = "daily"' 
+                                class="flex-1 py-1.5 text-xs font-bold rounded-md transition-all @(_request.Frequency == "daily" ? "bg-white text-indigo-700 shadow-sm" : "text-gray-500 hover:text-gray-700")">
+                            Hàng ngày
+                        </button>
+                        <button @onclick='() => _request.Frequency = "weekly"' 
+                                class="flex-1 py-1.5 text-xs font-bold rounded-md transition-all @(_request.Frequency == "weekly" ? "bg-white text-indigo-700 shadow-sm" : "text-gray-500 hover:text-gray-700")">
+                            Hàng tuần
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="p-4 bg-gray-50 flex justify-end gap-3 rounded-b-2xl">
+                <button @onclick="Close" class="px-4 py-2 text-sm font-bold text-gray-500 hover:bg-gray-200 rounded-xl transition-colors">
+                    Hủy
+                </button>
+                <button @onclick="CreateHabit" disabled="@(string.IsNullOrWhiteSpace(_request.Title) || _isSubmitting)" 
+                        class="px-5 py-2 bg-indigo-600 text-white text-sm font-bold rounded-xl shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                    @if (_isSubmitting)
+                    {
+                        <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    }
+                    <span>Tạo thói quen</span>
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public EventCallback OnHabitCreated { get; set; }
+
+    public bool IsOpen { get; private set; }
+    private CreateHabitRequest _request = new() { ColorHex = "#6366f1", Frequency = "daily" };
+    private bool _isSubmitting = false;
+
+    private readonly string[] _colors = new[]
+    {
+        "#6366f1", // Indigo
+        "#ef4444", // Red
+        "#f59e0b", // Amber
+        "#10b981", // Emerald
+        "#3b82f6", // Blue
+        "#ec4899", // Pink
+        "#8b5cf6"  // Violet
+    };
+
+    public void Open()
+    {
+        _request = new() { ColorHex = "#6366f1", Frequency = "daily" };
+        IsOpen = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        IsOpen = false;
+        StateHasChanged();
+    }
+
+    private async Task CreateHabit()
+    {
+        if (string.IsNullOrWhiteSpace(_request.Title)) return;
+
+        _isSubmitting = true;
+        StateHasChanged();
+
+        try
+        {
+            await HabitService.CreateHabitAsync(_request);
+            IsOpen = false;
+            await OnHabitCreated.InvokeAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating habit: {ex.Message}");
+            // Show toast?
+        }
+        finally
+        {
+            _isSubmitting = false;
+            StateHasChanged();
+        }
+    }
+}

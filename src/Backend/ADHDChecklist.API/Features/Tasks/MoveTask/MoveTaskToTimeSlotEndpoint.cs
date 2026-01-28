@@ -7,7 +7,7 @@ namespace ADHDChecklist.API.Features.Tasks.MoveTask
     {
         public static void MapMoveTaskToTimeSlot(this IEndpointRouteBuilder app)
         {
-            app.MapPatch("/api/tasks/{id:guid}/move-to-timeslot", async (
+            app.MapPost("/api/tasks/{id:guid}/move-to-timeslot", async (
                 Guid id,
                 MoveToTimeSlotRequest request,
                 ClaimsPrincipal user,

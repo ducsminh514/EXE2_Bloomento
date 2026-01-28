@@ -1,0 +1,131 @@
+@using System.Timers
+
+<div class="flex flex-col items-center">
+    <!-- Timer Display -->
+    <div class="relative group cursor-pointer mb-6" @onclick="ToggleTimer">
+        <div class="text-[80px] sm:text-[120px] font-black leading-none text-white tracking-tighter drop-shadow-2xl transition-all group-hover:scale-105 select-none font-mono">
+            @($"{_timeLeft.Minutes:D2}:{_timeLeft.Seconds:D2}")
+        </div>
+        
+        <!-- Status Badge -->
+        <div class="absolute -top-4 right-0">
+             @if (_isRunning)
+             {
+                 <span class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">FOCUSING</span>
+             }
+             else
+             {
+                 <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur">PAUSED</span>
+             }
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex gap-4 mb-8">
+        @if (!_isRunning)
+        {
+            <button @onclick="StartTimer" class="bg-white text-indigo-900 rounded-full p-4 hover:scale-110 transition-transform shadow-lg hover:shadow-white/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        }
+        else
+        {
+            <button @onclick="PauseTimer" class="bg-white/10 text-white border-2 border-white rounded-full p-4 hover:bg-white/20 hover:scale-110 transition-all backdrop-blur">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        }
+        
+        <button @onclick="ResetTimer" class="bg-white/5 text-white/50 rounded-full p-4 hover:bg-white/10 hover:text-white transition-colors" title="Reset">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Presets -->
+    <div class="flex gap-2 bg-black/20 p-1 rounded-xl backdrop-blur-sm">
+        <button @onclick="() => SetTime(25)" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors @(_initialMinutes == 25 ? "bg-white text-indigo-900 shadow" : "text-white/60 hover:text-white hover:bg-white/5")">
+            Pomodoro (25m)
+        </button>
+        <button @onclick="() => SetTime(5)" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors @(_initialMinutes == 5 ? "bg-white text-indigo-900 shadow" : "text-white/60 hover:text-white hover:bg-white/5")">
+            Short Break (5m)
+        </button>
+         <button @onclick="() => SetTime(15)" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors @(_initialMinutes == 15 ? "bg-white text-indigo-900 shadow" : "text-white/60 hover:text-white hover:bg-white/5")">
+            Long Break (15m)
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnTimerComplete { get; set; }
+
+    private Timer? _timer;
+    private TimeSpan _timeLeft;
+    private int _initialMinutes = 25;
+    private bool _isRunning = false;
+
+    protected override void OnInitialized()
+    {
+        _timeLeft = TimeSpan.FromMinutes(_initialMinutes);
+        _timer = new Timer(1000);
+        _timer.Elapsed += async (sender, e) => await InvokeAsync(Tick);
+        _timer.AutoReset = true;
+    }
+
+    private void SetTime(int minutes)
+    {
+        _timer?.Stop();
+        _isRunning = false; // Add explicit running set to false
+        _initialMinutes = minutes;
+        _timeLeft = TimeSpan.FromMinutes(minutes);
+        StateHasChanged(); // Force update
+    }
+
+    private void ToggleTimer()
+    {
+        if (_isRunning) PauseTimer();
+        else StartTimer();
+    }
+
+    private void StartTimer()
+    {
+        _isRunning = true;
+        _timer?.Start();
+    }
+
+    private void PauseTimer()
+    {
+        _isRunning = false;
+        _timer?.Stop();
+    }
+
+    private void ResetTimer()
+    {
+        PauseTimer();
+        _timeLeft = TimeSpan.FromMinutes(_initialMinutes);
+    }
+
+    private async void Tick()
+    {
+        if (_timeLeft.TotalSeconds > 0)
+        {
+            _timeLeft = _timeLeft.Add(TimeSpan.FromSeconds(-1));
+            StateHasChanged();
+        }
+        else
+        {
+            PauseTimer();
+            // Play notification sound
+            await OnTimerComplete.InvokeAsync();
+        }
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
+}

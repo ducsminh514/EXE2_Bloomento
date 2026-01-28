@@ -1,0 +1,108 @@
+@using ADHDChecklist.Client.Shared.Models
+@inject IJSRuntime JS
+
+<div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex flex-col gap-3 transition-all hover:bg-white/15">
+    <div class="flex items-center justify-between text-white mb-1">
+        <h4 class="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+            🎧 White Noise
+            @if (!IsPremium)
+            {
+                <span class="bg-amber-400 text-black text-[9px] px-1.5 py-0.5 rounded font-bold">PREMIUM</span>
+            }
+        </h4>
+        @if (_isPlaying)
+        {
+            <div class="flex items-center gap-1">
+                 <span class="animate-pulse w-1 h-3 bg-indigo-400 rounded-full"></span>
+                 <span class="animate-pulse w-1 h-5 bg-purple-400 rounded-full animation-delay-75"></span>
+                 <span class="animate-pulse w-1 h-2 bg-pink-400 rounded-full animation-delay-150"></span>
+            </div>
+        }
+    </div>
+
+    @if (IsPremium)
+    {
+        <div class="grid grid-cols-4 gap-2">
+            @foreach (var sound in _sounds)
+            {
+                <button @onclick="() => ToggleSound(sound)" 
+                        class="aspect-square rounded-xl flex flex-col items-center justify-center gap-1 transition-all @(_currentSound == sound && _isPlaying ? "bg-white text-indigo-900 shadow-lg scale-105" : "bg-white/5 text-white/70 hover:bg-white/10")">
+                    <span class="text-xl">@sound.Icon</span>
+                    <span class="text-[9px] font-bold">@sound.Name</span>
+                </button>
+            }
+        </div>
+
+        @if (_currentSound != null)
+        {
+            <div class="flex items-center gap-3 mt-1">
+                <svg class="w-4 h-4 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                <input type="range" min="0" max="1" step="0.1" @bind="_volume" @oninput="UpdateVolume" 
+                       class="w-full h-1 bg-white/20 rounded-lg appearance-none cursor-pointer accent-white" />
+            </div>
+        }
+    }
+    else
+    {
+        <div class="bg-black/20 rounded-xl p-4 text-center cursor-pointer hover:bg-black/30 transition-colors" @onclick="OnUpgradeClicked">
+            <span class="text-3xl mb-2 block">🔒</span>
+            <p class="text-xs text-white/80 font-medium">Nâng cấp để mở khóa âm thanh giúp tập trung</p>
+        </div>
+    }
+
+    <!-- Hidden Audio Element -->
+    <audio id="focus-audio" loop></audio>
+</div>
+
+@code {
+    [Parameter] public bool IsPremium { get; set; }
+    [Parameter] public EventCallback OnUpgradeClicked { get; set; }
+
+    private List<SoundOption> _sounds = new()
+    {
+        new("Mưa", "🌧️", "https://actions.google.com/sounds/v1/nature/rain_heavy_loud.ogg"),
+        new("Rừng", "🌲", "https://actions.google.com/sounds/v1/nature/forest_morning.ogg"),
+        new("Sóng", "🌊", "https://actions.google.com/sounds/v1/nature/ocean_surf.ogg"),
+        new("Lửa", "🔥", "https://actions.google.com/sounds/v1/ambiences/fire.ogg")
+    };
+
+    private SoundOption? _currentSound;
+    private bool _isPlaying = false;
+    private double _volume = 0.5;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && IsPremium)
+        {
+            await JS.InvokeVoidAsync("eval", "document.getElementById('focus-audio').volume = 0.5");
+        }
+    }
+
+    private async Task ToggleSound(SoundOption sound)
+    {
+        if (_currentSound == sound && _isPlaying)
+        {
+            // Pause
+            _isPlaying = false;
+            await JS.InvokeVoidAsync("eval", "document.getElementById('focus-audio').pause()");
+        }
+        else
+        {
+            // Play new
+            _currentSound = sound;
+            _isPlaying = true;
+            await JS.InvokeVoidAsync("eval", $"var audio = document.getElementById('focus-audio'); audio.src = '{sound.Url}'; audio.play().catch(e => console.log(e));");
+        }
+    }
+
+    private async Task UpdateVolume(ChangeEventArgs e)
+    {
+        if (double.TryParse(e.Value?.ToString(), out var vol))
+        {
+            _volume = vol;
+            await JS.InvokeVoidAsync("eval", $"document.getElementById('focus-audio').volume = {_volume}");
+        }
+    }
+
+    private record SoundOption(string Name, string Icon, string Url);
+}

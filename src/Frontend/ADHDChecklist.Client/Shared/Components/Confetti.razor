@@ -1,0 +1,68 @@
+@inject IJSRuntime JS
+
+<canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-[100]"></canvas>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("eval", @"
+                window.shootConfetti = () => {
+                    const canvas = document.getElementById('confetti-canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                    
+                    const pieces = [];
+                    const colors = ['#f00', '#0f0', '#00f', '#ff0', '#0ff', '#f0f'];
+                    
+                    for(let i=0; i<300; i++) {
+                        pieces.push({
+                            x: canvas.width / 2,
+                            y: canvas.height / 2,
+                            vx: (Math.random() - 0.5) * 20,
+                            vy: (Math.random() - 0.5) * 20,
+                            color: colors[Math.floor(Math.random() * colors.length)],
+                            size: Math.random() * 5 + 5,
+                            rotation: Math.random() * 360
+                        });
+                    }
+                    
+                    let frame = 0;
+                    function animate() {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        pieces.forEach((p, index) => {
+                            p.x += p.vx;
+                            p.y += p.vy;
+                            p.vy += 0.5; // Gravity
+                            p.vx *= 0.99; // Air resistance
+                            p.rotation += 2;
+                            
+                            ctx.save();
+                            ctx.translate(p.x, p.y);
+                            ctx.rotate(p.rotation * Math.PI / 180);
+                            ctx.fillStyle = p.color;
+                            ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                            ctx.restore();
+                            
+                            if (p.y > canvas.height) pieces.splice(index, 1);
+                        });
+                        
+                        if (pieces.length > 0) {
+                            requestAnimationFrame(animate);
+                        } else {
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        }
+                    }
+                    animate();
+                }
+            ");
+        }
+    }
+
+    public async Task Shoot()
+    {
+        await JS.InvokeVoidAsync("shootConfetti");
+    }
+}

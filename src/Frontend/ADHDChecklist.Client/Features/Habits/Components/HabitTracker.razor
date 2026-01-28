@@ -1,0 +1,200 @@
+@using ADHDChecklist.Client.Shared.Models
+@using ADHDChecklist.Client.Features.Habits.Services
+@inject IHabitService HabitService
+@inject NavigationManager Navigation
+
+<div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 relative overflow-hidden transition-all hover:shadow-md">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-bold text-gray-800 flex items-center gap-2">
+            <span class="text-indigo-500">🌱</span>
+            <span>Thói quen (Tuần này)</span>
+        </h3>
+        @if (IsPremium)
+        {
+             <button @onclick="OpenCreateHabitModal" class="p-1.5 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-indigo-600 transition-colors" title="Thêm thói quen">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            </button>
+        }
+    </div>
+
+    @if (!IsPremium)
+    {
+        <!-- FREE TIER LOCK OVERLAY -->
+        <div class="absolute inset-x-0 bottom-0 top-12 bg-white/60 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center text-center p-4">
+            <span class="text-3xl mb-2">🔒</span>
+            <p class="text-sm font-bold text-gray-800">Tính năng Premium</p>
+            <p class="text-xs text-gray-500 mb-3 max-w-[200px]">Xây dựng thói quen tốt mỗi ngày với Habit Tracker.</p>
+            <button @onclick="OnUpgradeClicked" class="px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white text-xs font-bold rounded-lg shadow-lg hover:shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
+                Mở khóa ngay
+            </button>
+        </div>
+
+        <!-- MOCK DATA FOR DEMO -->
+        <div class="opacity-40 pointer-events-none">
+             @RenderHabitRow("Uống 2L nước", "daily", 5)
+             @RenderHabitRow("Đọc sách 30p", "daily", 2)
+             @RenderHabitRow("Thiền 10p", "daily", 0)
+        </div>
+    }
+    else
+    {
+        @if (_isLoading)
+        {
+            <div class="flex justify-center py-4">
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600"></div>
+            </div>
+        }
+        else if (_habits.Count == 0)
+        {
+            <div class="text-center py-6 border-2 border-dashed border-gray-100 rounded-xl">
+                <p class="text-xs text-gray-400 mb-2">Chưa có thói quen nào</p>
+                <button @onclick="OpenCreateHabitModal" class="text-indigo-600 font-bold text-xs hover:underline">
+                    + Tạo thói quen đầu tiên
+                </button>
+            </div>
+        }
+        else
+        {
+            <!-- Date Headers Row -->
+            <div class="flex items-center justify-end gap-1.5 mb-2 mr-0">
+                @for (int i = 0; i < 7; i++)
+                {
+                    var currentDayOfWeek = (int)DateTime.Now.DayOfWeek; 
+                    if (currentDayOfWeek == 0) currentDayOfWeek = 7;
+                    var mondayDate = DateTime.Now.AddDays(-(currentDayOfWeek - 1));
+                    var date = DateOnly.FromDateTime(mondayDate.AddDays(i));
+                    var isToday = date == DateOnly.FromDateTime(DateTime.Now);
+
+                    <div class="w-6 text-center text-[10px] font-bold @(isToday ? "text-indigo-600" : "text-gray-400")">
+                        @date.ToString("ddd", new System.Globalization.CultureInfo("vi-VN")).ToUpper().Replace("CN", "CN")
+                    </div>
+                }
+            </div>
+
+            <div class="space-y-3">
+                @foreach (var habit in _habits)
+                {
+                    <div class="flex items-center justify-between group">
+                        <div class="min-w-[100px] max-w-[120px]">
+                            <p class="text-xs font-bold text-gray-700 truncate" title="@habit.Title">@habit.Title</p>
+                            <p class="text-[10px] text-gray-400">Streak: @habit.CurrentStreak🔥</p>
+                        </div>
+                        
+                        <!-- Week Grid (Mon-Sun) -->
+                        <div class="flex items-center gap-1.5 flex-1 justify-end">
+                            @for (int i = 0; i < 7; i++)
+                            {
+                                var dayOffset = i - (int)DateTime.Now.DayOfWeek + 1; // Align to Mon-Sun? Or just Last 7 days?
+                                // Let's simplify: Display relative to Today (Last 6 days + Today)?
+                                // OR: Display Mon-Sun of Current Week.
+                                // Current Week Logic:
+                                var currentDayOfWeek = (int)DateTime.Now.DayOfWeek; // Sun=0, Mon=1...
+                                if (currentDayOfWeek == 0) currentDayOfWeek = 7; // Convert Sun to 7
+                                var mondayDate = DateTime.Now.AddDays(-(currentDayOfWeek - 1));
+                                var date = DateOnly.FromDateTime(mondayDate.AddDays(i));
+                                
+                                var isCompleted = habit.CompletedDates.Contains(date);
+                                var isToday = date == DateOnly.FromDateTime(DateTime.Now);
+                                var isFuture = date > DateOnly.FromDateTime(DateTime.Now);
+
+                                <button @onclick="() => ToggleHabit(habit, date)" 
+                                        disabled="@(isFuture)"
+                                        class="w-6 h-6 rounded-full flex items-center justify-center transition-all 
+                                               @(isCompleted ? "bg-indigo-500 text-white shadow-sm scale-110" : "bg-gray-100 text-transparent hover:bg-gray-200")
+                                               @(isFuture ? "opacity-30 cursor-not-allowed" : "cursor-pointer")
+                                               @(isToday ? "ring-1 ring-indigo-500/50 ring-offset-1" : "")"
+                                        title="@date.ToString("dd/MM")">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </button>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+<CreateHabitModal @ref="_createHabitModal" OnHabitCreated="LoadHabits" />
+
+@code {
+    [Parameter] public bool IsPremium { get; set; }
+    [Parameter] public EventCallback OnUpgradeClicked { get; set; }
+
+    private List<HabitResponse> _habits = new();
+    private bool _isLoading = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (IsPremium && (_habits.Count == 0 || _habits == null))
+        {
+            await LoadHabits();
+        }
+    }
+
+    private async Task LoadHabits()
+    {
+        _isLoading = true;
+        _habits = await HabitService.GetHabitsAsync();
+        _isLoading = false;
+        StateHasChanged();
+    }
+
+    private async Task ToggleHabit(HabitResponse habit, DateOnly date)
+    {
+        // Optomistic UI
+        var wasCompleted = habit.CompletedDates.Contains(date);
+        if (wasCompleted) habit.CompletedDates.Remove(date);
+        else habit.CompletedDates.Add(date);
+
+        StateHasChanged();
+
+        var success = await HabitService.ToggleHabitAsync(habit.Id, date);
+        if (!success)
+        {
+            // Revert on failure
+            if (wasCompleted) habit.CompletedDates.Add(date);
+            else habit.CompletedDates.Remove(date);
+            StateHasChanged();
+        }
+    }
+
+    private CreateHabitModal _createHabitModal;
+
+    private void OpenCreateHabitModal()
+    {
+        _createHabitModal?.Open();
+    }
+
+    private RenderFragment RenderHabitRow(string title, string freq, int streak) => builder =>
+    {
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(1, "class", "flex items-center justify-between mb-3");
+        
+        builder.OpenElement(2, "div");
+        builder.AddAttribute(3, "class", "min-w-[100px]");
+        builder.AddContent(4, RenderText(title, "text-xs font-bold text-gray-700"));
+        builder.CloseElement();
+
+        builder.OpenElement(5, "div");
+        builder.AddAttribute(6, "class", "flex gap-1.5");
+        for (int i=0; i<7; i++) {
+             builder.OpenElement(7, "div");
+             builder.AddAttribute(8, "class", $"w-6 h-6 rounded-full {(i < streak ? "bg-indigo-300" : "bg-gray-100")}");
+             builder.CloseElement();
+        }
+        builder.CloseElement();
+
+        builder.CloseElement();
+    };
+
+    private RenderFragment RenderText(string text, string classNames) => builder =>
+    {
+        builder.OpenElement(0, "p");
+        builder.AddAttribute(1, "class", classNames);
+        builder.AddContent(2, text);
+        builder.CloseElement();
+    };
+}
