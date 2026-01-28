@@ -22,12 +22,24 @@ using ADHDChecklist.API.Features.Tasks.ToggleTask;
 using ADHDChecklist.API.Features.Tasks.UpdateTask;
 using ADHDChecklist.API.Features.Preferences.GetPreferences;
 using ADHDChecklist.API.Features.Preferences.UpdatePreferences;
-
-// ...
-
-// Register Endpoints
-
+using ADHDChecklist.API.Features.BrainDump.CreateBrainDumpItem;
+using ADHDChecklist.API.Features.BrainDump.GetBrainDumpItems;
+using ADHDChecklist.API.Features.BrainDump.DeleteBrainDumpItem;
 using ADHDChecklist.API.Features.Tasks.GetOverdueCount;
+using ADHDChecklist.API.Features.Users.UpdateProfile;
+using ADHDChecklist.API.Features.Users.Upgrade;
+using ADHDChecklist.API.Features.Habits.GetHabits;
+using ADHDChecklist.API.Features.Habits.CreateHabit;
+using ADHDChecklist.API.Features.Habits.ToggleHabit;
+using ADHDChecklist.API.Services;
+using ADHDChecklist.API.Shared.Behaviors;
+using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+
 using ADHDChecklist.API.Features.Users.UpdateProfile;
 using ADHDChecklist.API.Features.Users.Upgrade;
 using ADHDChecklist.API.Features.Habits.GetHabits;
@@ -295,6 +307,10 @@ app.MapAnalyticsEndpoints();
 app.MapGetHabits();
 app.MapCreateHabit();
 app.MapToggleHabit();
+app.MapCreateBrainDumpItem();
+app.MapGetBrainDumpItems();
+app.MapDeleteBrainDumpItem();
+
 
 // ============================================
 // 10. BACKGROUND JOBS

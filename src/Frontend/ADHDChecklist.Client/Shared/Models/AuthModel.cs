@@ -267,3 +267,16 @@ public record UpdatePreferencesRequest(
     string? ThemeColor,
     string? ThemeMode
 );
+
+// ============================================
+// BRAIN DUMP MODELS
+// ============================================
+public record BrainDumpItemResponse(
+    Guid Id,
+    string Content,
+    DateTime CreatedAt
+);
+
+public record CreateBrainDumpItemRequest(
+    string Content
+);

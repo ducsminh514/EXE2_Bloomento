@@ -13,6 +13,7 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
+@inject IBrainDumpService BrainDumpService
 @inject DragDropState _dragState
 @attribute [Authorize]
 
@@ -222,20 +223,20 @@
                             
                             <!-- Top: Free Tier Analytics -->
                             <div class="flex-1 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
-                                <div class="p-3 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                                    <h4 class="font-black text-xs text-gray-700 uppercase tracking-widest flex items-center gap-2">
+                                <div class="p-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
+                                    <h4 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest flex items-center gap-2">
                                         <span class="text-base">📊</span> Thống kê (Hôm nay)
                                     </h4>
-                                    <span class="text-[9px] bg-primary-50 text-primary-600 px-2 py-0.5 rounded font-bold uppercase">Free Tier</span>
+                                    <span class="text-[9px] bg-primary-50 dark:bg-primary-900/30 text-primary-600 px-2 py-0.5 rounded font-bold uppercase">Free Tier</span>
                                 </div>
                                 <div class="flex-1 p-4 flex flex-col gap-4 overflow-y-auto">
                                     <!-- Summary Row -->
                                     <div class="grid grid-cols-2 gap-3">
-                                        <div class="bg-gray-50 rounded-lg p-3 text-center border border-gray-100">
-                                            <span class="block text-2xl font-black text-gray-800">@_allTasks.Count</span>
+                                        <div class="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3 text-center border border-gray-100 dark:border-gray-700">
+                                            <span class="block text-2xl font-black text-gray-800 dark:text-gray-100">@_allTasks.Count</span>
                                             <span class="text-[10px] text-gray-500 font-bold uppercase">Tổng task</span>
                                         </div>
-                                         <div class="bg-green-50 rounded-lg p-3 text-center border border-green-100">
+                                         <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 text-center border border-green-100 dark:border-green-800/50">
                                             <span class="block text-2xl font-black text-green-600">@_completedCount</span>
                                             <span class="text-[10px] text-green-600/70 font-bold uppercase">Hoàn thành</span>
                                         </div>
@@ -251,8 +252,8 @@
                                                 var percent = _allTasks.Count > 0 ? (double)count / _allTasks.Count * 100 : 0;
                                                 if (count > 0) {
                                                     <div class="flex items-center gap-2 text-xs">
-                                                        <span class="flex-1 truncate font-medium text-gray-600">@cat.Name</span>
-                                                        <div class="w-24 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                                        <span class="flex-1 truncate font-medium text-gray-600 dark:text-gray-400">@cat.Name</span>
+                                                        <div class="w-24 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                                                             <div class="h-full rounded-full" style="width: @percent%; background-color: @cat.ColorHex"></div>
                                                         </div>
                                                         <span class="text-[10px] text-gray-400 w-4 text-right">@count</span>
@@ -431,6 +432,11 @@
     <UpgradeModal
         OnClose="() => _showUpgradeModal = false"
         OnUpgradeSuccess="HandleUpgradeSuccess" />
+}
+
+@if (_currentUser?.IsPremium == true)
+{
+    <BrainDumpWidget OnDragStarted="HandleBrainDumpDragStart" />
 }
 
 @code {
@@ -802,21 +808,68 @@
     private void HandleDragStart(TaskResponse task)
     {
         _dragState.DraggedTask = task;
+        _dragState.DraggedBrainDumpItem = null;
+    }
+
+    private void HandleBrainDumpDragStart(BrainDumpItemResponse item)
+    {
+        _dragState.DraggedBrainDumpItem = item;
+        _dragState.DraggedTask = null;
     }
 
     private async Task HandleInboxDropWrapper()
     {
         if (_dragState.DraggedTask != null)
         {
-            await HandleInboxDrop(_dragState.DraggedTask);
+            await HandleMoveToInbox(_dragState.DraggedTask.Id);
             _dragState.DraggedTask = null;
+        }
+        else if (_dragState.DraggedBrainDumpItem != null)
+        {
+            await ConvertBrainDumpToTask(_dragState.DraggedBrainDumpItem);
+            _dragState.DraggedBrainDumpItem = null;
         }
     }
 
-    private async Task HandleInboxDrop(TaskResponse task)
+    private async Task ConvertBrainDumpToTask(BrainDumpItemResponse item)
+    {
+        try
+        {
+            // 1. Create Task in Inbox (no time block)
+            var request = new CreateTaskRequest(
+                item.Content,
+                "", // No description
+                null, // No category
+                _selectedDate,
+                null, // No start
+                null, // No end
+                30, // Default duration
+                1, // Normal priority
+                false, // IsRecurring
+                null // RecurrencePattern
+            );
+
+            await TaskService.CreateTaskAsync(request);
+
+            // 2. Delete Brain Dump Item
+            await BrainDumpService.DeleteItemAsync(item.Id);
+
+            // 3. Refresh
+            await LoadData();
+            
+            if (_confetti != null) await _confetti.Shoot();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error converting brain dump to task: {ex.Message}");
+        }
+    }
+
+    private async Task HandleMoveToInbox(Guid taskId)
     {
         // If already in inbox (no time block), ignore
-        if (!task.TimeBlockStart.HasValue)
+        var task = _allTasks.FirstOrDefault(t => t.Id == taskId);
+        if (task == null || !task.TimeBlockStart.HasValue)
             return;
 
         try

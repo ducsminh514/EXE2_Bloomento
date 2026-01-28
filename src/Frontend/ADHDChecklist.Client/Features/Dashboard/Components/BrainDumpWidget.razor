@@ -1,0 +1,138 @@
+@using ADHDChecklist.Client.Features.Dashboard.Services
+@using ADHDChecklist.Client.Shared.Models
+@inject IBrainDumpService BrainDumpService
+@inject IJSRuntime JS
+
+<div class="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-3 pointer-events-auto">
+    <!-- Popover Content -->
+    @if (_isOpen)
+    {
+        <div class="mb-2 w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col animate-scale-up overflow-hidden">
+            <!-- Header -->
+            <div class="p-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
+                <h4 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest flex items-center gap-2">
+                    <span class="text-base">🧠</span> Brain Dump
+                </h4>
+                <button @onclick="Toggle" class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-400">&times;</button>
+            </div>
+
+            <!-- Quick Add -->
+            <div class="p-3 border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800">
+                <div class="relative group">
+                    <input type="text" 
+                           @bind="_newItemContent" 
+                           @bind:event="oninput"
+                           @onkeyup="HandleKeyUp"
+                           placeholder="Nghĩ gì viết nấy..." 
+                           class="w-full pl-3 pr-10 py-2 bg-gray-50 dark:bg-gray-900 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary-500 transition-all placeholder:text-gray-400 dark:text-gray-200" />
+                    <button @onclick="AddItem" 
+                            disabled="@(string.IsNullOrWhiteSpace(_newItemContent))"
+                            class="absolute right-2 top-1.5 p-1 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-30 transition-all shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Items List -->
+            <div class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2 max-h-[300px]">
+                @if (_items.Any())
+                {
+                    @foreach (var item in _items)
+                    {
+                        <div class="group relative bg-gray-50 dark:bg-gray-900 p-2.5 rounded-xl border border-transparent hover:border-primary-200 dark:hover:border-primary-800 transition-all cursor-grab active:cursor-grabbing"
+                             draggable="true" 
+                             @ondragstart="() => OnDragStart(item)">
+                            <div class="pr-6">
+                                <p class="text-xs font-semibold text-gray-700 dark:text-gray-300 leading-tight">@item.Content</p>
+                                <span class="text-[8px] text-gray-400 font-bold block mt-1 uppercase">@item.CreatedAt.ToLocalTime().ToString("HH:mm")</span>
+                            </div>
+                            <button @onclick="() => DeleteItem(item.Id)" 
+                                    class="absolute right-2 top-2 p-1 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="py-10 flex flex-col items-center justify-center text-center">
+                        <span class="text-2xl mb-2 opacity-20">📥</span>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Đồ hết suy nghĩ vào đây</p>
+                    </div>
+                }
+            </div>
+            
+            <div class="p-2 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-700 text-center">
+                <span class="text-[9px] text-gray-400 font-bold uppercase">💡 Kéo ý tưởng vào Inbox để tạo Task</span>
+            </div>
+        </div>
+    }
+
+    <!-- Bubble Button -->
+    <button @onclick="Toggle" 
+            class="w-14 h-14 bg-primary-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all @(_isOpen ? "bg-primary-700 rotate-12" : "animate-bounce-subtle")">
+        @if (_isOpen)
+        {
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        }
+        else
+        {
+            <span class="text-2xl">🧠</span>
+        }
+    </button>
+</div>
+
+@code {
+    [Parameter] public EventCallback<BrainDumpItemResponse> OnDragStarted { get; set; }
+    
+    private List<BrainDumpItemResponse> _items = new();
+    private string _newItemContent = "";
+    private bool _isOpen = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadItems();
+    }
+
+    private async Task LoadItems()
+    {
+        _items = await BrainDumpService.GetItemsAsync();
+    }
+
+    private void Toggle() => _isOpen = !_isOpen;
+
+    private async Task HandleKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await AddItem();
+        }
+    }
+
+    private async Task AddItem()
+    {
+        if (string.IsNullOrWhiteSpace(_newItemContent)) return;
+
+        var result = await BrainDumpService.CreateItemAsync(_newItemContent);
+        if (result != null)
+        {
+            _items.Insert(0, result);
+            _newItemContent = "";
+            StateHasChanged();
+        }
+    }
+
+    private async Task DeleteItem(Guid id)
+    {
+        if (await BrainDumpService.DeleteItemAsync(id))
+        {
+            _items.RemoveAll(x => x.Id == id);
+            StateHasChanged();
+        }
+    }
+
+    private void OnDragStart(BrainDumpItemResponse item)
+    {
+        OnDragStarted.InvokeAsync(item);
+    }
+}

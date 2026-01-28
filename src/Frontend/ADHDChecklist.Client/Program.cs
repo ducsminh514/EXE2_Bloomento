@@ -33,6 +33,7 @@ builder.Services.AddScoped<DragDropState>();
 // ============================================
 builder.Services.AddScoped<IApiClient, ApiClient>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IBrainDumpService, BrainDumpService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
