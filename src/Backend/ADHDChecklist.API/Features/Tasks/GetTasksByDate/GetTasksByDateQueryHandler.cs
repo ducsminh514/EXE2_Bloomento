@@ -50,7 +50,9 @@ public class GetTasksByDateQueryHandler : IRequestHandler<GetTasksByDateQuery, T
                 new List<TaskResponse>(), // ✅ Empty list thay vì query SubTasks
                 t.OrderIndex ?? 0,
                 t.CreatedAt,
-                t.UpdatedAt
+                t.UpdatedAt,
+                t.RescheduleCount,
+                t.DopamineType
             ))
             .ToListAsync(cancellationToken);
 

@@ -6,6 +6,7 @@ namespace ADHDChecklist.Client.Features.Dashboard.Services
     public interface IAnalyticsService
     {
         Task<WeeklyAnalyticsResponse?> GetWeeklyAnalyticsAsync();
+        Task<PremiumAnalyticsResponse?> GetPremiumAnalyticsAsync();
     }
 
     public class AnalyticsService : IAnalyticsService
@@ -28,6 +29,19 @@ namespace ADHDChecklist.Client.Features.Dashboard.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting analytics");
+                return null;
+            }
+        }
+
+        public async Task<PremiumAnalyticsResponse?> GetPremiumAnalyticsAsync()
+        {
+            try
+            {
+                return await _apiClient.GetAsync<PremiumAnalyticsResponse>("/api/analytics/premium");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting premium analytics");
                 return null;
             }
         }

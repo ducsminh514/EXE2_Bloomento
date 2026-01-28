@@ -37,7 +37,8 @@ namespace ADHDChecklist.API.Features.Tasks.CreateTask
                 IsCompleted = false,
                 OrderIndex = 0,
                 CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                UpdatedAt = DateTime.UtcNow,
+                DopamineType = request.DopamineType ?? "Low"
             };
 
             _context.Tasks.Add(task);
@@ -73,7 +74,9 @@ namespace ADHDChecklist.API.Features.Tasks.CreateTask
                 new List<TaskResponse>(),
                 task.OrderIndex ?? 0,
                 task.CreatedAt,
-                task.UpdatedAt
+                task.UpdatedAt,
+                task.RescheduleCount,
+                task.DopamineType
             );
         }
     }
@@ -104,7 +107,8 @@ namespace ADHDChecklist.API.Features.Tasks.CreateTask
                     request.Priority,
                     request.IsRecurring,
                     request.RecurrencePattern,
-                    userId
+                    userId,
+                    request.DopamineType
                 );
 
                 var result = await mediator.Send(command, ct);

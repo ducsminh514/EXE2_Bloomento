@@ -14,6 +14,7 @@ namespace ADHDChecklist.API.Features.Tasks.CreateTask
         int Priority,
         bool IsRecurring,
         string? RecurrencePattern,
-        Guid UserId
+        Guid UserId,
+        string? DopamineType = "Low"
     ) : IRequest<TaskResponse>;
 }

@@ -14,6 +14,7 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
       int? Duration,
       int Priority,
       bool IsCompleted,
+      string? DopamineType,
       Guid UserId
   ) : IRequest<TaskResponse?>;
 }

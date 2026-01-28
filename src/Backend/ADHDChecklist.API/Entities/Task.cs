@@ -44,6 +44,9 @@ public partial class Task
 
     public DateTime? DeletedAt { get; set; }
 
+    public int RescheduleCount { get; set; } = 0;
+    public string? DopamineType { get; set; } // 'Low' (Hard/Boring) or 'High' (Fun/Creative)
+
     public virtual ICollection<BrainDumpItem> BrainDumpItems { get; set; } = new List<BrainDumpItem>();
 
     public virtual Category? Category { get; set; }

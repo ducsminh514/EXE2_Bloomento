@@ -5,6 +5,7 @@ using ADHDChecklist.API.Data;
 using ADHDChecklist.API.Entities;
 using ADHDChecklist.API.Entities.Common;
 using ADHDChecklist.API.Features.Analytics.FreeTier;
+using ADHDChecklist.API.Features.Analytics.Premium;
 using ADHDChecklist.API.Features.Auth.GoogleLogin;
 using ADHDChecklist.API.Features.Auth.Login;
 using ADHDChecklist.API.Features.Auth.RefreshToken;
@@ -302,6 +303,7 @@ app.MapUpdatePreferences();
 
 // Analytics endpoints
 app.MapAnalyticsEndpoints();
+app.MapPremiumAnalyticsEndpoints();
 
 // Habit endpoints
 app.MapGetHabits();

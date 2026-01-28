@@ -13,7 +13,8 @@ public record CreateTaskRequest(
     int? Duration,
     int Priority,
     bool IsRecurring,
-    string? RecurrencePattern
+    string? RecurrencePattern,
+    string? DopamineType = "Low"
 );
 
 public record UpdateTaskRequest(
@@ -25,7 +26,8 @@ public record UpdateTaskRequest(
     TimeOnly? TimeBlockEnd,
     int? Duration,
     int Priority,
-    bool IsCompleted
+    bool IsCompleted,
+    string? DopamineType = null
 );
 
 public record MoveTaskRequest(
@@ -57,7 +59,9 @@ public record TaskResponse(
     List<TaskResponse> SubTasks,
     int? OrderIndex,
     DateTime CreatedAt,
-    DateTime UpdatedAt
+    DateTime UpdatedAt,
+    int? RescheduleCount,
+    string? DopamineType
 );
 
 public record TaskListResponse(

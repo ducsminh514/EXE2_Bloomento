@@ -38,6 +38,7 @@ namespace ADHDChecklist.API.Features.Tasks.AutoAdjust
                 task.ScheduledDate = today;
                 task.TimeBlockStart = null; // Reset time so user can re-plan
                 task.TimeBlockEnd = null;
+                task.RescheduleCount++;
                 // Keep priority and other details
             }
 

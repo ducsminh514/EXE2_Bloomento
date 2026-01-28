@@ -1,0 +1,300 @@
+@using ADHDChecklist.Client.Features.Dashboard.Services
+@using ADHDChecklist.Client.Shared.Models
+@using Microsoft.AspNetCore.Components.Authorization
+@using System
+@using System.Linq
+@inject IAnalyticsService AnalyticsService
+@inject ICategoryService CategoryService
+@inject AuthenticationStateProvider AuthStateProvider
+
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 animate-fade-in">
+    <div class="max-w-7xl mx-auto space-y-8">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h2 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">PHÂN TÍCH NĂNG SUẤT</h2>
+                <p class="text-gray-500 font-medium">Cái nhìn chi tiết về thói quen và hiệu quả công việc của bạn</p>
+            </div>
+            <div class="flex items-center gap-2 bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                <span class="text-xs font-bold text-gray-400 uppercase px-2">Phạm vi:</span>
+                <select class="bg-transparent text-sm font-bold text-primary-600 focus:outline-none cursor-pointer">
+                    <option>7 ngày qua</option>
+                    <option disabled>30 ngày qua (Sắp có)</option>
+                </select>
+            </div>
+        </div>
+
+        @if (_isLoading)
+        {
+            <div class="h-64 flex items-center justify-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+            </div>
+        }
+        else if (_analytics != null)
+        {
+            <!-- Top Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Tỷ lệ hoàn thành</p>
+                    <div class="flex items-end gap-2">
+                        <span class="text-4xl font-black text-primary-600">@_analytics.CompletionRate%</span>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Tổng cộng xong</p>
+                    <div class="flex items-end gap-2">
+                        <span class="text-4xl font-black text-green-600">@_analytics.TotalCompleted</span>
+                        <span class="text-xs font-bold text-gray-400 mb-1.5">tasks</span>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Productivity Score</p>
+                    <div class="flex items-end gap-2">
+                        <span class="text-4xl font-black text-orange-500">@(Math.Round(_analytics.CompletionRate * 0.8 + 12, 0))</span>
+                        <span class="text-[10px] font-bold text-orange-200 bg-orange-500 px-1.5 py-0.5 rounded ml-1 mb-2 tracking-tighter">GOOD</span>
+                    </div>
+                </div>
+
+                 <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Hiện diện</p>
+                    <div class="flex items-end gap-2">
+                        <span class="text-4xl font-black text-purple-600">7/7</span>
+                        <span class="text-xs font-bold text-gray-400 mb-1.5">ngày</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Weekly Trend Chart -->
+                <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col">
+                    <h3 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest mb-8">Xu hướng hoàn thành (7 ngày)</h3>
+                    
+                    <div class="flex-1 flex items-end justify-between gap-2 px-4 h-64">
+                        @foreach (var day in _analytics.DailyStats)
+                        {
+                            var height = day.TasksCreated > 0 ? (double)day.TasksCompleted / 10 * 100 : 0; 
+                            if (height > 100) height = 100;
+
+                            <div class="flex-1 flex flex-col items-center group">
+                                <div class="relative w-full max-w-[40px] flex flex-col items-center">
+                                    <div class="absolute -top-10 scale-0 group-hover:scale-100 transition-all bg-gray-900 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg z-10 whitespace-nowrap">
+                                        @day.TasksCompleted / @day.TasksCreated xong
+                                    </div>
+                                    <div class="absolute bottom-0 w-full bg-gray-100 dark:bg-gray-700/50 rounded-t-lg" style="height: @(day.TasksCreated * 10)px; min-height: 4px;"></div>
+                                    <div class="relative w-full bg-primary-500 rounded-t-lg transition-all duration-500" style="height: @(day.TasksCompleted * 10)px; min-height: 2px;">
+                                        <div class="absolute top-0 inset-x-0 h-1 bg-white/20 rounded-t-lg"></div>
+                                    </div>
+                                </div>
+                                <span class="mt-4 text-[10px] font-black text-gray-400 uppercase">@day.DayOfWeek.Substring(0, 3)</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Category Breakdown -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <h3 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest mb-6">Phân loại công việc</h3>
+                    
+                    <div class="space-y-6">
+                        @foreach (var cat in _categories)
+                        {
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="font-bold text-gray-700 dark:text-gray-300">@cat.Name</span>
+                                    <span class="text-gray-400 font-medium">@cat.TaskCount tasks</span>
+                                </div>
+                                <div class="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                    @{
+                                        var percent = _analytics.TotalCompleted > 0 ? (double)cat.TaskCount / _analytics.TotalCompleted * 100 : 0;
+                                    }
+                                    <div class="h-full rounded-full transition-all duration-1000" style="width: @percent%; background-color: @cat.ColorHex"></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mt-8 p-4 bg-primary-50 dark:bg-primary-900/20 rounded-2xl border border-primary-100 dark:border-primary-800/50">
+                        <p class="text-[10px] font-bold text-primary-600 uppercase tracking-wide mb-1">Insights</p>
+                        <p class="text-[11px] text-primary-800 dark:text-primary-300 font-medium leading-relaxed">
+                            Bạn hoàn thành nhiều việc nhất vào <strong>thứ Tư</strong>. Tập trung vào các task lớn vào ngày này nhé!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            @if (_premiumAnalytics != null)
+            {
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- 1. Time Blindness Chart -->
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest">Phân tích "Mù thời gian"</h3>
+                            <span class="text-[10px] font-bold text-red-500 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded">CẢNH BÁO SAI LỆCH</span>
+                        </div>
+                        <div class="space-y-4">
+                            @foreach (var task in _premiumAnalytics.TimeBlindness)
+                            {
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-[11px] font-bold">
+                                        <span class="text-gray-700 dark:text-gray-300 truncate max-w-[200px]">@task.TaskTitle</span>
+                                        <span class="@(task.DeviationPercentage > 0 ? "text-red-500" : "text-green-500")">@(task.DeviationPercentage > 0 ? "+" : "")@Math.Round(task.DeviationPercentage)%</span>
+                                    </div>
+                                    <div class="relative h-4 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden flex">
+                                        @{
+                                            var total = Math.Max(task.EstimatedMinutes, task.ActualMinutes);
+                                            var estWidth = (double)task.EstimatedMinutes / total * 100;
+                                            var actWidth = (double)task.ActualMinutes / total * 100;
+                                        }
+                                        <div class="absolute inset-y-0 left-0 bg-primary-200 dark:bg-primary-900/40 z-10" style="width: @estWidth%"></div>
+                                        <div class="absolute inset-y-0 left-0 bg-primary-600 z-20" style="width: @actWidth%; opacity: 0.8"></div>
+                                    </div>
+                                    <div class="flex justify-between text-[10px] text-gray-400 font-bold uppercase">
+                                        <span>Dự kiến: @task.EstimatedMinutes m</span>
+                                        <span>Thực tế: @task.ActualMinutes m</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- 2. Energy Heatmap -->
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <h3 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest mb-6">Biểu đồ năng lượng (24h)</h3>
+                        <div class="grid grid-cols-6 sm:grid-cols-12 gap-2">
+                            @for (int h = 0; h < 24; h++)
+                            {
+                                var stats = _premiumAnalytics.EnergyHeatmap.FirstOrDefault(e => e.Hour == h);
+                                var intensity = stats?.CompletedCount ?? 0;
+                                var opacity = Math.Min(0.2 + (intensity * 0.2), 1.0);
+
+                                <div class="flex flex-col items-center gap-1 group">
+                                    <div class="w-full aspect-square rounded-lg transition-all @(intensity > 0 ? "bg-primary-500" : "bg-gray-100 dark:bg-gray-700/50") shadow-sm"
+                                         style="opacity: @opacity">
+                                    </div>
+                                    <span class="text-[8px] font-bold text-gray-400 group-hover:text-primary-600">@h</span>
+                                </div>
+                            }
+                        </div>
+                        <div class="mt-6 flex items-center gap-2 text-[10px] text-gray-400 font-bold">
+                            <span>Sáng sớm</span>
+                            <div class="flex-1 h-1 bg-gradient-to-r from-gray-100 via-primary-500 to-primary-900 rounded-full"></div>
+                            <span>Cú đêm</span>
+                        </div>
+                    </div>
+
+                    <!-- 3. Dopamine Balance -->
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <h3 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest mb-6">Cân bằng Dopamine</h3>
+                        <div class="flex items-center justify-center py-4">
+                            <div class="relative w-48 h-24 overflow-hidden">
+                                <!-- Gauge background -->
+                                <div class="absolute inset-0 rounded-t-full border-[16px] border-gray-100 dark:border-gray-700"></div>
+                                <!-- Gauge fill -->
+                                <div class="absolute inset-0 rounded-t-full border-[16px] border-primary-500 origin-bottom transition-all duration-1000"
+                                     style="transform: rotate(@(_premiumAnalytics.DopamineBalance.BalanceRatio * 1.8 - 180)deg); clip-path: inset(0 0 50% 0);"></div>
+                                
+                                <div class="absolute bottom-0 inset-x-0 text-center">
+                                    <span class="text-2xl font-black text-gray-800 dark:text-white">@Math.Round(_premiumAnalytics.DopamineBalance.BalanceRatio)%</span>
+                                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Sáng tạo / Thú vị</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mt-6">
+                            <div class="text-center p-3 bg-gray-50 dark:bg-gray-900/40 rounded-2xl">
+                                <span class="block text-xl font-black text-gray-700 dark:text-gray-300">@_premiumAnalytics.DopamineBalance.LowDopamineCount</span>
+                                <span class="text-[9px] font-bold text-gray-400 uppercase">Khó / NhàM chán</span>
+                            </div>
+                            <div class="text-center p-3 bg-primary-50 dark:bg-primary-900/20 rounded-2xl">
+                                <span class="block text-xl font-black text-primary-600">@_premiumAnalytics.DopamineBalance.HighDopamineCount</span>
+                                <span class="text-[9px] font-bold text-primary-500 uppercase">Thú vị / Mới lạ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Procrastination Debt -->
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest">Nợ công việc (BỊ DỜI LỊCH)</h3>
+                            <span class="text-[18px]">👻</span>
+                        </div>
+                        <div class="space-y-3">
+                            @foreach (var task in _premiumAnalytics.ProcrastinationDebt)
+                            {
+                                <div class="flex items-center gap-3 p-3 bg-red-50/50 dark:bg-red-900/10 rounded-2xl border border-red-100/50 dark:border-red-900/20">
+                                    <div class="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center text-red-600 font-black text-xs">
+                                        @task.RescheduleCount
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h5 class="text-xs font-bold text-gray-800 dark:text-gray-100 truncate">@task.Title</h5>
+                                        <p class="text-[9px] font-bold text-red-500 uppercase">Dời lịch quá nhiều lần</p>
+                                    </div>
+                                    <button class="p-2 hover:bg-white dark:hover:bg-gray-800 rounded-xl transition-colors shadow-sm">
+                                        <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
+                                    </button>
+                                </div>
+                            }
+                            @if (!_premiumAnalytics.ProcrastinationDebt.Any())
+                            {
+                                <div class="h-full flex flex-col items-center justify-center text-gray-400 py-8">
+                                    <span class="text-3xl mb-2">🎈</span>
+                                    <p class="text-[10px] font-bold uppercase tracking-widest">Không có nợ tồn đọng!</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private WeeklyAnalyticsResponse? _analytics;
+    private PremiumAnalyticsResponse? _premiumAnalytics;
+    private List<CategoryResponse> _categories = new();
+    private bool _isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        _isLoading = true;
+        try
+        {
+            var analyticsTask = AnalyticsService.GetWeeklyAnalyticsAsync();
+            var categoriesTask = CategoryService.GetCategoriesAsync();
+
+            await Task.WhenAll(analyticsTask, categoriesTask);
+            
+            _analytics = await analyticsTask;
+            var categories = await categoriesTask;
+            _categories = (categories ?? new List<CategoryResponse>())
+                .OrderByDescending(x => x.TaskCount)
+                .ToList();
+
+            // Fetch Premium stats if user is premium
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            var isPremium = user.FindFirst("IsPremium")?.Value == "true" || user.FindFirst("subscription")?.Value == "Premium";
+
+            if (isPremium)
+            {
+                _premiumAnalytics = await AnalyticsService.GetPremiumAnalyticsAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading analytics: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

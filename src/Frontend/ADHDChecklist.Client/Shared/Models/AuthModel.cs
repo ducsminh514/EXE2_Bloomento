@@ -141,9 +141,11 @@ public record TaskResponse(
     string? RecurrencePattern,
     Guid? ParentTaskId,
     List<TaskResponse> SubTasks,
-    int OrderIndex,
+    int? OrderIndex,
     DateTime CreatedAt,
-    DateTime UpdatedAt
+    DateTime UpdatedAt,
+    int? RescheduleCount = 0,
+    string? DopamineType = "Low"
 );
 
 public record TaskListResponse(
@@ -162,7 +164,8 @@ public record CreateTaskRequest(
     int? Duration,
     int Priority,
     bool IsRecurring,
-    string? RecurrencePattern
+    string? RecurrencePattern,
+    string? DopamineType = "Low"
 );
 
 public record UpdateTaskRequest(
@@ -174,7 +177,8 @@ public record UpdateTaskRequest(
     TimeOnly? TimeBlockEnd,
     int? Duration,
     int Priority,
-    bool IsCompleted
+    bool IsCompleted,
+    string? DopamineType = null
 );
 
 // ============================================
@@ -216,6 +220,38 @@ public record DailyStats(
     string DayOfWeek,
     int TasksCompleted,
     int TasksCreated
+);
+
+// --- PREMIUM ANALYTICS MODELS ---
+public record PremiumAnalyticsResponse(
+    List<TimeBlindnessData> TimeBlindness,
+    List<EnergyData> EnergyHeatmap,
+    List<ProcrastinationDebtData> ProcrastinationDebt,
+    DopamineBalanceData DopamineBalance
+);
+
+public record TimeBlindnessData(
+    string TaskTitle,
+    int EstimatedMinutes,
+    int ActualMinutes,
+    double DeviationPercentage
+);
+
+public record EnergyData(
+    int Hour,
+    int CompletedCount
+);
+
+public record ProcrastinationDebtData(
+    Guid TaskId,
+    string Title,
+    int RescheduleCount
+);
+
+public record DopamineBalanceData(
+    int LowDopamineCount,
+    int HighDopamineCount,
+    double BalanceRatio
 );
 
 // ============================================

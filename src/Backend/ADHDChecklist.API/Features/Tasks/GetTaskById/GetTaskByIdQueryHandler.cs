@@ -50,7 +50,9 @@ namespace ADHDChecklist.API.Features.Tasks.GetTaskById
                 new List<TaskResponse>(), // ✅ Empty list
                 task.OrderIndex ?? 0,
                 task.CreatedAt,
-                task.UpdatedAt
+                task.UpdatedAt,
+                task.RescheduleCount,
+                task.DopamineType
             );
         }
     }

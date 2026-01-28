@@ -590,6 +590,9 @@ namespace ADHDChecklist.API.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<string>("DopamineType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("Duration")
                         .HasColumnType("int");
 
@@ -619,6 +622,9 @@ namespace ADHDChecklist.API.Migrations
                     b.Property<string>("RecurrencePattern")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("RescheduleCount")
+                        .HasColumnType("int");
 
                     b.Property<DateOnly>("ScheduledDate")
                         .HasColumnType("date");
@@ -654,6 +660,8 @@ namespace ADHDChecklist.API.Migrations
 
                     b.HasIndex("IsCompleted")
                         .HasDatabaseName("IX_Tasks_IsCompleted");
+
+                    b.HasIndex("ParentTaskId");
 
                     b.HasIndex("UserId", "CompletedAt")
                         .HasDatabaseName("IX_Tasks_UserId_CompletedAt")
@@ -981,6 +989,10 @@ namespace ADHDChecklist.API.Migrations
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("ADHDChecklist.API.Entities.Task", "ParentTask")
+                        .WithMany("SubTasks")
+                        .HasForeignKey("ParentTaskId");
+
                     b.HasOne("ADHDChecklist.API.Entities.Common.ApplicationUser", "User")
                         .WithMany("Tasks")
                         .HasForeignKey("UserId")
@@ -988,6 +1000,8 @@ namespace ADHDChecklist.API.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+
+                    b.Navigation("ParentTask");
 
                     b.Navigation("User");
                 });
@@ -1091,6 +1105,8 @@ namespace ADHDChecklist.API.Migrations
                     b.Navigation("FocusSessions");
 
                     b.Navigation("Reminders");
+
+                    b.Navigation("SubTasks");
                 });
 #pragma warning restore 612, 618
         }

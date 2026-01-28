@@ -73,19 +73,39 @@
                             </InputSelect>
                         </div>
 
-                         <!-- Priority (Pills) -->
-                        <div class="flex bg-gray-100 p-1 rounded-full">
-                             @for (int i = 1; i <= 3; i++)
-                             {
-                                 var p = i;
-                                 <button type="button"
-                                         @onclick="() => _model.Priority = p"
-                                         class="px-3 py-1 text-[10px] font-bold rounded-full transition-all @(_model.Priority == p ? GetPriorityClass(p) : "text-gray-500 hover:text-gray-700")">
-                                     @GetPriorityLabel(p)
-                                 </button>
-                             }
-                        </div>
+                    <!-- Priority (Pills) -->
+                    <div class="flex bg-gray-100 dark:bg-gray-700/50 p-1 rounded-full">
+                         @for (int i = 1; i <= 3; i++)
+                         {
+                             var p = i;
+                             <button type="button"
+                                     @onclick="() => _model.Priority = p"
+                                     class="px-3 py-1 text-[10px] font-bold rounded-full transition-all @(_model.Priority == p ? GetPriorityClass(p) : "text-gray-500 hover:text-gray-700")">
+                                 @GetPriorityLabel(p)
+                             </button>
+                         }
                     </div>
+                </div>
+
+                <!-- Row 4: Dopamine Type (Premium Visualization Data) -->
+                <div class="bg-primary-50/50 dark:bg-primary-900/10 p-3 rounded-2xl border border-primary-100 dark:border-primary-800/50">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-[10px] font-black text-primary-600 uppercase tracking-widest">Loại Dopamine</label>
+                        <span class="text-[9px] font-bold text-primary-400">Dùng cho phân tích Premium</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="button" @onclick='() => _model.DopamineType = "Low"'
+                                class="flex-1 py-2 px-3 rounded-xl border-2 transition-all text-left @(_model.DopamineType == "Low" ? "border-primary-500 bg-white dark:bg-gray-800 shadow-sm" : "border-transparent bg-gray-100 dark:bg-gray-700/30 opacity-60")">
+                            <span class="block text-[11px] font-black text-gray-700 dark:text-gray-200">Kỷ luật / Khó</span>
+                            <span class="block text-[9px] text-gray-400 font-bold uppercase">Low Dopamine</span>
+                        </button>
+                        <button type="button" @onclick='() => _model.DopamineType = "High"'
+                                class="flex-1 py-2 px-3 rounded-xl border-2 transition-all text-left @(_model.DopamineType == "High" ? "border-primary-500 bg-white dark:bg-gray-800 shadow-sm" : "border-transparent bg-gray-100 dark:bg-gray-700/30 opacity-60")">
+                            <span class="block text-[11px] font-black text-gray-700 dark:text-gray-200">Sáng tạo / Mới</span>
+                            <span class="block text-[9px] text-gray-400 font-bold uppercase">High Dopamine</span>
+                        </button>
+                    </div>
+                </div>
 
                     @if (!string.IsNullOrEmpty(_errorMessage))
                     {
@@ -139,6 +159,7 @@
         public string? TimeEnd { get; set; }
         public int Priority { get; set; } = 1;
         public bool IsCompleted { get; set; }
+        public string DopamineType { get; set; } = "Low";
     }
 
     protected override async Task OnInitializedAsync()
@@ -162,6 +183,7 @@
                 _model.TimeEnd = task.TimeBlockEnd?.ToString("HH:mm");
                 _model.Priority = task.Priority;
                 _model.IsCompleted = task.IsCompleted;
+                _model.DopamineType = task.DopamineType ?? "Low";
             }
         }
         catch (Exception ex)
@@ -201,7 +223,8 @@
                 timeEnd,
                 duration,
                 _model.Priority,
-                _model.IsCompleted
+                _model.IsCompleted,
+                _model.DopamineType
             );
 
             await TaskService.UpdateTaskAsync(TaskId, request);

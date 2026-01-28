@@ -31,6 +31,11 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
             }
 
             // Update fields
+            if (task.ScheduledDate != request.ScheduledDate)
+            {
+                task.RescheduleCount++;
+            }
+
             task.Title = request.Title;
             task.Description = request.Description;
             task.CategoryId = request.CategoryId;
@@ -39,7 +44,23 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
             task.TimeBlockEnd = request.TimeBlockEnd;
             task.Duration = request.Duration;
             task.Priority = request.Priority;
-            task.IsCompleted = request.IsCompleted;
+            
+            if (request.DopamineType != null)
+            {
+                task.DopamineType = request.DopamineType;
+            }
+
+            if (!task.IsCompleted && request.IsCompleted)
+            {
+                task.IsCompleted = true;
+                task.CompletedAt = DateTime.UtcNow;
+            }
+            else if (task.IsCompleted && !request.IsCompleted)
+            {
+                task.IsCompleted = false;
+                task.CompletedAt = null;
+            }
+
             task.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync(cancellationToken);
@@ -74,7 +95,9 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
             new List<TaskResponse>(),
             task.OrderIndex ?? 0,
             task.CreatedAt,
-            task.UpdatedAt
+            task.UpdatedAt,
+            task.RescheduleCount,
+            task.DopamineType
         );
         }
     }

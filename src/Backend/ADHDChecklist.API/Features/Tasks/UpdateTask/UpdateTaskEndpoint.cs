@@ -28,6 +28,7 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
                     request.Duration,
                     request.Priority,
                     request.IsCompleted,
+                    request.DopamineType,
                     userId
                 );
 
