@@ -33,6 +33,7 @@ using ADHDChecklist.API.Features.Habits.GetHabits;
 using ADHDChecklist.API.Features.Habits.CreateHabit;
 using ADHDChecklist.API.Features.Habits.ToggleHabit;
 using ADHDChecklist.API.Services;
+using ADHDChecklist.API.Services.BackgroundJobs;
 using ADHDChecklist.API.Shared.Behaviors;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -40,20 +41,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
-using ADHDChecklist.API.Features.Users.UpdateProfile;
-using ADHDChecklist.API.Features.Users.Upgrade;
-using ADHDChecklist.API.Features.Habits.GetHabits;
-using ADHDChecklist.API.Features.Habits.CreateHabit;
-using ADHDChecklist.API.Features.Habits.ToggleHabit;
-using ADHDChecklist.API.Services;
-using ADHDChecklist.API.Shared.Behaviors;
-using FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using ADHDChecklist.API.Features.AI.BreakdownTask;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -176,6 +165,20 @@ builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ADHDChecklist.API.Services.BackgroundJobs.CleanupService>();
 builder.Services.AddScoped<ADHDChecklist.API.Services.BackgroundJobs.ReminderJob>();
+builder.Services.AddHttpClient<IGeminiService, GeminiService>();
+
+builder.Services.AddMemoryCache();
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddFixedWindowLimiter("GeminiPolicy", opt =>
+    {
+        opt.PermitLimit = 5;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 0;
+    });
+});
 
 // ============================================
 // 6.1 HANGFIRE
@@ -244,6 +247,7 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler();
 //app.UseHttpsRedirection();
 app.UseCors("AllowBlazorClient");
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -312,6 +316,7 @@ app.MapToggleHabit();
 app.MapCreateBrainDumpItem();
 app.MapGetBrainDumpItems();
 app.MapDeleteBrainDumpItem();
+app.MapBreakdownTask();
 
 
 // ============================================

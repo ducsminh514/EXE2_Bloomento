@@ -2,6 +2,8 @@
 using ADHDChecklist.API.Data;
 using ADHDChecklist.API.Shared.DTOs;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using TaskEntity = ADHDChecklist.API.Entities.Task;
 
 namespace ADHDChecklist.API.Features.Tasks.CreateTask
 {
@@ -20,6 +22,23 @@ namespace ADHDChecklist.API.Features.Tasks.CreateTask
 
         public async Task<TaskResponse> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
         {
+            // 1. Check User Tier
+            var user = await _context.Users.FindAsync(new object[] { request.UserId }, cancellationToken);
+            if (user == null) throw new UnauthorizedAccessException("User not found");
+
+            if (!user.IsPremium())
+            {
+                // 2. Count active tasks
+                var taskCount = await _context.Tasks.CountAsync(t => t.UserId == request.UserId && t.DeletedAt == null, cancellationToken);
+                
+                if (taskCount >= 50)
+                {
+                    throw new ADHDChecklist.API.Entities.Exceptions.PremiumFeatureException(
+                        "Bạn đã đạt giới hạn 50 công việc của gói Free. Vui lòng nâng cấp Premium để tạo không giới hạn!", 
+                        "Unlimited Tasks");
+                }
+            }
+
             var task = new Entities.Task
             {
                 Id = Guid.NewGuid(),

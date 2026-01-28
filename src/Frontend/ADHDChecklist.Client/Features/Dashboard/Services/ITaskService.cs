@@ -17,5 +17,6 @@ namespace ADHDChecklist.Client.Features.Dashboard.Services
         // New methods
         Task<int> AutoAdjustTasksAsync();
         Task<int> GetOverdueCountAsync();
+        Task<string[]> BreakdownTaskAsync(string taskTitle);
     }
 }

@@ -148,5 +148,24 @@ namespace ADHDChecklist.Client.Features.Dashboard.Services
                 return 0;
             }
         }
+
+        public async Task<string[]> BreakdownTaskAsync(string taskTitle)
+        {
+            try
+            {
+                var response = await _apiClient.PostAsync<BreakdownTaskResponse>(
+                    "/api/ai/breakdown",
+                    new { TaskTitle = taskTitle }
+                );
+                return response?.Steps ?? Array.Empty<string>();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error breaking down task");
+                return Array.Empty<string>();
+            }
+        }
     }
+
+    public record BreakdownTaskResponse(string[] Steps);
 }

@@ -12,9 +12,24 @@
 
             <!-- Header: Title Input (Document Style) -->
             <div class="px-6 pt-6 pb-2">
-                <InputText @bind-Value="_model.Title"
-                           class="w-full text-xl font-bold text-gray-900 placeholder-gray-400 border-none p-0 focus:ring-0"
-                           placeholder="Bạn muốn làm gì?" />
+                <div class="flex gap-2">
+                    <InputText @bind-Value="_model.Title"
+                               class="flex-1 text-xl font-bold text-gray-900 placeholder-gray-400 border-none p-0 focus:ring-0"
+                               placeholder="Bạn muốn làm gì?" />
+                    
+                    <button type="button" @onclick="HandleAutoBreakdown" disabled="@_isBreakingDown"
+                            class="p-2 rounded-full hover:bg-purple-50 text-purple-600 transition-colors disabled:opacity-50"
+                            title="Tự động chia nhỏ task (Magic Breakdown)">
+                        @if (_isBreakingDown)
+                        {
+                            <div class="animate-spin h-5 w-5 border-2 border-purple-600 border-t-transparent rounded-full"></div>
+                        }
+                        else
+                        {
+                            <span class="text-xl">🪄</span>
+                        }
+                    </button>
+                </div>
                 <ValidationMessage For="@(() => _model.Title)" class="text-red-500 text-xs mt-1" />
             </div>
 
@@ -100,8 +115,17 @@
 
                 @if (!string.IsNullOrEmpty(_errorMessage))
                 {
-                    <div class="text-xs text-red-500 font-medium bg-red-50 p-2 rounded">
-                        ⚠️ @_errorMessage
+                    <div class="text-xs font-medium bg-red-50 p-3 rounded-lg border border-red-100 flex items-start gap-2 animate-fade-in">
+                        <span class="text-lg">⚠️</span>
+                        <div class="flex-1">
+                            <span class="text-red-600 block">@_errorMessage</span>
+                            @if (_errorMessage.Contains("giới hạn"))
+                            {
+                                <button type="button" class="mt-1 text-[10px] font-bold text-white bg-gradient-to-r from-amber-400 to-orange-500 px-3 py-1 rounded-full shadow hover:scale-105 transition-transform">
+                                    Nâng cấp Premium ngay 👑
+                                </button>
+                            }
+                        </div>
                     </div>
                 }
             </div>
@@ -133,11 +157,44 @@
 
     private TaskFormModel _model = new();
     private bool _isSubmitting;
+    private bool _isBreakingDown;
     private string? _errorMessage;
 
     protected override void OnInitialized()
     {
         _model.ScheduledDate = SelectedDate.ToString("yyyy-MM-dd");
+    }
+
+    private async Task HandleAutoBreakdown()
+    {
+        if (string.IsNullOrWhiteSpace(_model.Title)) return;
+
+        _isBreakingDown = true;
+        try
+        {
+            var steps = await TaskService.BreakdownTaskAsync(_model.Title);
+            if (steps.Any())
+            {
+                var checklist = string.Join("\n", steps.Select(s => $"- [ ] {s}"));
+                
+                if (!string.IsNullOrWhiteSpace(_model.Description))
+                {
+                    _model.Description += "\n\n### Các bước nhỏ (AI Suggestion):\n" + checklist;
+                }
+                else
+                {
+                    _model.Description = "### Các bước nhỏ (AI Suggestion):\n" + checklist;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = "Lỗi khi gọi AI: " + ex.Message;
+        }
+        finally
+        {
+            _isBreakingDown = false;
+        }
     }
 
     private class TaskFormModel
@@ -192,7 +249,14 @@
         }
         catch (Exception ex)
         {
-            _errorMessage = "Có lỗi xảy ra khi tạo công việc: " + ex.Message;
+            if (ex.Message.Contains("Unlimited Tasks") || ex.Message.Contains("giới hạn"))
+            {
+                _errorMessage = "🔒 " + ex.Message.Replace("System.Exception:", "").Trim();
+            }
+            else
+            {
+                _errorMessage = "Có lỗi xảy ra: " + ex.Message;
+            }
         }
         finally
         {
