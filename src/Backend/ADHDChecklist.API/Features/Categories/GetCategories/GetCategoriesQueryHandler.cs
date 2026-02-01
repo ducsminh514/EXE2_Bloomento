@@ -1,6 +1,8 @@
 ﻿using ADHDChecklist.API.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ADHDChecklist.API.Features.Categories;
+
 namespace ADHDChecklist.API.Features.Categories.GetCategories
 {
     public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, List<CategoryResponse>>

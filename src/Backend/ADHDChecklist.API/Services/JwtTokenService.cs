@@ -5,6 +5,8 @@ using System.Text;
 using ADHDChecklist.API.Entities;
 using ADHDChecklist.API.Entities.Common;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity; // Added for User Manager
+using System.Security.Claims; // Explicitly included
 
 namespace ADHDChecklist.API.Services;
 
@@ -18,10 +20,12 @@ public interface IJwtTokenService
 public class JwtTokenService : IJwtTokenService
 {
     private readonly IConfiguration _configuration;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public JwtTokenService(IConfiguration configuration)
+    public JwtTokenService(IConfiguration configuration, UserManager<ApplicationUser> userManager)
     {
         _configuration = configuration;
+        _userManager = userManager;
     }
 
     public string GenerateAccessToken(ApplicationUser user)
@@ -35,6 +39,13 @@ public class JwtTokenService : IJwtTokenService
             new Claim("IsPremium", user.IsPremium().ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
+
+        // Add Roles
+        var roles = _userManager.GetRolesAsync(user).Result; // Synchronous for simplicity in this method context, or change to async
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
 
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]!)

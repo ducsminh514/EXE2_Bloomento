@@ -1,0 +1,95 @@
+@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+@inject ADHDChecklist.Client.Features.Auth.Services.IAuthService AuthService
+@inject IJSRuntime JS
+
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        <div class="flex h-screen bg-gray-50 dark:bg-gray-900 font-sans">
+            <!-- Sidebar -->
+            <aside class="w-64 bg-slate-900 text-white flex flex-col">
+                <div class="h-16 flex items-center px-6 border-b border-slate-700">
+                    <span class="text-xl font-bold tracking-tight text-blue-400">Bloomento Admin</span>
+                </div>
+
+                <nav class="flex-1 px-4 py-4 space-y-1">
+                    <NavLink href="/admin/dashboard" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors" Match="NavLinkMatch.All">
+                        <span class="mr-3">📊</span> Dashboard
+                    </NavLink>
+                    <NavLink href="/admin/users" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors">
+                        <span class="mr-3">👥</span> Users
+                    </NavLink>
+                    
+                    <div class="pt-4 pb-2">
+                        <p class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Content</p>
+                    </div>
+
+                    <NavLink href="/admin/knowledge/articles" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors">
+                        <span class="mr-3">📚</span> Articles
+                    </NavLink>
+                    <NavLink href="/admin/knowledge/categories" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors">
+                        <span class="mr-3">🏷️</span> Categories
+                    </NavLink>
+
+                    <NavLink href="/admin/knowledge/comments" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors">
+                        <span class="mr-3">💬</span> Comments
+                    </NavLink>
+                    
+                    <div class="pt-4 pb-2">
+                        <p class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">System</p>
+                    </div>
+                     <NavLink href="/" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors text-slate-400 hover:text-white">
+                        <span class="mr-3">⬅️</span> Back to App
+                    </NavLink>
+                </nav>
+
+                <div class="p-4 border-t border-slate-700">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-white">@context.User.Identity?.Name</p>
+                            <p class="text-xs text-slate-400">Super Admin</p>
+                        </div>
+                        <button @onclick="HandleLogout" class="p-2 text-slate-400 hover:text-red-400 transition-colors" title="Logout">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1 overflow-y-auto">
+                <div class="p-8">
+                    @Body
+                </div>
+            </main>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="flex items-center justify-center h-screen bg-gray-100">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-red-600 mb-4">403 Forbidden</h1>
+                <p class="text-gray-600 mb-6">You do not have permission to access the Admin Console.</p>
+                <a href="/" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Go Home</a>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+<style>
+    /* Admin specific overrides if needed */
+</style>
+
+@code {
+    private async Task HandleLogout()
+    {
+        if (await JS.InvokeAsync<bool>("confirm", "Are you sure you want to logout?"))
+        {
+            await AuthService.LogoutAsync();
+            Navigation.NavigateTo("/login", forceLoad: true);
+        }
+    }
+}

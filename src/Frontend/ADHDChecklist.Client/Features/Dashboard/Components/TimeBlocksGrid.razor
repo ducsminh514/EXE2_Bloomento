@@ -166,6 +166,7 @@
                                  <div class="resize-handle" 
                                       draggable="true" 
                                       @ondragstart="() => HandleResizeStart(task)"
+                                      @ondragstart:stopPropagation
                                       @onclick:stopPropagation>
                                  </div>
                             }

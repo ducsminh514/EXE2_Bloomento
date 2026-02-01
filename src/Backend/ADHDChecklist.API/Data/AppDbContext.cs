@@ -24,6 +24,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     public DbSet<BrainDumpItem> BrainDumpItems { get; set; } = null!;
     public DbSet<UserPreference> UserPreferences { get; set; } = null!;
     public DbSet<AnalyticsSnapshot> AnalyticsSnapshots { get; set; } = null!;
+    
+    // Knowledge Sharing Module
+    public DbSet<KnowledgeCategory> KnowledgeCategories { get; set; } = null!;
+    public DbSet<Article> Articles { get; set; } = null!;
+    public DbSet<ArticleComment> ArticleComments { get; set; } = null!;
+    public DbSet<ArticleBookmark> ArticleBookmarks { get; set; } = null!;
+    public DbSet<ReadingProgress> ReadingProgresses { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -40,6 +47,36 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
 
         // Apply all configurations from assembly
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+        // Knowledge Module - Avoid Cascade Cycles
+        
+        // Article -> User (Author) : Restrict (Don't delete articles if user is deleted, or handle manually)
+        modelBuilder.Entity<Article>()
+            .HasOne(a => a.Author)
+            .WithMany()
+            .HasForeignKey(a => a.AuthorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Comment -> User : Restrict
+        modelBuilder.Entity<ArticleComment>()
+            .HasOne(c => c.User)
+            .WithMany()
+            .HasForeignKey(c => c.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Bookmark -> User : Restrict
+        modelBuilder.Entity<ArticleBookmark>()
+            .HasOne(b => b.User)
+            .WithMany()
+            .HasForeignKey(b => b.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Progress -> User : Restrict
+        modelBuilder.Entity<ReadingProgress>()
+            .HasOne(p => p.User)
+            .WithMany()
+            .HasForeignKey(p => p.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     // Auto-update timestamps
@@ -75,9 +112,3 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     }
 }
 
-// Interface for auditable entities
-public interface IAuditable
-{
-    DateTime CreatedAt { get; set; }
-    DateTime UpdatedAt { get; set; }
-}

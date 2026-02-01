@@ -23,6 +23,14 @@ namespace ADHDChecklist.API.Features.Tasks.AutoAdjust
 
         public async Task<int> Handle(AutoAdjustTasksCommand request, CancellationToken cancellationToken)
         {
+            var user = await _context.Users.FindAsync(new object[] { request.UserId }, cancellationToken);
+            if (user == null || !user.IsPremium())
+            {
+                 throw new ADHDChecklist.API.Entities.Exceptions.PremiumFeatureException(
+                    "Tính năng 'Dời việc quá hạn' chỉ dành cho Premium.", 
+                    "Auto-Adjust Tasks");
+            }
+
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
             var overdueTasks = await _context.Tasks
@@ -39,7 +47,6 @@ namespace ADHDChecklist.API.Features.Tasks.AutoAdjust
                 task.TimeBlockStart = null; // Reset time so user can re-plan
                 task.TimeBlockEnd = null;
                 task.RescheduleCount++;
-                // Keep priority and other details
             }
 
             await _context.SaveChangesAsync(cancellationToken);

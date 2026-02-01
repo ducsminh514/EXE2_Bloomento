@@ -3,6 +3,7 @@ using ADHDChecklist.Client.Features.Auth.Services;
 using ADHDChecklist.Client.Features.Dashboard.Services;
 using ADHDChecklist.Client.Features.Preferences.Services;
 using ADHDChecklist.Client.Features.Habits.Services;
+using ADHDChecklist.Client.Features.Knowledge.Services;
 using ADHDChecklist.Client.Infrastructure.Services;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -32,14 +33,22 @@ builder.Services.AddScoped<DragDropState>();
 // AUTH SERVICES
 // ============================================
 builder.Services.AddScoped<IApiClient, ApiClient>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IBrainDumpService, BrainDumpService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
-builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// ============================================
+// FEATURE SERVICES
+// ============================================
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+//builder.Services.AddScoped<IPremiumAnalyticsService, PremiumAnalyticsService>();
+builder.Services.AddScoped<IBrainDumpService, BrainDumpService>();
 builder.Services.AddScoped<IHabitService, HabitService>();
+builder.Services.AddScoped<IKnowledgeService, KnowledgeService>();
 builder.Services.AddScoped<IPreferencesService, PreferencesService>();
+builder.Services.AddScoped<ADHDChecklist.Client.Features.Admin.Services.IAdminService, ADHDChecklist.Client.Features.Admin.Services.AdminService>();
+
 builder.Services.AddAuthorizationCore();
 
 // ============================================

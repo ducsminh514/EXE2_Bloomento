@@ -13,6 +13,13 @@ using ADHDChecklist.API.Features.Auth.Register;
 using ADHDChecklist.API.Features.Auth.ResendVerification;
 using ADHDChecklist.API.Features.Auth.VerifyEmail;
 using System.Text.Json.Serialization;
+using ADHDChecklist.API.Features.Knowledge.Categories;
+using ADHDChecklist.API.Features.Knowledge.Articles;
+using ADHDChecklist.API.Features.Knowledge.Comments;
+using ADHDChecklist.API.Features.Common.Upload;
+using ADHDChecklist.API.Features.Admin.Dashboard;
+using ADHDChecklist.API.Features.Admin.Users;
+using ADHDChecklist.API.Features.Knowledge.Bookmarks;
 using ADHDChecklist.API.Features.Categories;
 using ADHDChecklist.API.Features.Tasks.CreateTask;
 using ADHDChecklist.API.Features.Tasks.DeleteTask;
@@ -122,7 +129,10 @@ builder.Services.AddAuthentication(options =>
     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
 });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
+});
 
 // ============================================
 // 4. CORS
@@ -166,6 +176,12 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ADHDChecklist.API.Services.BackgroundJobs.CleanupService>();
 builder.Services.AddScoped<ADHDChecklist.API.Services.BackgroundJobs.ReminderJob>();
 builder.Services.AddHttpClient<IGeminiService, GeminiService>();
+builder.Services.AddScoped<KnowledgeSeeder>();
+builder.Services.AddScoped<IdentitySeeder>();
+
+// ... (existing code)
+
+
 
 builder.Services.AddMemoryCache();
 builder.Services.AddRateLimiter(options =>
@@ -245,6 +261,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseExceptionHandler();
+app.UseStaticFiles();
 //app.UseHttpsRedirection();
 app.UseCors("AllowBlazorClient");
 app.UseRateLimiter();
@@ -298,9 +315,40 @@ app.MapGetOverdueCount();
 // Category endpoints
 app.MapCategoryEndpoints();
 
+// Knowledge endpoints
+app.MapGetKnowledgeCategories();
+app.MapArticleEndpoints();
+app.MapArticleDetailEndpoint();
+app.MapGetCommentsEndpoint();
+app.MapCreateCommentEndpoint();
+app.MapToggleBookmarkEndpoint();
+app.MapGetBookmarkedArticlesEndpoint();
+
+// Admin Knowledge (Admin Policy required)
+app.MapGetAdminArticlesEndpoint();
+app.MapCreateArticleEndpoint();
+app.MapUpdateArticleEndpoint();
+app.MapDeleteArticleEndpoint();
+// Admin Comments
+app.MapGetAdminCommentsEndpoint();
+app.MapToggleCommentVisibilityEndpoint();
+// Admin Categories
+app.MapCreateCategoryEndpoint();
+app.MapUpdateCategoryEndpoint();
+app.MapDeleteCategoryEndpoint();
+
+// Common
+app.MapUploadImageEndpoint();
+
+// Admin Dashboard
+app.MapGetAdminDashboardStatsEndpoint();
+app.MapGetAdminDashboardChartsEndpoint();
+app.MapGetUsersEndpoint();
+app.MapGetUserDetailEndpoint();
+app.MapToggleUserLockEndpoint();
+
 // User endpoints
 app.MapUpdateProfile();
-
 app.MapUpgrade();
 app.MapGetPreferences();
 app.MapUpdatePreferences();
@@ -335,5 +383,28 @@ RecurringJob.AddOrUpdate<ADHDChecklist.API.Services.BackgroundJobs.ReminderJob>(
     "task-reminders",
     service => service.CheckAndSendReminders(),
     "*/15 * * * *");
+
+
+// ============================================
+// 11. DATA SEEDING
+// ============================================
+using (var scope = app.Services.CreateScope())
+{
+    try 
+    {
+        // var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        // dbContext.Database.Migrate(); // Optional: Auto-migrate
+        
+        var knowledgeSeeder = scope.ServiceProvider.GetRequiredService<KnowledgeSeeder>();
+        await knowledgeSeeder.SeedAsync();
+
+        var identitySeeder = scope.ServiceProvider.GetRequiredService<IdentitySeeder>();
+        await identitySeeder.SeedAsync();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error seeding data: {ex.Message}");
+    }
+}
 
 app.Run();

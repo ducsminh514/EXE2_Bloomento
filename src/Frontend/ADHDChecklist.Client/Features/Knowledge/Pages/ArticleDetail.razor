@@ -1,0 +1,125 @@
+@page "/knowledge/article/{ArticleSlug}"
+@using ADHDChecklist.Client.Features.Knowledge.Services
+@using ADHDChecklist.Client.Features.Knowledge.Components
+@inject IKnowledgeService KnowledgeService
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+@if (_isLoading)
+{
+    <div class="max-w-3xl mx-auto p-6 space-y-8 animate-pulse">
+        <div class="h-8 bg-gray-200 rounded w-3/4"></div>
+        <div class="flex gap-4">
+             <div class="h-4 bg-gray-100 rounded w-24"></div>
+             <div class="h-4 bg-gray-100 rounded w-24"></div>
+        </div>
+        <div class="space-y-4">
+            <div class="h-4 bg-gray-100 rounded w-full"></div>
+            <div class="h-4 bg-gray-100 rounded w-full"></div>
+            <div class="h-4 bg-gray-100 rounded w-5/6"></div>
+        </div>
+    </div>
+}
+else if (_article == null)
+{
+    <div class="flex flex-col items-center justify-center min-h-[50vh]">
+        <span class="text-4xl mb-4">😢</span>
+        <h2 class="text-2xl font-bold text-gray-800">Không tìm thấy bài viết</h2>
+        <button @onclick='() => Navigation.NavigateTo("/knowledge")' class="mt-4 text-primary-600 hover:underline">Quay về trang chủ</button>
+    </div>
+}
+else
+{
+    <div class="max-w-3xl mx-auto px-6 py-12 animate-fade-in pb-32"> <!-- Added padding bottom for safety -->
+        
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 text-sm text-gray-500 mb-8">
+            <a href="/knowledge" class="hover:text-primary-600 transition-colors">Kiến thức</a>
+            <span>/</span>
+            <a href="/knowledge/category/@_article.CategorySlug" class="hover:text-primary-600 transition-colors font-bold text-primary-600">@_article.CategoryName</a>
+        </div>
+
+        <!-- Meta Header -->
+        <h1 class="text-3xl md:text-4xl font-black text-gray-900 leading-tight mb-4">
+            @_article.Title
+        </h1>
+        
+        <div class="flex items-center gap-6 text-sm text-gray-500 mb-8 border-b border-gray-100 pb-8">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold text-xs">
+                    @(_article.AuthorName.Length > 0 ? _article.AuthorName[0] : 'A')
+                </div>
+                <span class="font-medium text-gray-900">@_article.AuthorName</span>
+            </div>
+            <span>•</span>
+            <span>@_article.EstimatedReadTimeMinutes phút đọc</span>
+            <span>•</span>
+            <span class="@GetDifficultyColor(_article.Difficulty) font-bold">@_article.Difficulty</span>
+        </div>
+
+        <!-- Content (Prose) -->
+        <article class="prose prose-lg prose-slate max-w-none 
+                        prose-headings:font-bold prose-headings:text-gray-800 
+                        prose-p:text-gray-600 prose-p:leading-loose
+                        prose-a:text-primary-600 prose-a:no-underline hover:prose-a:underline
+                        prose-blockquote:border-l-4 prose-blockquote:border-primary-400 prose-blockquote:bg-gray-50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg
+                        prose-img:rounded-xl prose-img:shadow-md">
+            @((MarkupString)_article.Content)
+        </article>
+
+        <!-- Comment Section -->
+        <CommentSection ArticleId="@_article.Id" />
+        
+        <!-- Engagement / Footer -->
+        <div class="mt-8 pt-8 border-t border-gray-100 flex items-center justify-between">
+            <div class="flex gap-4">
+                <button class="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 hover:bg-red-50 text-gray-600 hover:text-red-500 transition-colors font-bold text-sm group">
+                    <span class="group-hover:scale-110 transition-transform">❤️</span> Thích
+                </button>
+                <button @onclick="ToggleBookmark" 
+                        class="flex items-center gap-2 px-4 py-2 rounded-full transition-colors font-bold text-sm group @(_article.IsBookmarked ? "bg-blue-100 text-blue-600" : "bg-gray-50 hover:bg-blue-50 text-gray-600 hover:text-blue-500")">
+                    <span class="group-hover:scale-110 transition-transform">@(_article.IsBookmarked ? "🔖" : "🏷️")</span> 
+                    @(_article.IsBookmarked ? "Đã lưu" : "Lưu")
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public string ArticleSlug { get; set; } = string.Empty;
+
+    private ArticleDetailDto? _article;
+    private bool _isLoading = true;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _isLoading = true;
+        _article = await KnowledgeService.GetArticleDetailAsync(ArticleSlug);
+        _isLoading = false;
+    }
+
+    private string GetDifficultyColor(string difficulty)
+    {
+        return difficulty.ToLower() switch
+        {
+            "easy" => "text-green-500",
+            "medium" => "text-yellow-500",
+            "hard" => "text-red-500",
+            _ => "text-gray-400"
+        };
+    }
+
+    private async Task ToggleBookmark()
+    {
+        if (_article == null) return;
+        
+        // Optimistic update
+        _article.IsBookmarked = !_article.IsBookmarked;
+        
+        var result = await KnowledgeService.ToggleBookmarkAsync(_article.Id);
+        
+        // Ensure state sync
+        _article.IsBookmarked = result;
+    }
+}

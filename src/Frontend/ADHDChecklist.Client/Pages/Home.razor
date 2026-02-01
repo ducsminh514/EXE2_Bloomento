@@ -39,6 +39,25 @@
                         </button>
                     }
                 </div>
+
+
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center gap-6 ml-8">
+                     <AuthorizeView Roles="Admin">
+                        <a href="/admin/dashboard" class="px-3 py-1 bg-slate-800 text-white text-xs font-bold rounded-md hover:bg-slate-700 transition-colors flex items-center gap-2">
+                            <span>🛡️</span> Admin Panel
+                        </a>
+                    </AuthorizeView>
+
+                    <a href="/" class="text-sm font-bold text-primary-700 border-b-2 border-primary-600 pb-0.5">
+                        Dashboard
+                    </a>
+                    <a href="/knowledge" class="text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors flex items-center gap-1 group">
+                        <span>📚</span> 
+                        <span class="group-hover:translate-x-0.5 transition-transform">Kiến thức</span>
+                    </a>
+                </div>
                 
                 <div class="flex items-center gap-4">
                     <button @onclick="ShowProfileModal" class="text-sm text-gray-600 hover:text-primary-600 transition-colors flex items-center gap-2 group">
@@ -385,6 +404,7 @@
                        OnDelete="DeleteTask"
                        OnToggleComplete="ToggleTaskComplete"
                        OnFocus="HandleFocusTask"
+                       OnMagicBreakdown="HandleMagicBreakdown"
                        IsPremium="@(_currentUser?.IsPremium == true)"
                        OnUpgradeClicked="ShowUpgradeModal" />
 }
@@ -596,6 +616,13 @@
             return;
         }
 
+        // Redirect Admin to Admin Dashboard
+        if (authState.User.IsInRole("Admin"))
+        {
+            Navigation.NavigateTo("/admin/dashboard");
+            return;
+        }
+
         // Fetch detailed profile for modal
         _currentUser = await AuthService.GetCurrentUserAsync();
         if (_currentUser != null)
@@ -736,6 +763,68 @@
         {
             await AuthService.LogoutAsync();
             Navigation.NavigateTo("/login", forceLoad: true);
+        }
+    }
+
+    private async Task HandleMagicBreakdown(Guid taskId)
+    {
+        var task = _allTasks.FirstOrDefault(t => t.Id == taskId);
+        if (task == null) return;
+
+        // Optimistic UI / Toast? For now just log
+        // Ideally show a toast "Generating steps..."
+        // Since we don't have a toast service ready, checking JS confirm to notify user or just wait?
+        // Let's use JS to show "Processing..."
+        // await JS.InvokeVoidAsync("alert", "Đang phân tích và chia nhỏ công việc...");
+        
+        _isLoading = true; // Block UI slightly
+        StateHasChanged();
+
+        try
+        {
+            var steps = await TaskService.BreakdownTaskAsync(task.Title);
+            
+            if (steps.Length > 0)
+            {
+                var stepList = string.Join("\n", steps.Select(s => $"- [ ] {s}"));
+                var newDescription = (task.Description ?? "") + $"\n\n**✨ Magic Breakdown:**\n{stepList}";
+                
+                var updateRequest = new UpdateTaskRequest(
+                    task.Title,
+                    newDescription,
+                    task.CategoryId,
+                    task.ScheduledDate,
+                    task.TimeBlockStart,
+                    task.TimeBlockEnd,
+                    task.Duration,
+                    task.Priority,
+                    task.IsCompleted
+                );
+
+                await TaskService.UpdateTaskAsync(task.Id, updateRequest);
+                await LoadData(); // Refresh UI
+                
+                // Show result in Edit Modal to verify? Or just let user see it.
+                // Re-open/Refresh the Popover? Popover binds to _selectedTaskForQuickView which is updated by LoadData?
+                // LoadData refreshes _allTasks, but _selectedTaskForQuickView is a separate object copy passed by value?
+                // We need to re-find it.
+                _selectedTaskForQuickView = _allTasks.FirstOrDefault(t => t.Id == taskId);
+                
+                await JS.InvokeVoidAsync("alert", "✨ Đã chia nhỏ công việc thành công! Hãy xem phần Mô tả.");
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("alert", "⚠️ AI không trả về kết quả nào. Hãy thử lại (Kiểm tra API Key).");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error magic breakdown: {ex.Message}");
+            await JS.InvokeVoidAsync("alert", $"❌ Lỗi: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false;
         }
     }
 
@@ -974,10 +1063,34 @@
         }
 
         _isLoading = true;
-        var count = await TaskService.AutoAdjustTasksAsync();
-        // If count > 0, maybe show toast
-        _isLoading = false;
-        
-        await LoadData();
+        try 
+        {
+            var count = await TaskService.AutoAdjustTasksAsync();
+            if (count > 0) 
+            {
+                 await JS.InvokeVoidAsync("alert", $"Đã dời {count} công việc quá hạn sang hôm nay!");
+            }
+            else
+            {
+                 await JS.InvokeVoidAsync("alert", "Không có công việc nào quá hạn cần dời.");
+            }
+        }
+        catch (Exception ex)
+        {
+             if (ex.Message.Contains("Premium")) 
+             {
+                 ShowUpgradeModal();
+             }
+             else
+             {
+                 Console.WriteLine($"Error auto-adjust: {ex.Message}");
+                 await JS.InvokeVoidAsync("alert", "Lỗi khi dời lịch tự động: " + ex.Message);
+             }
+        }
+        finally
+        {
+            _isLoading = false;
+            await LoadData();
+        }
     }
 }

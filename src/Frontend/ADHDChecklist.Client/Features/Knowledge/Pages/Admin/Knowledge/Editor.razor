@@ -1,0 +1,237 @@
+@page "/admin/knowledge/articles/create"
+@page "/admin/knowledge/articles/edit/{Id:guid}"
+@layout ADHDChecklist.Client.Layout.AdminLayout
+@using ADHDChecklist.Client.Features.Knowledge.Services
+@using ADHDChecklist.Client.Features.Knowledge.DTOs
+@inject IKnowledgeService KnowledgeService
+@inject NavigationManager Navigation
+
+<div class="max-w-4xl mx-auto">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">
+            @(Id.HasValue ? "Edit Article" : "Create New Article")
+        </h1>
+        <a href="/admin/knowledge/articles" class="text-sm text-gray-600 hover:text-gray-900">Cancel</a>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <EditForm Model="@Model" OnValidSubmit="SaveArticle">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-red-600 mb-4" />
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Title -->
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                    <InputText @bind-Value="Model.Title" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Enter article title..." />
+                </div>
+
+                <!-- Slug -->
+                <div class="col-span-2 md:col-span-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Slug</label>
+                    <InputText @bind-Value="Model.Slug" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="url-friendly-slug" />
+                    <p class="text-xs text-gray-500 mt-1">Unique URL identifier (kebab-case)</p>
+                </div>
+
+                 <!-- Category -->
+                <div class="col-span-2 md:col-span-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <InputSelect @bind-Value="Model.CategoryId" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="">-- Select Category --</option>
+                        @foreach (var cat in _categories)
+                        {
+                            <option value="@cat.Id">@cat.Name</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                 <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Cover Image URL</label>
+                    <div class="flex gap-2">
+                        <InputText @bind-Value="Model.CoverImage" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="https://..." />
+                         <InputFile OnChange="UploadCoverImage" id="coverImage" class="hidden" accept="image/*" />
+                         <label for="coverImage" class="cursor-pointer px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-200 flex items-center gap-2">
+                             <span>📤</span> Upload
+                         </label>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Summary (Short Description)</label>
+                    <InputTextArea @bind-Value="Model.Summary" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none h-20" />
+                </div>
+
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Content (Support Markdown/HTML)</label>
+                    
+                    <div class="mb-2 p-2 bg-gray-50 border border-gray-200 rounded-lg flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                             <InputFile OnChange="UploadContentImage" id="contentImage" class="hidden" accept="image/*" />
+                             <label for="contentImage" class="cursor-pointer px-3 py-1.5 bg-white border border-gray-300 rounded text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                                 <span>🖼️</span> Insert Image
+                             </label>
+                        </div>
+                        <span class="text-xs text-gray-400">Uploads & appends Markdown to content.</span>
+                    </div>
+
+                    <InputTextArea @bind-Value="Model.Content" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono text-sm h-64" placeholder="# Write your content here..." />
+                </div>
+
+                <!-- Meta -->
+                <div class="col-span-2 md:col-span-1">
+                     <label class="block text-sm font-medium text-gray-700 mb-1">Read Time (Min)</label>
+                     <InputNumber @bind-Value="Model.EstimatedReadTimeMinutes" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                </div>
+                 <div class="col-span-2 md:col-span-1">
+                     <label class="block text-sm font-medium text-gray-700 mb-1">Difficulty</label>
+                     <InputSelect @bind-Value="Model.Difficulty" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                     </InputSelect>
+                </div>
+
+                <!-- Toggles -->
+                <div class="col-span-2 flex gap-6 mt-4">
+                    <div class="flex items-center">
+                        <InputCheckbox @bind-Value="Model.IsPublished" id="isPublished" class="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+                        <label for="isPublished" class="ml-2 block text-sm font-medium text-gray-900">Publish Immediately</label>
+                    </div>
+                    <div class="flex items-center">
+                        <InputCheckbox @bind-Value="Model.IsPremium" id="isPremium" class="h-4 w-4 text-yellow-600 rounded border-gray-300 focus:ring-yellow-500" />
+                        <label for="isPremium" class="ml-2 block text-sm font-medium text-gray-900">Premium Content</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-6 border-t border-gray-100">
+                <a href="/admin/knowledge/articles" class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Cancel</a>
+                <button type="submit" disabled="@_isSaving" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2">
+                    @if (_isSaving)
+                    {
+                        <span class="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></span>
+                    }
+                    Save Article
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Guid? Id { get; set; }
+
+    private ArticleEditorDto Model { get; set; } = new();
+    private List<KnowledgeCategoryDto> _categories = new();
+    private bool _isSaving = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _categories = await KnowledgeService.GetCategoriesAsync();
+
+        if (Id.HasValue)
+        {
+            // Load existing (Wait, GetArticleDetail uses Slug, but Admin Edit uses ID usually. 
+            // My Service currently has GetArticleDetail(slug). 
+            // I should technically implement GetArticleById for Admin, but I can use admin list to get detail or just assume I can find it.
+            // For MVP: I will rely on my existing GetAdminArticlesAsync list and find it IN MEMORY or fail.
+            // IMPROVEMENT: Implement GetArticleById endpoint.
+            // WORKAROUND: For now, I'll fetch the FULL admin list and filter by ID to populate edit (Not scalable but works for small list).
+            var articles = await KnowledgeService.GetAdminArticlesAsync();
+            var article = articles.FirstOrDefault(a => a.Id == Id.Value);
+            
+            if (article != null)
+            {
+                // Map to Editor DTO
+                // Note: Detailed content is NOT in list DTO.
+                // CRITICAL: GetAdminArticles list does NOT contain CONTENT.
+                // I MUST implement GetArticleById or GetArticleDetail(slug) that RETURNS CONTENT.
+                // Current GetArticleDetail(slug) returns content. I can use that if I know the slug.
+                // Yes, ArticleDto from list has Slug.
+                
+                var detail = await KnowledgeService.GetArticleDetailAsync(article.Slug);
+                if (detail != null)
+                {
+                     Model = new ArticleEditorDto
+                     {
+                         Id = detail.Id,
+                         Title = detail.Title,
+                         Slug = detail.Slug,
+                         Summary = detail.Summary,
+                         Content = detail.Content,
+                         CoverImage = detail.CoverImage,
+                         // CategoryId search via Name or fetch logic
+                         // Detail DTO has CategoryName/Slug but not ID?
+                         // I need CategoryId on detail DTO or map it back.
+                         // Let's check Category list to find ID by Slug match.
+                         CategoryId = _categories.FirstOrDefault(c => c.Name == detail.CategoryName)?.Id ?? Guid.Empty,
+                         EstimatedReadTimeMinutes = detail.EstimatedReadTimeMinutes,
+                         Difficulty = detail.Difficulty,
+                         IsPublished = article.IsPublished, // Detail DTO might not have publish status if public API
+                         IsPremium = article.IsPremium
+                     };
+                }
+            }
+        }
+    }
+
+    private async Task SaveArticle()
+    {
+        _isSaving = true;
+        try
+        {
+            if (Id.HasValue)
+            {
+                Model.Id = Id.Value;
+                await KnowledgeService.UpdateArticleAsync(Id.Value, Model);
+            }
+            else
+            {
+                await KnowledgeService.CreateArticleAsync(Model);
+            }
+            Navigation.NavigateTo("/admin/knowledge/articles");
+        }
+        finally
+        {
+            _isSaving = false;
+        }
+    }
+
+    private async Task UploadCoverImage(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            // Max 5MB
+            var content = new MultipartFormDataContent();
+            var fileContent = new StreamContent(file.OpenReadStream(5 * 1024 * 1024));
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+            content.Add(fileContent, "file", file.Name);
+
+            var url = await KnowledgeService.UploadImageAsync(content);
+            if (!string.IsNullOrEmpty(url))
+            {
+                Model.CoverImage = url;
+            }
+        }
+    }
+
+    private async Task UploadContentImage(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            var content = new MultipartFormDataContent();
+             var fileContent = new StreamContent(file.OpenReadStream(5 * 1024 * 1024));
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+            content.Add(fileContent, "file", file.Name);
+
+            var url = await KnowledgeService.UploadImageAsync(content);
+            if (!string.IsNullOrEmpty(url))
+            {
+                Model.Content += $"\n![Image]({url})\n";
+            }
+        }
+    }
+}

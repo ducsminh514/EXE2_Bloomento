@@ -6,6 +6,7 @@
 @inject ILogger<Login> Logger
 @using System.ComponentModel.DataAnnotations
 @using ADHDChecklist
+@inject AuthenticationStateProvider AuthStateProvider
 <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-purple-50 px-4">
     <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
 
@@ -162,10 +163,26 @@
 
             var response = await AuthService.LoginAsync(request);
 
+
+
             if (response.Success)
             {
-                Logger.LogInformation("Login successful, redirecting to dashboard");
-                Navigation.NavigateTo("/", forceLoad: true);
+                Logger.LogInformation("Login successful");
+                
+                // Check role to redirect
+                var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+                var user = authState.User;
+
+                if (user.IsInRole("Admin"))
+                {
+                    Logger.LogInformation("User is Admin, redirecting to Admin Dashboard");
+                    Navigation.NavigateTo("/admin/dashboard", forceLoad: true);
+                }
+                else
+                {
+                    Logger.LogInformation("User is Member, redirecting to Dashboard");
+                    Navigation.NavigateTo("/", forceLoad: true);
+                }
             }
             else
             {

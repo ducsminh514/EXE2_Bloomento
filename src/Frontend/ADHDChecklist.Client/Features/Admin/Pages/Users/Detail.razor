@@ -1,0 +1,203 @@
+@page "/admin/users/{UserId}"
+@layout ADHDChecklist.Client.Layout.AdminLayout
+@using ADHDChecklist.Client.Features.Admin.Services
+@using ADHDChecklist.Client.Features.Admin.DTOs
+@inject IAdminService AdminService
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>User Details - Bloomento Admin</PageTitle>
+
+<div class="space-y-6">
+    <div class="flex items-center gap-4">
+        <a href="/admin/users" class="text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </a>
+        <h1 class="text-2xl font-bold text-gray-900">User Details</h1>
+    </div>
+
+     @if (_isLoading)
+     {
+         <div class="flex justify-center p-12">
+            <div class="animate-spin h-8 w-8 border-4 border-indigo-500 rounded-full border-t-transparent"></div>
+         </div>
+     }
+     else if (_user != null)
+     {
+         <!-- Header Card -->
+         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+             <div class="flex items-center gap-4">
+                 <div class="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 text-2xl font-bold">
+                     @GetInitials(_user.FullName)
+                 </div>
+                 <div>
+                     <h2 class="text-xl font-bold text-gray-900">@_user.FullName</h2>
+                     <p class="text-gray-500">@_user.Email</p>
+                     <div class="flex gap-2 mt-2">
+                         @if (_user.IsPremium)
+                         {
+                             <span class="px-2 py-1 text-xs font-medium rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200">
+                                🌟 Premium Plan
+                             </span>
+                         }
+                         else
+                         {
+                             <span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">Free Plan</span>
+                         }
+
+                         @if (_user.IsLockedOut)
+                         {
+                             <span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">Locked</span>
+                         }
+                         else if (_user.IsEmailVerified)
+                         {
+                             <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">Verified</span>
+                         }
+                     </div>
+                 </div>
+             </div>
+             
+             <div class="flex gap-3">
+                 <button @onclick="ToggleLock" class="@(_user.IsLockedOut ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700") text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2">
+                     @if (_user.IsLockedOut)
+                     {
+                         <span>🔓 Unlock Account</span>
+                     }
+                     else
+                     {
+                         <span>🔒 Lock Account</span>
+                     }
+                 </button>
+             </div>
+         </div>
+
+         <!-- Stats Grid -->
+         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+             <!-- Engagement -->
+             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                 <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Engagement</h3>
+                 <div class="space-y-4">
+                     <div class="flex justify-between items-center">
+                         <span class="text-gray-600">Joined</span>
+                         <span class="font-medium text-gray-900">@_user.CreatedAt.ToString("MMM dd, yyyy")</span>
+                     </div>
+                     <div class="flex justify-between items-center">
+                         <span class="text-gray-600">Last Login</span>
+                         <span class="font-medium text-gray-900">@(_user.LastLoginAt?.ToString("MMM dd, HH:mm") ?? "Never")</span>
+                     </div>
+                     <div class="flex justify-between items-center">
+                         <span class="text-gray-600">Current Streak</span>
+                         <span class="font-medium text-amber-600">🔥 @_user.CurrentStreak</span>
+                     </div>
+                 </div>
+             </div>
+
+             <!-- Task Performance -->
+             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                 <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Productivity</h3>
+                 <div class="space-y-4">
+                     <div class="flex justify-between items-center">
+                         <span class="text-gray-600">Total Tasks</span>
+                         <span class="font-medium text-gray-900">@_user.TaskCount</span>
+                     </div>
+                     <div class="flex justify-between items-center">
+                         <span class="text-gray-600">Completed</span>
+                         <span class="font-medium text-green-600">@_user.CompletedTaskCount</span>
+                     </div>
+                     <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                         <div class="bg-green-500 h-2.5 rounded-full" style="@($"width: {CalculateCompletionRate().ToString("0")}%;")"></div>
+                     </div>
+                     <p class="text-xs text-right text-gray-500">@CalculateCompletionRate().ToString("0")% Completion Rate</p>
+                 </div>
+             </div>
+
+             <!-- System Info -->
+             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                 <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">System Info</h3>
+                 <div class="space-y-4">
+                     <div class="flex justify-between items-center">
+                         <span class="text-gray-600">User ID</span>
+                         <span class="text-xs font-mono bg-gray-100 px-2 py-1 rounded">@_user.Id</span>
+                     </div>
+                     @if (_user.LockoutEnd.HasValue)
+                     {
+                          <div class="flex justify-between items-center">
+                             <span class="text-red-600">Locked Until</span>
+                             <span class="font-medium text-red-600">@_user.LockoutEnd?.ToString("MMM dd, yyyy")</span>
+                         </div>
+                     }
+                 </div>
+             </div>
+         </div>
+     }
+     else
+     {
+         <div class="text-center py-12 bg-white rounded-xl border border-gray-200">
+             <div class="text-red-500 mb-2 text-xl">❌</div>
+             <h3 class="text-lg font-medium text-gray-900">User Not Found</h3>
+             <a href="/admin/users" class="text-indigo-600 hover:underline mt-2 inline-block">Return to list</a>
+         </div>
+     }
+</div>
+
+@code {
+    [Parameter]
+    public string UserId { get; set; } = string.Empty;
+
+    private UserDetailResponse? _user;
+    private bool _isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUser();
+    }
+
+    private async Task LoadUser()
+    {
+        _isLoading = true;
+        try
+        {
+            _user = await AdminService.GetUserDetailAsync(UserId);
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task ToggleLock()
+    {
+        if (_user == null) return;
+
+        string action = _user.IsLockedOut ? "unlock" : "lock";
+        if (await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to {action} this user?"))
+        {
+            var success = await AdminService.ToggleUserLockAsync(UserId);
+            if (success)
+            {
+                await LoadUser(); // Reload to get updated status
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("alert", "Failed to update user status.");
+            }
+        }
+    }
+
+    private double CalculateCompletionRate()
+    {
+        if (_user == null || _user.TaskCount == 0) return 0;
+        return (double)_user.CompletedTaskCount / _user.TaskCount * 100;
+    }
+
+    private string GetInitials(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "U";
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 1) return parts[0][0].ToString().ToUpper();
+        return (parts[0][0].ToString() + parts[parts.Length - 1][0].ToString()).ToUpper();
+    }
+}

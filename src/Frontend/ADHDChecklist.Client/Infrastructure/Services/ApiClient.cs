@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Blazored.LocalStorage;
@@ -9,7 +10,9 @@ public interface IApiClient
 {
     Task<T?> GetAsync<T>(string endpoint);
     Task<T?> PostAsync<T>(string endpoint, object? data = null);
+    Task<T?> PostFileAsync<T>(string endpoint, MultipartFormDataContent content);
     Task<T?> PutAsync<T>(string endpoint, object data);
+    Task PatchAsync(string endpoint, object? data = null);
     Task<T?> DeleteAsync<T>(string endpoint);
     void SetAuthToken(string token);
     void ClearAuthToken();
@@ -46,6 +49,11 @@ public class ApiClient : IApiClient
                 return default;
             }
 
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                return default;
+            }
+
             return await response.Content.ReadFromJsonAsync<T>();
         }
         catch (Exception ex)
@@ -68,6 +76,13 @@ public class ApiClient : IApiClient
                 var error = await response.Content.ReadAsStringAsync();
                 _logger.LogWarning("POST request failed: {Endpoint}, Status: {Status}, Error: {Error}",
                     endpoint, response.StatusCode, error);
+                
+                return default;
+            }
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                return default;
             }
 
             return await response.Content.ReadFromJsonAsync<T>();
@@ -86,6 +101,58 @@ public class ApiClient : IApiClient
         }
     }
 
+    public async Task<T?> PostFileAsync<T>(string endpoint, MultipartFormDataContent content)
+    {
+        try
+        {
+            await SetAuthHeaderAsync();
+
+            var response = await _httpClient.PostAsync(endpoint, content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("POST FILE request failed: {Endpoint}, Status: {Status}, Error: {Error}",
+                    endpoint, response.StatusCode, error);
+                return default;
+            }
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                return default;
+            }
+
+            return await response.Content.ReadFromJsonAsync<T>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in POST FILE request to {Endpoint}", endpoint);
+            throw;
+        }
+    }
+
+    public async Task PatchAsync(string endpoint, object? data = null)
+    {
+        try
+        {
+            await SetAuthHeaderAsync();
+
+            var response = await _httpClient.PatchAsJsonAsync(endpoint, data);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("PATCH request failed: {Endpoint}, Status: {Status}, Error: {Error}",
+                    endpoint, response.StatusCode, error);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in PATCH request to {Endpoint}", endpoint);
+            throw;
+        }
+    }
+
     public async Task<T?> PutAsync<T>(string endpoint, object data)
     {
         try
@@ -98,6 +165,11 @@ public class ApiClient : IApiClient
             {
                 _logger.LogWarning("PUT request failed: {Endpoint}, Status: {Status}",
                     endpoint, response.StatusCode);
+                return default;
+            }
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
                 return default;
             }
 
@@ -122,6 +194,11 @@ public class ApiClient : IApiClient
             {
                 _logger.LogWarning("DELETE request failed: {Endpoint}, Status: {Status}",
                     endpoint, response.StatusCode);
+                return default;
+            }
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
                 return default;
             }
 

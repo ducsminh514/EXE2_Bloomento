@@ -86,6 +86,12 @@
                     <span class="group-hover/btn:scale-110 transition-transform">🎯</span> Tập trung
                     @if (!IsPremium) { <span class="ml-1 text-[9px] bg-white px-1 rounded border border-primary-200">SOFT</span> }
                 </button>
+                @if (IsPremium && !Task.IsCompleted)
+                {
+                    <button @onclick="() => OnMagicBreakdown.InvokeAsync(Task.Id)" class="px-3 py-1.5 bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700 text-xs font-bold rounded-lg hover:from-purple-100 hover:to-pink-100 transition-colors flex items-center justify-center gap-1 group/magic border border-purple-100" title="AI Magic Breakdown">
+                        <span class="group-hover/magic:animate-spin">✨</span> AI
+                    </button>
+                }
                 <button @onclick="() => OnEdit.InvokeAsync(Task.Id)" class="px-3 py-1.5 bg-white border border-gray-200 text-gray-600 text-xs font-bold rounded-lg hover:bg-gray-50 transition-colors">
                     Chi tiết
                 </button>
@@ -103,6 +109,7 @@
     [Parameter] public EventCallback<Guid> OnEdit { get; set; }
     [Parameter] public EventCallback<Guid> OnDelete { get; set; }
     [Parameter] public EventCallback<Guid> OnFocus { get; set; }
+    [Parameter] public EventCallback<Guid> OnMagicBreakdown { get; set; }
     [Parameter] public bool IsPremium { get; set; }
     [Parameter] public EventCallback OnUpgradeClicked { get; set; }
 

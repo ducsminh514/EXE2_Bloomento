@@ -84,6 +84,23 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
             if (keyValuePairs.TryGetValue("IsPremium", out var isPremium))
                 claims.Add(new Claim("IsPremium", isPremium.ToString()!));
 
+            // Extract Roles
+            if (keyValuePairs.TryGetValue(ClaimTypes.Role, out var roles))
+            {
+                if (roles.ToString()!.Trim().StartsWith("["))
+                {
+                    var parsedRoles = JsonSerializer.Deserialize<string[]>(roles.ToString()!);
+                    foreach (var parsedRole in parsedRoles!)
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, parsedRole));
+                    }
+                }
+                else
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, roles.ToString()!));
+                }
+            }
+
             // Add expiration
             if (keyValuePairs.TryGetValue("exp", out var exp))
                 claims.Add(new Claim("exp", exp.ToString()!));

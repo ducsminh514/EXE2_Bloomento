@@ -126,15 +126,8 @@ namespace ADHDChecklist.Client.Features.Dashboard.Services
 
         public async Task<int> AutoAdjustTasksAsync()
         {
-            try
-            {
-                // api/tasks/auto-adjust returns int
-                return await _apiClient.PostAsync<int>("/api/tasks/auto-adjust");
-            }
-            catch
-            {
-                return 0;
-            }
+            // api/tasks/auto-adjust returns int
+            return await _apiClient.PostAsync<int>("/api/tasks/auto-adjust");
         }
 
         public async Task<int> GetOverdueCountAsync()
@@ -151,19 +144,11 @@ namespace ADHDChecklist.Client.Features.Dashboard.Services
 
         public async Task<string[]> BreakdownTaskAsync(string taskTitle)
         {
-            try
-            {
-                var response = await _apiClient.PostAsync<BreakdownTaskResponse>(
-                    "/api/ai/breakdown",
-                    new { TaskTitle = taskTitle }
-                );
-                return response?.Steps ?? Array.Empty<string>();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error breaking down task");
-                return Array.Empty<string>();
-            }
+            var response = await _apiClient.PostAsync<BreakdownTaskResponse>(
+                "/api/ai/breakdown",
+                new { TaskTitle = taskTitle }
+            );
+            return response?.Steps ?? Array.Empty<string>();
         }
     }
 

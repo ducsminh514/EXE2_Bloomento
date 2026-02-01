@@ -1,0 +1,144 @@
+@page "/admin/knowledge/comments"
+@layout ADHDChecklist.Client.Layout.AdminLayout
+@using ADHDChecklist.Client.Features.Knowledge.Services
+@inject IKnowledgeService KnowledgeService
+@inject IJSRuntime JS
+
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">Comment Moderation</h1>
+</div>
+
+@if (_isLoading)
+{
+    <div class="flex justify-center p-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+    </div>
+}
+else
+{
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3">Content</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Article</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                @foreach (var comment in _comments)
+                {
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="text-sm font-medium text-gray-900">@comment.AuthorName</div>
+                            <div class="text-xs text-gray-500">@comment.AuthorEmail</div>
+                            <div class="text-xs text-gray-400 mt-1">@comment.CreatedAt.ToString("MMM dd, yyyy HH:mm")</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-gray-900 break-words">@comment.Content</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-blue-600 hover:underline">
+                                <a href="/knowledge/@comment.ArticleId" target="_blank">@comment.ArticleTitle</a>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @if (comment.IsHidden)
+                            {
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                    Hidden
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    Visible
+                                </span>
+                            }
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button @onclick="() => ToggleVisibility(comment)" 
+                                    class="text-sm font-medium @(comment.IsHidden ? "text-green-600 hover:text-green-900" : "text-amber-600 hover:text-amber-900")">
+                                @(comment.IsHidden ? "Unhide" : "Hide")
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        
+        @if (!_comments.Any())
+        {
+             <div class="text-center py-10 text-gray-500">
+                No comments found. Peace and quiet! 😌
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @if (_totalPages > 1)
+    {
+        <div class="flex justify-center mt-6 gap-2">
+            <button @onclick="() => ChangePage(_currentPage - 1)" disabled="@(_currentPage == 1)"
+                    class="px-3 py-1 rounded border @(_currentPage == 1 ? "bg-gray-100 text-gray-400" : "bg-white hover:bg-gray-50")">
+                Previous
+            </button>
+            <span class="px-3 py-1 text-gray-600">Page @_currentPage of @_totalPages</span>
+            <button @onclick="() => ChangePage(_currentPage + 1)" disabled="@(_currentPage == _totalPages)"
+                    class="px-3 py-1 rounded border @(_currentPage == _totalPages ? "bg-gray-100 text-gray-400" : "bg-white hover:bg-gray-50")">
+                Next
+            </button>
+        </div>
+    }
+}
+
+@code {
+    private List<AdminCommentDto> _comments = new();
+    private bool _isLoading = true;
+    private int _currentPage = 1;
+    private int _totalPages = 1;
+    private const int PageSize = 20;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadComments();
+    }
+
+    private async Task LoadComments()
+    {
+        _isLoading = true;
+        var response = await KnowledgeService.GetAdminCommentsAsync(_currentPage, PageSize);
+        if (response != null)
+        {
+            _comments = response.Comments;
+            _totalPages = response.TotalPages;
+        }
+        _isLoading = false;
+    }
+
+    private async Task ChangePage(int newPage)
+    {
+        if (newPage < 1 || newPage > _totalPages) return;
+        _currentPage = newPage;
+        await LoadComments();
+    }
+
+    private async Task ToggleVisibility(AdminCommentDto comment)
+    {
+        var action = comment.IsHidden ? "unhide" : "hide";
+        if (!await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to {action} this comment?"))
+        {
+            return;
+        }
+
+        var success = await KnowledgeService.ToggleCommentVisibilityAsync(comment.Id);
+        if (success)
+        {
+            // Optimistic update
+            comment.IsHidden = !comment.IsHidden;
+            StateHasChanged();
+        }
+    }
+}

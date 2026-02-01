@@ -1,0 +1,225 @@
+@using ADHDChecklist.Client.Features.Knowledge.Services
+@inject IKnowledgeService KnowledgeService
+@inject IJSRuntime JS
+
+<div class="mt-12">
+    <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <span>💬</span> Thảo luận (@(_rawComments?.Count ?? 0))
+    </h3>
+
+    <!-- Main Comment Form -->
+    <div class="bg-gray-50 rounded-xl p-4 mb-8 border border-gray-200">
+        <textarea @bind="_newCommentContent"
+                  class="w-full bg-white border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all placeholder-gray-400"
+                  rows="3"
+                  placeholder="Chia sẻ suy nghĩ của bạn..."></textarea>
+        
+        <div class="flex justify-end mt-2">
+            <button @onclick="() => SubmitComment(null)" 
+                    disabled="@_isSubmitting"
+                    class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-6 rounded-lg text-sm transition-colors disabled:opacity-50 flex items-center gap-2">
+                @if (_isSubmitting)
+                {
+                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                }
+                Gửi bình luận
+            </button>
+        </div>
+    </div>
+
+    <!-- Comment List -->
+    @if (_rootComments == null)
+    {
+        <div class="space-y-4">
+             <div class="h-20 bg-gray-100 rounded-xl animate-pulse"></div>
+             <div class="h-20 bg-gray-100 rounded-xl animate-pulse"></div>
+        </div>
+    }
+    else if (!_rootComments.Any())
+    {
+        <div class="text-center py-8 text-gray-500 text-sm">
+            Chưa có bình luận nào. Hãy là người đầu tiên!
+        </div>
+    }
+    else
+    {
+        <div class="space-y-6">
+            @foreach (var comment in _rootComments)
+            {
+                @RenderComment(comment)
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public Guid ArticleId { get; set; }
+
+    private List<CommentDto>? _rawComments;
+    private List<CommentDto>? _rootComments;
+    private string _newCommentContent = "";
+    private bool _isSubmitting = false;
+    
+    // Reply State
+    private Guid? _replyingToId;
+    private string _replyContent = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (ArticleId != Guid.Empty)
+        {
+            await LoadComments();
+        }
+    }
+
+    private async Task LoadComments()
+    {
+        _rawComments = await KnowledgeService.GetCommentsAsync(ArticleId);
+        _rootComments = _rawComments.Where(c => c.ParentCommentId == null).ToList();
+        StateHasChanged();
+    }
+
+    private async Task SubmitComment(Guid? parentId)
+    {
+        string content = parentId.HasValue ? _replyContent : _newCommentContent;
+        if (string.IsNullOrWhiteSpace(content)) return;
+
+        _isSubmitting = true;
+        var success = await KnowledgeService.PostCommentAsync(ArticleId, content, parentId);
+        _isSubmitting = false;
+
+        if (success)
+        {
+            if (parentId.HasValue)
+            {
+                _replyContent = "";
+                _replyingToId = null;
+            }
+            else
+            {
+                _newCommentContent = "";
+            }
+            await LoadComments();
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("alert", "Không thể gửi bình luận. Vui lòng thử lại sau.");
+        }
+    }
+    
+    private void StartReply(Guid commentId)
+    {
+        _replyingToId = commentId;
+        _replyContent = "";
+    }
+    
+    private void CancelReply()
+    {
+        _replyingToId = null;
+        _replyContent = "";
+    }
+
+    private RenderFragment RenderComment(CommentDto comment) => builder =>
+    {
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(1, "class", "flex gap-4 animate-fade-in");
+        
+        // Avatar
+        builder.OpenElement(2, "div");
+        builder.AddAttribute(3, "class", "w-10 h-10 rounded-full bg-gradient-to-br from-primary-100 to-purple-100 flex-shrink-0 flex items-center justify-center text-primary-700 font-bold border border-white shadow-sm");
+        builder.AddContent(4, comment.UserName.Substring(0, 1).ToUpper());
+        builder.CloseElement(); // div avatar
+
+        // Content
+        builder.OpenElement(5, "div");
+        builder.AddAttribute(6, "class", "flex-1");
+        
+            // Bubble
+            builder.OpenElement(7, "div");
+            builder.AddAttribute(8, "class", "bg-white p-4 rounded-xl rounded-tl-none border border-gray-100 shadow-sm relative group hover:border-primary-100 transition-colors");
+                
+                // Header
+                builder.OpenElement(9, "div");
+                builder.AddAttribute(10, "class", "flex items-center justify-between mb-2");
+                    builder.OpenElement(11, "span");
+                    builder.AddAttribute(12, "class", "font-bold text-gray-900 text-sm");
+                    builder.AddContent(13, comment.UserName);
+                    builder.CloseElement();
+                    
+                    builder.OpenElement(14, "span");
+                    builder.AddAttribute(15, "class", "text-xs text-gray-400");
+                    builder.AddContent(16, GetTimeAgo(comment.CreatedAt));
+                    builder.CloseElement();
+                builder.CloseElement(); // header
+
+                // Text
+                builder.OpenElement(17, "p");
+                builder.AddAttribute(18, "class", "text-gray-700 text-sm whitespace-pre-line leading-relaxed");
+                builder.AddContent(19, comment.Content);
+                builder.CloseElement();
+                
+                // Reply Button
+                builder.OpenElement(20, "button");
+                builder.AddAttribute(21, "class", "mt-2 text-xs font-bold text-gray-400 hover:text-primary-600 transition-colors flex items-center gap-1");
+                builder.AddAttribute(22, "onclick", Microsoft.AspNetCore.Components.EventCallback.Factory.Create<Microsoft.AspNetCore.Components.Web.MouseEventArgs>(this, () => StartReply(comment.Id)));
+                builder.AddContent(23, "💬 Trả lời");
+                builder.CloseElement();
+
+            builder.CloseElement(); // div bubble
+
+            // Reply Form
+            if (_replyingToId == comment.Id)
+            {
+                builder.OpenElement(24, "div");
+                builder.AddAttribute(25, "class", "mt-4 ml-4 bg-gray-50 p-3 rounded-lg border border-gray-200 animate-fade-in");
+                    builder.OpenElement(26, "textarea");
+                    builder.AddAttribute(27, "class", "w-full bg-white border border-gray-300 rounded p-2 text-sm outline-none focus:border-primary-500 mb-2");
+                    builder.AddAttribute(28, "rows", "2");
+                    builder.AddAttribute(29, "placeholder", "Viết câu trả lời...");
+                    builder.AddAttribute(30, "value", Microsoft.AspNetCore.Components.BindConverter.FormatValue(_replyContent));
+                    builder.AddAttribute(31, "onchange", Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, __value => _replyContent = __value, _replyContent));
+                    builder.CloseElement();
+                    
+                    builder.OpenElement(32, "div");
+                    builder.AddAttribute(33, "class", "flex justify-end gap-2");
+                        builder.OpenElement(34, "button");
+                        builder.AddAttribute(35, "class", "text-xs font-bold text-gray-500 hover:text-gray-700 px-3 py-1");
+                        builder.AddAttribute(36, "onclick", Microsoft.AspNetCore.Components.EventCallback.Factory.Create<Microsoft.AspNetCore.Components.Web.MouseEventArgs>(this, CancelReply));
+                        builder.AddContent(37, "Hủy");
+                        builder.CloseElement();
+
+                        builder.OpenElement(38, "button");
+                        builder.AddAttribute(39, "class", "text-xs font-bold bg-primary-600 text-white px-3 py-1 rounded hover:bg-primary-700");
+                        builder.AddAttribute(40, "onclick", Microsoft.AspNetCore.Components.EventCallback.Factory.Create<Microsoft.AspNetCore.Components.Web.MouseEventArgs>(this, () => SubmitComment(comment.Id)));
+                        builder.AddContent(41, "Gửi trả lời");
+                        builder.CloseElement();
+                    builder.CloseElement();
+                builder.CloseElement();
+            }
+
+            // Replies
+            var replies = _rawComments?.Where(c => c.ParentCommentId == comment.Id).ToList();
+            if (replies != null && replies.Any())
+            {
+                builder.OpenElement(42, "div");
+                builder.AddAttribute(43, "class", "mt-4 pl-4 border-l-2 border-gray-100 space-y-4");
+                foreach (var reply in replies)
+                {
+                    builder.AddContent(44, RenderComment(reply));
+                }
+                builder.CloseElement();
+            }
+
+        builder.CloseElement(); // div flex-1
+        builder.CloseElement(); // div wrapper
+    };
+
+    private string GetTimeAgo(DateTime dateTime)
+    {
+        var span = DateTime.UtcNow - dateTime;
+        if (span.TotalMinutes < 1) return "Vừa xong";
+        if (span.TotalMinutes < 60) return $"{(int)span.TotalMinutes} phút trước";
+        if (span.TotalHours < 24) return $"{(int)span.TotalHours} giờ trước";
+        return $"{(int)span.TotalDays} ngày trước";
+    }
+}

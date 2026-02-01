@@ -64,22 +64,10 @@
                 <!-- Preferences (Themes) -->
                 <div class="pt-2">
                     <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Tùy chỉnh giao diện</h4>
-                    <div class="@(_model.SubscriptionTier == "Free" ? "relative group" : "")">
-                         @if (_model.SubscriptionTier == "Free")
-                        {
-                             <div class="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center border border-dashed border-gray-200 rounded-xl transition-opacity">
-                                 <span class="text-xs font-bold text-gray-500 mb-2">Tính năng Premium</span>
-                                 <button type="button" @onclick="Upgrade" class="px-3 py-1.5 bg-gradient-to-r from-gray-800 to-black text-white text-[10px] font-bold rounded-lg shadow hover:shadow-lg transition-transform hover:scale-105">
-                                     Mở khóa Themes
-                                 </button>
-                             </div>
-                        }
-                        
-                        <!-- Create independent component context or just render -->
-                        <div class="@(_model.SubscriptionTier == "Free" ? "opacity-50 pointer-events-none filter grayscale block" : "block")">
-                            <ADHDChecklist.Client.Features.Preferences.Components.ThemeSelector />
-                        </div>
-                    </div>
+                    
+                    <ADHDChecklist.Client.Features.Preferences.Components.ThemeSelector 
+                        IsPremium="@(_model.SubscriptionTier != "Free")"
+                        OnUpgradeClicked="Upgrade" />
                 </div>
 
                 @if (!string.IsNullOrEmpty(_message))

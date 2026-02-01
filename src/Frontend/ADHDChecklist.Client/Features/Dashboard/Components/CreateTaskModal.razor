@@ -60,8 +60,8 @@
                 <!-- Row 2: Description -->
                 <div>
                      <InputTextArea @bind-Value="_model.Description"
-                                   rows="2"
-                                   class="w-full text-sm text-gray-600 border-gray-200 rounded-lg focus:ring-primary-500 focus:border-primary-500 resize-none placeholder-gray-400"
+                                   rows="5"
+                                   class="w-full text-sm text-gray-600 border-gray-200 rounded-lg focus:ring-primary-500 focus:border-primary-500 resize-y placeholder-gray-400"
                                    placeholder="Thêm mô tả ngắn gọn..." />
                 </div>
 
@@ -185,6 +185,12 @@
                 {
                     _model.Description = "### Các bước nhỏ (AI Suggestion):\n" + checklist;
                 }
+            }
+            else
+            {
+                 // AI rejected the prompt (Guardrails triggered)
+                 _errorMessage = "AI không thể phân tích task này. Vui lòng nhập task cụ thể hơn (Ví dụ: 'Dọn phòng', 'Học toán').";
+                 StateHasChanged(); // Force UI update
             }
         }
         catch (Exception ex)
