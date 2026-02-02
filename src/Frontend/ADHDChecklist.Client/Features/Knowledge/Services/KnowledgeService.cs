@@ -160,12 +160,30 @@ namespace ADHDChecklist.Client.Features.Knowledge.Services
             }
         }
 
-
-        public async Task<AdminCommentListResponse?> GetAdminCommentsAsync(int page = 1, int pageSize = 20)
+        public async Task<bool> DeleteCommentAsync(Guid id)
         {
             try
             {
-                return await _apiClient.GetAsync<AdminCommentListResponse>($"/api/admin/knowledge/comments?page={page}&pageSize={pageSize}");
+                await _apiClient.DeleteAsync<object>($"/api/admin/knowledge/comments/{id}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting comment: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<AdminCommentListResponse?> GetAdminCommentsAsync(int page = 1, int pageSize = 20, string? status = null)
+        {
+            try
+            {
+                var query = $"/api/admin/knowledge/comments?page={page}&pageSize={pageSize}";
+                if (!string.IsNullOrEmpty(status))
+                {
+                    query += $"&status={status}";
+                }
+                return await _apiClient.GetAsync<AdminCommentListResponse>(query);
             }
             catch (Exception ex)
             {
@@ -178,15 +196,7 @@ namespace ADHDChecklist.Client.Features.Knowledge.Services
         {
             try
             {
-                await _apiClient.PostAsync<object>($"/api/admin/knowledge/comments/{id}/toggle-visibility"); // Using PostAsync wrapper for PATCH if supported or custom PATCH
-                // Since ApiClient doesn't have PatchAsync, I'll need to check if existing PostAsync works or if I need to add Patch.
-                // Wait, ApiClient has Put, Post, but maybe not Patch. The backend endpoint is PATCH.
-                // Assuming PostAsync might not work for Patch unless configured.
-                // Let's verify ApiClient first. If not, I'll use Put or HttpClient directly if ApiClient exposes it.
-                // Actually, I'll check ApiClient.cs again. It does NOT have PatchAsync.
-                // I will add PatchAsync to ApiClient in a separate step or stick to Post if I change backend.
-                // For now, let's assume I will add PatchAsync to ApiClient.
-                // But to be safe and quick, I'll just change the Backend to use POST for toggle action. It's an action resource anyway.
+                await _apiClient.PostAsync<object>($"/api/admin/knowledge/comments/{id}/toggle-visibility", null);
                 return true;
             }
             catch (Exception ex)
@@ -273,7 +283,8 @@ namespace ADHDChecklist.Client.Features.Knowledge.Services
         Task<Guid?> CreateArticleAsync(ADHDChecklist.Client.Features.Knowledge.DTOs.ArticleEditorDto article);
         Task<bool> UpdateArticleAsync(Guid id, ADHDChecklist.Client.Features.Knowledge.DTOs.ArticleEditorDto article);
         Task<bool> DeleteArticleAsync(Guid id);
-        Task<AdminCommentListResponse?> GetAdminCommentsAsync(int page = 1, int pageSize = 20);
+        Task<AdminCommentListResponse?> GetAdminCommentsAsync(int page = 1, int pageSize = 20, string? status = null);
+        Task<bool> DeleteCommentAsync(Guid id);
         Task<bool> ToggleCommentVisibilityAsync(Guid id);
         Task<bool> CreateCategoryAsync(KnowledgeCategoryDto category);
         Task<bool> UpdateCategoryAsync(KnowledgeCategoryDto category);

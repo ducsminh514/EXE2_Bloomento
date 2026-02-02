@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ADHDChecklist.API.Features.Knowledge.Comments
 {
     // Query
-    public record GetAdminCommentsQuery(int Page = 1, int PageSize = 20) : IRequest<AdminCommentListResponse>;
+    public record GetAdminCommentsQuery(int Page = 1, int PageSize = 20, string? Status = null) : IRequest<AdminCommentListResponse>;
 
     // Response DTOs
     public record AdminCommentListResponse(List<AdminCommentDto> Comments, int TotalCount, int CurrentPage, int TotalPages);
@@ -39,8 +39,26 @@ namespace ADHDChecklist.API.Features.Knowledge.Comments
                 .Include(c => c.Article)
                 .AsNoTracking();
 
+            if (!string.IsNullOrEmpty(request.Status))
+            {
+                if (request.Status.Equals("hidden", StringComparison.OrdinalIgnoreCase))
+                {
+                    query = query.Where(c => c.IsHidden);
+                }
+                else if (request.Status.Equals("visible", StringComparison.OrdinalIgnoreCase))
+                {
+                    query = query.Where(c => !c.IsHidden);
+                }
+            }
+
             var totalCount = await query.CountAsync(cancellationToken);
             var totalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize);
+
+            // If empty after filter (and page 1), result is empty
+            if (totalCount == 0)
+            {
+                 return new AdminCommentListResponse(new List<AdminCommentDto>(), 0, request.Page, 0);
+            }
 
             var comments = await query
                 .OrderByDescending(c => c.CreatedAt)
@@ -67,9 +85,9 @@ namespace ADHDChecklist.API.Features.Knowledge.Comments
     {
         public static void MapGetAdminCommentsEndpoint(this IEndpointRouteBuilder app)
         {
-            app.MapGet("/api/admin/knowledge/comments", async (int? page, int? pageSize, IMediator mediator) =>
+            app.MapGet("/api/admin/knowledge/comments", async (int? page, int? pageSize, string? status, IMediator mediator) =>
             {
-                var query = new GetAdminCommentsQuery(page ?? 1, pageSize ?? 20);
+                var query = new GetAdminCommentsQuery(page ?? 1, pageSize ?? 20, status);
                 var result = await mediator.Send(query);
                 return Results.Ok(result);
             })

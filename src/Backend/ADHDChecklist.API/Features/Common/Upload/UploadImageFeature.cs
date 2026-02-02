@@ -23,10 +23,10 @@ namespace ADHDChecklist.API.Features.Common.Upload
                 throw new ArgumentException("No file uploaded");
 
             // Simple validation
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".bmp", ".tiff", ".tif" };
             var extension = Path.GetExtension(request.File.FileName).ToLowerInvariant();
             if (!allowedExtensions.Contains(extension))
-                throw new ArgumentException("Invalid file type");
+                throw new ArgumentException($"Invalid file type: {extension} (Allowed: {string.Join(", ", allowedExtensions)})");
 
             // Ensure directory exists
             var webRootPath = _environment.WebRootPath;

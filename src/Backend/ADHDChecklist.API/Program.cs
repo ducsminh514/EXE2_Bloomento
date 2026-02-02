@@ -51,7 +51,20 @@ using Microsoft.OpenApi.Models;
 using ADHDChecklist.API.Features.AI.BreakdownTask;
 using Microsoft.AspNetCore.RateLimiting;
 
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Upload Limits (50MB)
+builder.Services.Configure<KestrelServerOptions>(options =>
+{
+    options.Limits.MaxRequestBodySize = 52428800; // 50MB
+});
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 52428800; // 50MB
+});
 
 // ============================================
 // 1. DATABASE
@@ -261,7 +274,17 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseExceptionHandler();
-app.UseStaticFiles();
+app.UseStaticFiles(); // Serves wwwroot by default
+
+// Ensure uploads are served even if outside typical structure or to be explicit
+var uploadsPath = Path.Combine(builder.Environment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"), "uploads");
+if (!Directory.Exists(uploadsPath)) Directory.CreateDirectory(uploadsPath);
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads"
+});
 //app.UseHttpsRedirection();
 app.UseCors("AllowBlazorClient");
 app.UseRateLimiter();
@@ -332,6 +355,7 @@ app.MapDeleteArticleEndpoint();
 // Admin Comments
 app.MapGetAdminCommentsEndpoint();
 app.MapToggleCommentVisibilityEndpoint();
+app.MapDeleteCommentEndpoint();
 // Admin Categories
 app.MapCreateCategoryEndpoint();
 app.MapUpdateCategoryEndpoint();

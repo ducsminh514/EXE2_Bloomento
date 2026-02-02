@@ -1,6 +1,7 @@
 @page "/admin/knowledge/articles"
 @layout ADHDChecklist.Client.Layout.AdminLayout
 @using ADHDChecklist.Client.Features.Knowledge.Services
+@inject IConfiguration Config
 @inject IKnowledgeService KnowledgeService
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
@@ -39,7 +40,10 @@ else
                             <div class="flex items-center">
                                 @if (!string.IsNullOrEmpty(article.CoverImage))
                                 {
-                                    <img class="h-10 w-10 rounded object-cover mr-3" src="@article.CoverImage" alt="" />
+                                    var imgUrl = article.CoverImage.StartsWith("/uploads/") 
+                                        ? (Config["ApiBaseUrl"] ?? "http://localhost:7001") + article.CoverImage 
+                                        : article.CoverImage;
+                                    <img class="h-10 w-10 rounded object-cover mr-3" src="@imgUrl" alt="" onerror="this.src='/images/placeholder.png'; this.onerror=null;" />
                                 }
                                 <div>
                                     <div class="text-sm font-medium text-gray-900">@article.Title</div>

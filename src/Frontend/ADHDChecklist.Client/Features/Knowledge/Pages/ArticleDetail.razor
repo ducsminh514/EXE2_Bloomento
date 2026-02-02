@@ -59,12 +59,20 @@ else
 
         <!-- Content (Prose) -->
         <article class="prose prose-lg prose-slate max-w-none 
-                        prose-headings:font-bold prose-headings:text-gray-800 
-                        prose-p:text-gray-600 prose-p:leading-loose
+                        prose-headings:text-gray-800 
+                        prose-p:text-gray-600 prose-p:my-2 prose-p:leading-relaxed
                         prose-a:text-primary-600 prose-a:no-underline hover:prose-a:underline
                         prose-blockquote:border-l-4 prose-blockquote:border-primary-400 prose-blockquote:bg-gray-50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg
-                        prose-img:rounded-xl prose-img:shadow-md">
-            @((MarkupString)_article.Content)
+                        prose-img:rounded-xl prose-img:shadow-md
+                        prose-h1:text-4xl prose-h1:font-bold prose-h1:mb-3 prose-h1:mt-6
+                        prose-h2:text-3xl prose-h2:font-semibold prose-h2:mb-2 prose-h2:mt-4
+                        prose-h3:text-2xl prose-h3:font-medium prose-h3:mb-2 prose-h3:mt-3
+                        prose-li:my-0">
+@using Markdig
+@inject IConfiguration Config
+            <div>
+                @((MarkupString)GetProcessedContent())
+            </div>
         </article>
 
         <!-- Comment Section -->
@@ -121,5 +129,35 @@ else
         
         // Ensure state sync
         _article.IsBookmarked = result;
+    }
+
+    private string GetProcessedContent()
+    {
+        if (_article == null) return "";
+        var content = _article.Content ?? "";
+        var baseUrl = Config["ApiBaseUrl"] ?? "http://localhost:7001";
+        
+        // Debug log to console (visible in F12)
+        Console.WriteLine($"[ArticleDetail] Processing content length: {content.Length}. BaseUrl: {baseUrl}");
+
+        // 1. Explicit replacement for standard Editor format (fast & reliable)
+        content = content.Replace("](/uploads/", $"]({baseUrl}/uploads/");
+        content = content.Replace("src=\"/uploads/", $"src=\"{baseUrl}/uploads/");
+
+        // 2. Regex for edge cases (spacing, single quotes, etc.)
+        // Matches ] ( /uploads/... ) or src=" /uploads/... " with optional whitespace
+        var pattern = @"(\]|src=[""'])\s*(/uploads/[^""')\s]+)";
+        var processed = System.Text.RegularExpressions.Regex.Replace(content, pattern, m => 
+        {
+            var prefix = m.Groups[1].Value;
+            var path = m.Groups[2].Value;
+            
+            // If already replaced by step 1 (starts with http), skip
+            if (path.StartsWith("http")) return m.Value;
+
+            return $"{prefix}{baseUrl}{path}";
+        });
+
+        return Markdown.ToHtml(processed);
     }
 }

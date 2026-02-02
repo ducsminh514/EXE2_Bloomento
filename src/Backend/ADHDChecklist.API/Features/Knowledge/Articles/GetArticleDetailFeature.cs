@@ -45,16 +45,26 @@ namespace ADHDChecklist.API.Features.Knowledge.Articles
 
         public async Task<ArticleDetailDto?> Handle(GetArticleDetailQuery request, CancellationToken cancellationToken)
         {
-            var article = await _context.Articles
+            var query = _context.Articles
                 .Include(a => a.Category)
                 .Include(a => a.Author)
-                .FirstOrDefaultAsync(a => a.Slug == request.Slug && a.IsPublished, cancellationToken);
+                .AsQueryable();
+
+            var user = _httpContextAccessor.HttpContext?.User;
+            var isAdmin = user?.IsInRole("Admin") ?? false;
+
+            if (!isAdmin)
+            {
+                query = query.Where(a => a.IsPublished);
+            }
+
+            var article = await query.FirstOrDefaultAsync(a => a.Slug == request.Slug, cancellationToken);
 
             if (article == null) return null;
 
             // Check if bookmarked
             var isBookmarked = false;
-            var userIdString = _httpContextAccessor.HttpContext?.User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var userIdString = user?.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier);
             if (!string.IsNullOrEmpty(userIdString) && Guid.TryParse(userIdString, out var userId))
             {
                 isBookmarked = await _context.ArticleBookmarks

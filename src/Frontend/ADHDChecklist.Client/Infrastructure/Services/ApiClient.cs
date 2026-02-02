@@ -84,8 +84,14 @@ public class ApiClient : IApiClient
             {
                 return default;
             }
+            
+             var contentStr = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrWhiteSpace(contentStr))
+            {
+                return default;
+            }
 
-            return await response.Content.ReadFromJsonAsync<T>();
+            return JsonSerializer.Deserialize<T>(contentStr, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
         catch (HttpRequestException httpEx)
         {
@@ -173,7 +179,23 @@ public class ApiClient : IApiClient
                 return default;
             }
 
-            return await response.Content.ReadFromJsonAsync<T>();
+            // Check for empty body on 200 OK
+            if (response.Content.Headers.ContentLength == 0)
+            {
+                 return default;
+            }
+            
+            // Or peek content string (safer if ContentLength is missing)
+            var contentStr = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrWhiteSpace(contentStr))
+            {
+                return default;
+            }
+
+            // Rewind or re-create content? ReadAsStringAsync consumes stream? 
+            // Better: use try-catch or just check length if reliable.
+            // Safe approach: Deserialize string.
+            return JsonSerializer.Deserialize<T>(contentStr, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
         catch (Exception ex)
         {
@@ -202,7 +224,18 @@ public class ApiClient : IApiClient
                 return default;
             }
 
-            return await response.Content.ReadFromJsonAsync<T>();
+            // Check for empty body on 200 OK
+            if (response.Content.Headers.ContentLength == 0)
+            {
+                 return default;
+            }
+             var contentStr = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrWhiteSpace(contentStr))
+            {
+                return default;
+            }
+
+            return JsonSerializer.Deserialize<T>(contentStr, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
         catch (Exception ex)
         {
