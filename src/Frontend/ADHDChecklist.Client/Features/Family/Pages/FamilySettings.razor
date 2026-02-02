@@ -88,6 +88,28 @@
                     }
                 </div>
             </div>
+
+            @if (_family.IsOwner && _family.PendingInvitations?.Any() == true)
+            {
+                <div class="p-6 border-t border-gray-100 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-800/20">
+                    <h3 class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-4">Pending Invitations</h3>
+                    <div class="space-y-3">
+                        @foreach (var invite in _family.PendingInvitations)
+                        {
+                            <div class="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-dashed border-gray-200 dark:border-gray-700">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-medium text-gray-900 dark:text-gray-100">@invite.Email</span>
+                                    <span class="text-[10px] text-gray-500">Sent on @invite.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full uppercase tracking-tighter">Pending</span>
+                                    <span class="text-[10px] text-gray-400">Expires @((int)(invite.ExpiresAt - DateTime.UtcNow).TotalDays)d</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
         </div>
     }
 </div>
@@ -142,24 +164,34 @@
             @if (_generatedCode != null)
             {
                 <div class="text-center py-4">
-                    <p class="text-sm text-gray-500 mb-2">Share this code with your family member:</p>
-                    <div class="text-3xl font-mono font-bold text-purple-600 tracking-wider mb-2">@_generatedCode</div>
-                    <p class="text-xs text-gray-400">Code expires in 48 hours.</p>
+                    <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 mb-4">
+                        <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <p class="text-sm font-bold text-gray-900 mb-1">Email Invitations Sent!</p>
+                    <p class="text-xs text-gray-500 mb-4">We've sent an invitation to <strong>@_inviteEmail</strong>.</p>
+                    
+                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                        <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Manual Backup Code</p>
+                        <div class="text-2xl font-mono font-bold text-purple-600 tracking-wider">@_generatedCode</div>
+                        <p class="text-[9px] text-gray-400 mt-1">Share this if they don't see the email (check Spam).</p>
+                    </div>
                 </div>
-                <div class="flex justify-end gap-3 mt-4">
-                     <button @onclick="CloseInviteModal" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Done</button>
+                <div class="flex justify-end gap-3 mt-6">
+                     <button @onclick="CloseInviteModal" class="px-6 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 shadow-md">Done</button>
                 </div>
             }
             else
             {
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Member Email (Optional)</label>
-                    <input @bind="_inviteEmail" type="email" placeholder="member@example.com" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none" />
-                    <p class="text-xs text-gray-500 mt-1">Or just generate a code to share manually.</p>
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Member Email</label>
+                    <input @bind="_inviteEmail" type="email" placeholder="example@email.com" class="w-full px-4 py-2 border border-blue-100 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all" />
+                    <p class="text-[11px] text-gray-500 mt-2 bg-blue-50/50 p-2 rounded-lg">🌸 Lời mời kèm mã số tham gia sẽ được gửi tự động đến địa chỉ này.</p>
                 </div>
-                 <div class="flex justify-end gap-3">
-                    <button @onclick="() => _showInviteModal = false" class="px-4 py-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">Cancel</button>
-                    <button @onclick="GenerateInvite" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Generate Code</button>
+                 <div class="flex justify-end gap-3 pt-2">
+                    <button @onclick="() => _showInviteModal = false" class="px-4 py-2 text-gray-500 font-bold hover:text-gray-700">Cancel</button>
+                    <button @onclick="GenerateInvite" class="px-6 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 shadow-lg disabled:opacity-50" disabled="@string.IsNullOrWhiteSpace(_inviteEmail)">Send Invite</button>
                 </div>
             }
         </div>

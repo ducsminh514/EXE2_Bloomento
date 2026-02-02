@@ -13,7 +13,16 @@ public record FamilyResponse(
     string Name, 
     Guid OwnerId, 
     bool IsOwner,
-    List<FamilyMemberResponse> Members
+    List<FamilyMemberResponse> Members,
+    List<PendingInvitationResponse> PendingInvitations
+);
+
+public record PendingInvitationResponse(
+    Guid Id,
+    string Email,
+    string Status,
+    DateTime CreatedAt,
+    DateTime ExpiresAt
 );
 
 public record FamilyMemberResponse(
@@ -58,12 +67,19 @@ public class GetFamilyHandler : IRequestHandler<GetFamilyQuery, FamilyResponse?>
             m.User.GoogleProfilePicture // Assuming this exists or falls back
         )).ToList();
 
+        var pendingInvitations = await _context.FamilyInvitations
+            .Where(i => i.FamilyId == family.Id && i.Status == "Pending" && i.ExpiresAt > DateTime.UtcNow)
+            .OrderByDescending(i => i.CreatedAt)
+            .Select(i => new PendingInvitationResponse(i.Id, i.Email, i.Status, i.CreatedAt, i.ExpiresAt))
+            .ToListAsync(cancellationToken);
+
         return new FamilyResponse(
             family.Id,
             family.Name,
             family.OwnerId,
             isOwner,
-            members
+            members,
+            pendingInvitations
         );
     }
 }

@@ -10,6 +10,7 @@ public interface IEmailService
     Task SendPasswordResetAsync(string toEmail, string userName, string resetLink);
     Task SendWelcomeEmailAsync(string toEmail, string userName);
     Task SendEmailAsync(string toEmail, string subject, string htmlBody);
+    Task SendFamilyInvitationAsync(string toEmail, string familyName, string inviterName, string code);
 }
 
 public class EmailService : IEmailService
@@ -106,6 +107,43 @@ public class EmailService : IEmailService
                         Bắt đầu ngay
                     </a>
                 </p>
+            </body>
+            </html>
+        ";
+
+        await SendEmailAsync(toEmail, subject, body);
+    }
+
+    public async Task SendFamilyInvitationAsync(string toEmail, string familyName, string inviterName, string code)
+    {
+        var subject = $"Chào mừng bạn tham gia gia đình {familyName}! 🌸";
+        var body = $@"
+            <html>
+            <body style='font-family: Arial, sans-serif;'>
+                <div style='max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;'>
+                    <div style='background-color: #4F46E5; color: white; padding: 24px; text-align: center;'>
+                        <h1 style='margin: 0;'>Bloomento Gia đình</h1>
+                    </div>
+                    <div style='padding: 24px; color: #1e293b;'>
+                        <h2 style='color: #4F46E5;'>Xin chào!</h2>
+                        <p><strong>{inviterName}</strong> vừa mời bạn tham gia nhóm gia đình <strong>{familyName}</strong> trên Bloomento.</p>
+                        <p>Tham gia gia đình giúp cả nhà cùng nhau:</p>
+                        <ul style='color: #475569;'>
+                            <li>✅ Chia sẻ và hỗ trợ các công việc hàng ngày</li>
+                            <li>🏆 Tích điểm thưởng cho các thói quen tốt</li>
+                            <li>📊 Theo dõi tiến độ và động viên nhau</li>
+                        </ul>
+                        <div style='background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 16px; text-align: center; margin: 24px 0;'>
+                            <p style='margin: 0 0 8px 0; font-size: 14px; color: #64748b;'>Mã mời của bạn:</p>
+                            <div style='font-family: monospace; font-size: 32px; font-weight: bold; color: #4F46E5; letter-spacing: 4px;'>{code}</div>
+                            <p style='margin: 8px 0 0 0; font-size: 11px; color: #94a3b8;'>Mã này sẽ hết hạn sau 7 ngày.</p>
+                        </div>
+                        <p>Hãy mở ứng dụng Bloomento, chọn <strong>Gia đình</strong> và nhập mã này để tham gia ngay!</p>
+                        <p style='margin-top: 24px; font-size: 12px; color: #94a3b8; text-align: center;'>
+                            Nếu bạn không biết về lời mời này, vui lòng bỏ qua email.
+                        </p>
+                    </div>
+                </div>
             </body>
             </html>
         ";

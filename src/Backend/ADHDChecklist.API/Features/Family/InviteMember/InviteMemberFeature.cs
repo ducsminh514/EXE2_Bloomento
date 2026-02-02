@@ -5,7 +5,7 @@ using ADHDChecklist.API.Data;
 using ADHDChecklist.API.Entities;
 using System.Security.Claims;
 using System.Security.Cryptography;
-
+using ADHDChecklist.API.Services;
 namespace ADHDChecklist.API.Features.Family.InviteMember;
 
 public record InviteMemberRequest(string Email);
@@ -23,10 +23,12 @@ public class InviteMemberValidator : AbstractValidator<InviteMemberCommand>
 public class InviteMemberHandler : IRequestHandler<InviteMemberCommand, string>
 {
     private readonly AppDbContext _context;
+    private readonly IEmailService _emailService;
 
-    public InviteMemberHandler(AppDbContext context)
+    public InviteMemberHandler(AppDbContext context, IEmailService emailService)
     {
         _context = context;
+        _emailService = emailService;
     }
 
     public async Task<string> Handle(InviteMemberCommand request, CancellationToken cancellationToken)
@@ -34,11 +36,12 @@ public class InviteMemberHandler : IRequestHandler<InviteMemberCommand, string>
         // Check if inviter is Admin
         var memberRecord = await _context.FamilyMembers
             .Include(m => m.Family)
+            .Include(m => m.User)
             .FirstOrDefaultAsync(m => m.UserId == request.UserId, cancellationToken);
             
         if (memberRecord == null || memberRecord.Role != "Admin")
         {
-            throw new UnauthorizedAccessException("Only family admins can invite members.");
+            throw new UnauthorizedAccessException("Chỉ có Quản trị viên gia đình mới có thể mời thành viên.");
         }
 
         // Generate Code
@@ -52,12 +55,26 @@ public class InviteMemberHandler : IRequestHandler<InviteMemberCommand, string>
             Code = code,
             Status = "Pending",
             CreatedAt = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddDays(2)
+            ExpiresAt = DateTime.UtcNow.AddDays(7) // Increased to 7 days
         };
 
         _context.FamilyInvitations.Add(invitation);
-        
         await _context.SaveChangesAsync(cancellationToken);
+
+        // Send Email
+        try
+        {
+            await _emailService.SendFamilyInvitationAsync(
+                request.Email, 
+                memberRecord.Family.Name, 
+                memberRecord.User.FullName ?? "Thành viên gia đình", 
+                code);
+        }
+        catch (Exception ex)
+        {
+            // Log error but don't fail the invitation creation
+            Console.WriteLine($"Lỗi gửi email mời: {ex.Message}");
+        }
 
         return code;
     }

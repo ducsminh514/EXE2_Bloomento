@@ -59,11 +59,20 @@ public class FamilyService : IFamilyService
 
 
 public record FamilyResponse(
-    Guid Id, 
-    string Name, 
+    Guid Id,
+    string Name,
     Guid OwnerId, 
     bool IsOwner,
-    List<FamilyMemberResponse> Members
+    List<FamilyMemberResponse> Members,
+    List<PendingInvitationResponse> PendingInvitations
+);
+
+public record PendingInvitationResponse(
+    Guid Id,
+    string Email,
+    string Status,
+    DateTime CreatedAt,
+    DateTime ExpiresAt
 );
 
 public record FamilyMemberResponse(
