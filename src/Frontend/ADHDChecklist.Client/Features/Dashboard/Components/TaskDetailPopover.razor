@@ -6,7 +6,7 @@
     <!-- Invisible overlay to close when clicking outside -->
     <div class="fixed inset-0 z-40" @onclick="OnClose"></div>
 
-    <div class="fixed z-50 w-[350px] bg-white rounded-xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden animate-fade-in-up"
+    <div class="fixed z-50 w-[400px] bg-white rounded-xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden animate-fade-in-up"
          style="top: @(AdjustedTop)px; left: @(AdjustedLeft)px;">
         
         <!-- Header -->
@@ -28,9 +28,9 @@
         </div>
 
         <!-- Body -->
-        <div class="p-5">
+        <div class="p-5 flex-1 overflow-y-auto min-h-0">
             <div class="flex items-start gap-3 mb-4">
-                <div class="mt-1">
+                <div class="mt-1 flex-shrink-0">
                     <div class="w-5 h-5 rounded-full border-2 cursor-pointer flex items-center justify-center transition-colors @(Task.IsCompleted ? "border-green-500 bg-green-500" : "border-gray-300 hover:border-primary-500")"
                          @onclick="() => OnToggleComplete.InvokeAsync(Task.Id)">
                         @if (Task.IsCompleted)
@@ -39,11 +39,30 @@
                         }
                     </div>
                 </div>
-                <div>
-                    <h3 class="font-bold text-gray-900 text-lg leading-tight @(Task.IsCompleted ? "line-through text-gray-400" : "")">@Task.Title</h3>
-                    @if (!string.IsNullOrEmpty(Task.Description))
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-bold text-gray-900 text-lg leading-tight break-words @(Task.IsCompleted ? "line-through text-gray-400" : "")">@Task.Title</h3>
+                    
+                    @if (!string.IsNullOrEmpty(_userDescription))
                     {
-                        <p class="text-sm text-gray-500 mt-1 line-clamp-3">@Task.Description</p>
+                        <p class="text-sm text-gray-600 mt-2 whitespace-pre-wrap break-words">@_userDescription</p>
+                    }
+                    
+                    @if (_magicBreakdownItems.Any())
+                    {
+                        <div class="mt-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100 p-3">
+                            <h4 class="text-xs font-bold text-purple-700 flex items-center gap-1.5 mb-2">
+                                <span class="text-base">✨</span> Magic Breakdown
+                            </h4>
+                            <ul class="space-y-2">
+                                @foreach (var item in _magicBreakdownItems)
+                                {
+                                    <li class="flex items-start gap-2 text-sm text-gray-700">
+                                        <div class="mt-1 w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0"></div>
+                                        <span class="leading-snug">@item</span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
                     }
                 </div>
             </div>
@@ -113,8 +132,48 @@
     [Parameter] public bool IsPremium { get; set; }
     [Parameter] public EventCallback OnUpgradeClicked { get; set; }
 
+    private string _userDescription = "";
+    private List<string> _magicBreakdownItems = new();
+
+    protected override void OnParametersSet()
+    {
+        ParseDescription();
+    }
+
+    private void ParseDescription()
+    {
+        _userDescription = "";
+        _magicBreakdownItems = new();
+
+        if (Task == null || string.IsNullOrWhiteSpace(Task.Description)) return;
+
+        var parts = Task.Description.Split(new[] { "**✨ Magic Breakdown:**" }, StringSplitOptions.None);
+        
+        _userDescription = parts[0].Trim();
+
+        if (parts.Length > 1)
+        {
+            var breakdownText = parts[1];
+            // Split by lines and clean up checklist items
+            var lines = breakdownText.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var line in lines)
+            {
+                var cleaned = line.Trim();
+                // Matches "- [ ] Item" or "- Item"
+                if (cleaned.StartsWith("- [ ]") || cleaned.StartsWith("- [x]") || cleaned.StartsWith("-"))
+                {
+                    cleaned = cleaned.Replace("- [ ]", "").Replace("- [x]", "").Replace("-", "").Trim();
+                    if (!string.IsNullOrWhiteSpace(cleaned))
+                    {
+                        _magicBreakdownItems.Add(cleaned);
+                    }
+                }
+            }
+        }
+    }
+
     // Clamp to screen
-    private double AdjustedLeft => Math.Min(Math.Max(X + 20, 10), 1920 - 370); // 370 = width + padding roughly
+    private double AdjustedLeft => Math.Min(Math.Max(X + 20, 10), 1920 - 420); // Width approx 400 + padding
     private double AdjustedTop => Math.Min(Math.Max(Y - 100, 10), 900); // Rough clamping
 }
 
