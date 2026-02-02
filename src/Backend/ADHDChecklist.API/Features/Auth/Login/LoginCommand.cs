@@ -23,13 +23,23 @@ namespace ADHDChecklist.API.Features.Auth.Login
         bool RequireEmailVerification = false
     );
 
+    public record UserInfoGg(
+        string UserId,
+        string Email,
+        string FullName,
+        string SubscriptionTier,
+        bool IsPremium,
+        string Role
+    );
+
     public record UserInfo(
         string UserId,
         string Email,
         string FullName,
         string SubscriptionTier,
         bool IsPremium,
-        bool IsEmailVerified
+        bool IsEmailVerified,
+        string Role
     );
 
 }

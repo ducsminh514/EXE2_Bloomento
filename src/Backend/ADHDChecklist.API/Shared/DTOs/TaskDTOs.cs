@@ -14,7 +14,10 @@ public record CreateTaskRequest(
     int Priority,
     bool IsRecurring,
     string? RecurrencePattern,
-    string? DopamineType = "Low"
+    string? DopamineType = "Low",
+    Guid? FamilyId = null,
+    Guid? AssignedUserId = null,
+    bool IsShared = false
 );
 
 public record UpdateTaskRequest(
@@ -27,7 +30,9 @@ public record UpdateTaskRequest(
     int? Duration,
     int Priority,
     bool IsCompleted,
-    string? DopamineType = null
+    string? DopamineType = null,
+    Guid? AssignedUserId = null,
+    bool IsShared = false
 );
 
 public record MoveTaskRequest(
@@ -61,7 +66,12 @@ public record TaskResponse(
     DateTime CreatedAt,
     DateTime UpdatedAt,
     int? RescheduleCount,
-    string? DopamineType
+    string? DopamineType,
+    Guid? FamilyId,
+    Guid? AssignedUserId,
+    string? AssignedUserName,
+    string? AssignedUserAvatar,
+    bool IsShared
 );
 
 public record TaskListResponse(

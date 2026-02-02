@@ -1,0 +1,257 @@
+@page "/settings/family"
+@using ADHDChecklist.Client.Features.Family.Services
+@inject IFamilyService FamilyService
+@inject IJSRuntime JS
+@attribute [Authorize]
+
+<PageTitle>Family Settings - Bloomento</PageTitle>
+
+<div class="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Family Settings</h1>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage your family group, members, and subscription.</p>
+    </div>
+
+    @if (_isLoading)
+    {
+        <div class="flex justify-center py-12">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+        </div>
+    }
+    else if (_family == null)
+    {
+        <!-- No Family State -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="p-8 text-center">
+                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30 mb-6">
+                    <svg class="h-8 w-8 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Create or Join a Family</h3>
+                <p class="mt-2 text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+                    Upgrade to Family Plan to share tasks, habits, and progress with your loved ones. Support each other and achieve goals together.
+                </p>
+                <div class="mt-8 flex justify-center gap-4">
+                    <button @onclick="() => _showCreateModal = true" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors">
+                        Create Family
+                    </button>
+                    <button @onclick="() => _showJoinModal = true" class="px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 font-medium rounded-lg transition-colors">
+                        Join with Code
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Existing Family State -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">@_family.Name</h2>
+                    <p class="text-sm text-gray-500">Plan: Family Premium</p>
+                </div>
+                @if (_family.IsOwner)
+                {
+                    <button @onclick="InviteMember" class="flex items-center gap-2 px-3 py-1.5 text-sm bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Invite Member
+                    </button>
+                }
+            </div>
+            
+            <div class="p-6">
+                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">Members (@_family.Members.Count/5)</h3>
+                <div class="space-y-4">
+                    @foreach (var member in _family.Members)
+                    {
+                        <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border border-transparent hover:border-gray-200 dark:hover:border-gray-700">
+                            <div class="flex items-center gap-3">
+                                <div class="h-10 w-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
+                                    @(string.IsNullOrEmpty(member.AvatarUrl) ? member.FullName.Substring(0, 1).ToUpper() : "")
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900 dark:text-gray-100">@member.FullName</p>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs text-gray-500">@member.Role</span>
+                                        @if (!string.IsNullOrEmpty(member.Nickname))
+                                        {
+                                            <span class="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">@member.Nickname</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Create Family Modal -->
+@if (_showCreateModal)
+{
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Create Family</h3>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Family Name</label>
+                <input @bind="_newFamilyName" type="text" placeholder="e.g. Smith Family" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none" />
+            </div>
+            <div class="flex justify-end gap-3">
+                <button @onclick="() => _showCreateModal = false" class="px-4 py-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">Cancel</button>
+                <button @onclick="CreateFamily" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50" disabled="@string.IsNullOrWhiteSpace(_newFamilyName)">Create</button>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Join Family Modal -->
+@if (_showJoinModal)
+{
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Join Family</h3>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Invitation Code</label>
+                <input @bind="_joinCode" type="text" placeholder="e.g. 123456" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none text-center text-lg tracking-widest uppercase" />
+            </div>
+            @if (!string.IsNullOrEmpty(_errorMessage))
+            {
+                <p class="text-red-500 text-sm mb-4">@_errorMessage</p>
+            }
+            <div class="flex justify-end gap-3">
+                <button @onclick="() => _showJoinModal = false" class="px-4 py-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">Cancel</button>
+                <button @onclick="JoinFamily" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50" disabled="@string.IsNullOrWhiteSpace(_joinCode)">Join</button>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Invite Modal -->
+@if (_showInviteModal)
+{
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Invite Member</h3>
+            
+            @if (_generatedCode != null)
+            {
+                <div class="text-center py-4">
+                    <p class="text-sm text-gray-500 mb-2">Share this code with your family member:</p>
+                    <div class="text-3xl font-mono font-bold text-purple-600 tracking-wider mb-2">@_generatedCode</div>
+                    <p class="text-xs text-gray-400">Code expires in 48 hours.</p>
+                </div>
+                <div class="flex justify-end gap-3 mt-4">
+                     <button @onclick="CloseInviteModal" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Done</button>
+                </div>
+            }
+            else
+            {
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Member Email (Optional)</label>
+                    <input @bind="_inviteEmail" type="email" placeholder="member@example.com" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none" />
+                    <p class="text-xs text-gray-500 mt-1">Or just generate a code to share manually.</p>
+                </div>
+                 <div class="flex justify-end gap-3">
+                    <button @onclick="() => _showInviteModal = false" class="px-4 py-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">Cancel</button>
+                    <button @onclick="GenerateInvite" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Generate Code</button>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private FamilyResponse? _family;
+    private bool _isLoading = true;
+    private bool _showCreateModal = false;
+    private bool _showJoinModal = false;
+    private bool _showInviteModal = false;
+    private string _errorMessage = "";
+
+    // Form inputs
+    private string _newFamilyName = "";
+    private string _joinCode = "";
+    private string _inviteEmail = "";
+    private string? _generatedCode = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFamily();
+    }
+
+    private async Task LoadFamily()
+    {
+        _isLoading = true;
+        try
+        {
+            _family = await FamilyService.GetFamilyAsync();
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task CreateFamily()
+    {
+        try
+        {
+            await FamilyService.CreateFamilyAsync(_newFamilyName);
+            _showCreateModal = false;
+            await LoadFamily();
+        }
+        catch (Exception ex)
+        {
+            // Show error toast ideally
+            Console.WriteLine(ex.Message);
+        }
+    }
+    
+    private async Task JoinFamily()
+    {
+        _errorMessage = "";
+        try
+        {
+            await FamilyService.JoinFamilyAsync(_joinCode);
+            _showJoinModal = false;
+            await LoadFamily();
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = ex.Message;
+        }
+    }
+
+    private void InviteMember()
+    {
+        _generatedCode = null;
+        _inviteEmail = "";
+        _showInviteModal = true;
+    }
+
+    private async Task GenerateInvite()
+    {
+        try
+        {
+            // We pass "placeholder" email if empty, as backend expects email but code is what matters for now
+            var email = string.IsNullOrWhiteSpace(_inviteEmail) ? "manual-share@placeholder.com" : _inviteEmail;
+            _generatedCode = await FamilyService.InviteMemberAsync(email);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+    
+    private void CloseInviteModal()
+    {
+        _showInviteModal = false;
+        _generatedCode = null;
+    }
+}

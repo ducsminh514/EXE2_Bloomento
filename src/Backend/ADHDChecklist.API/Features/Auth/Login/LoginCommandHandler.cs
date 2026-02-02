@@ -94,6 +94,9 @@ namespace ADHDChecklist.API.Features.Auth.Login
 
             _logger.LogInformation("User {UserId} logged in successfully", user.Id);
 
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault() ?? "Member";
+
             return new LoginResponse(
                 Success: true,
                 Message: "Đăng nhập thành công",
@@ -105,7 +108,8 @@ namespace ADHDChecklist.API.Features.Auth.Login
                     FullName: user.FullName ?? user.Email!,
                     SubscriptionTier: user.SubscriptionTier.ToString(),
                     IsPremium: user.IsPremium(),
-                    IsEmailVerified: user.IsEmailVerified
+                    IsEmailVerified: user.IsEmailVerified,
+                    Role: role
                 )
             );
         }

@@ -15,6 +15,8 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
       int Priority,
       bool IsCompleted,
       string? DopamineType,
-      Guid UserId
+      Guid UserId,
+      Guid? AssignedUserId = null,
+      bool IsShared = false
   ) : IRequest<TaskResponse?>;
 }

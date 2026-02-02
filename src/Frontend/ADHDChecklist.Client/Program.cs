@@ -9,7 +9,7 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-
+using ADHDChecklist.Client.Features.Family.Services;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
@@ -41,6 +41,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 // ============================================
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IRewardService, RewardService>(); // Added IRewardService registration
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 //builder.Services.AddScoped<IPremiumAnalyticsService, PremiumAnalyticsService>();
 builder.Services.AddScoped<IBrainDumpService, BrainDumpService>();
@@ -48,6 +49,8 @@ builder.Services.AddScoped<IHabitService, HabitService>();
 builder.Services.AddScoped<IKnowledgeService, KnowledgeService>();
 builder.Services.AddScoped<IPreferencesService, PreferencesService>();
 builder.Services.AddScoped<ADHDChecklist.Client.Features.Admin.Services.IAdminService, ADHDChecklist.Client.Features.Admin.Services.AdminService>();
+builder.Services.AddScoped<ADHDChecklist.Client.Features.Family.Services.IFamilyService, ADHDChecklist.Client.Features.Family.Services.FamilyService>();
+builder.Services.AddScoped<ADHDChecklist.Client.Features.Notifications.Services.INotificationService, ADHDChecklist.Client.Features.Notifications.Services.NotificationService>();
 
 builder.Services.AddAuthorizationCore();
 

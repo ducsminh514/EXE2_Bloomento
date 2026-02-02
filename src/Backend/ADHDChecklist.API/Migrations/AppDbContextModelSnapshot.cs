@@ -488,6 +488,168 @@ namespace ADHDChecklist.API.Migrations
                     b.ToTable("DistractionLogs", (string)null);
                 });
 
+            modelBuilder.Entity("ADHDChecklist.API.Entities.Family", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SubscriptionPlan")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Families");
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.FamilyInvitation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FamilyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FamilyId");
+
+                    b.ToTable("FamilyInvitations");
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.FamilyMember", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FamilyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Nickname")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FamilyId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("FamilyMembers");
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.FamilyPointHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FamilyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ReferenceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FamilyId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("FamilyPointHistory");
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.FamilyReward", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CostPoints")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("FamilyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FamilyId");
+
+                    b.ToTable("FamilyRewards");
+                });
+
             modelBuilder.Entity("ADHDChecklist.API.Entities.FocusSession", b =>
                 {
                     b.Property<Guid>("Id")
@@ -588,6 +750,9 @@ namespace ADHDChecklist.API.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<Guid?>("FamilyId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Frequency")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -597,6 +762,9 @@ namespace ADHDChecklist.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<bool>("IsShared")
+                        .HasColumnType("bit");
 
                     b.Property<int>("LongestStreak")
                         .ValueGeneratedOnAdd()
@@ -612,6 +780,8 @@ namespace ADHDChecklist.API.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FamilyId");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("IX_Habits_UserId");
@@ -701,6 +871,44 @@ namespace ADHDChecklist.API.Migrations
                     b.ToTable("KnowledgeCategories");
                 });
 
+            modelBuilder.Entity("ADHDChecklist.API.Entities.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ReferenceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("ADHDChecklist.API.Entities.ReadingProgress", b =>
                 {
                     b.Property<Guid>("Id")
@@ -787,6 +995,9 @@ namespace ADHDChecklist.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("AssignedUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
@@ -811,6 +1022,9 @@ namespace ADHDChecklist.API.Migrations
                     b.Property<int?>("Duration")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("FamilyId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsCompleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -820,6 +1034,9 @@ namespace ADHDChecklist.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
+
+                    b.Property<bool>("IsShared")
+                        .HasColumnType("bit");
 
                     b.Property<int>("OrderIndex")
                         .ValueGeneratedOnAdd()
@@ -865,6 +1082,8 @@ namespace ADHDChecklist.API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AssignedUserId");
+
                     b.HasIndex("CategoryId")
                         .HasDatabaseName("IX_Tasks_CategoryId")
                         .HasFilter("[CategoryId] IS NOT NULL");
@@ -872,6 +1091,8 @@ namespace ADHDChecklist.API.Migrations
                     b.HasIndex("DeletedAt")
                         .HasDatabaseName("IX_Tasks_DeletedAt")
                         .HasFilter("[DeletedAt] IS NULL");
+
+                    b.HasIndex("FamilyId");
 
                     b.HasIndex("IsCompleted")
                         .HasDatabaseName("IX_Tasks_IsCompleted");
@@ -1204,6 +1425,77 @@ namespace ADHDChecklist.API.Migrations
                     b.Navigation("FocusSession");
                 });
 
+            modelBuilder.Entity("ADHDChecklist.API.Entities.Family", b =>
+                {
+                    b.HasOne("ADHDChecklist.API.Entities.Common.ApplicationUser", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.FamilyInvitation", b =>
+                {
+                    b.HasOne("ADHDChecklist.API.Entities.Family", "Family")
+                        .WithMany("Invitations")
+                        .HasForeignKey("FamilyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Family");
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.FamilyMember", b =>
+                {
+                    b.HasOne("ADHDChecklist.API.Entities.Family", "Family")
+                        .WithMany("Members")
+                        .HasForeignKey("FamilyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ADHDChecklist.API.Entities.Common.ApplicationUser", "User")
+                        .WithMany("FamilyMembers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Family");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.FamilyPointHistory", b =>
+                {
+                    b.HasOne("ADHDChecklist.API.Entities.Family", "Family")
+                        .WithMany()
+                        .HasForeignKey("FamilyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ADHDChecklist.API.Entities.Common.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Family");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.FamilyReward", b =>
+                {
+                    b.HasOne("ADHDChecklist.API.Entities.Family", "Family")
+                        .WithMany()
+                        .HasForeignKey("FamilyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Family");
+                });
+
             modelBuilder.Entity("ADHDChecklist.API.Entities.FocusSession", b =>
                 {
                     b.HasOne("ADHDChecklist.API.Entities.Task", "Task")
@@ -1228,11 +1520,18 @@ namespace ADHDChecklist.API.Migrations
 
             modelBuilder.Entity("ADHDChecklist.API.Entities.Habit", b =>
                 {
+                    b.HasOne("ADHDChecklist.API.Entities.Family", "Family")
+                        .WithMany()
+                        .HasForeignKey("FamilyId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("ADHDChecklist.API.Entities.Common.ApplicationUser", "User")
                         .WithMany("Habits")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Family");
 
                     b.Navigation("User");
                 });
@@ -1255,6 +1554,17 @@ namespace ADHDChecklist.API.Migrations
                         .HasForeignKey("ParentCategoryId");
 
                     b.Navigation("ParentCategory");
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.Notification", b =>
+                {
+                    b.HasOne("ADHDChecklist.API.Entities.Common.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ADHDChecklist.API.Entities.ReadingProgress", b =>
@@ -1288,9 +1598,19 @@ namespace ADHDChecklist.API.Migrations
 
             modelBuilder.Entity("ADHDChecklist.API.Entities.Task", b =>
                 {
+                    b.HasOne("ADHDChecklist.API.Entities.Common.ApplicationUser", "AssignedUser")
+                        .WithMany()
+                        .HasForeignKey("AssignedUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("ADHDChecklist.API.Entities.Category", "Category")
                         .WithMany("Tasks")
                         .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ADHDChecklist.API.Entities.Family", "Family")
+                        .WithMany()
+                        .HasForeignKey("FamilyId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ADHDChecklist.API.Entities.Task", "ParentTask")
@@ -1303,7 +1623,11 @@ namespace ADHDChecklist.API.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("AssignedUser");
+
                     b.Navigation("Category");
+
+                    b.Navigation("Family");
 
                     b.Navigation("ParentTask");
 
@@ -1395,6 +1719,8 @@ namespace ADHDChecklist.API.Migrations
 
                     b.Navigation("Categories");
 
+                    b.Navigation("FamilyMembers");
+
                     b.Navigation("FocusSessions");
 
                     b.Navigation("Habits");
@@ -1402,6 +1728,13 @@ namespace ADHDChecklist.API.Migrations
                     b.Navigation("Preferences");
 
                     b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.Family", b =>
+                {
+                    b.Navigation("Invitations");
+
+                    b.Navigation("Members");
                 });
 
             modelBuilder.Entity("ADHDChecklist.API.Entities.FocusSession", b =>

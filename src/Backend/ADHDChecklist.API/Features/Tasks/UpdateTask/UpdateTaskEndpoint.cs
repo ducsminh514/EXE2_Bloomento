@@ -29,7 +29,9 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
                     request.Priority,
                     request.IsCompleted,
                     request.DopamineType,
-                    userId
+                    userId,
+                    request.AssignedUserId,
+                    request.IsShared
                 );
 
                 var result = await mediator.Send(command, ct);

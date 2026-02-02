@@ -47,6 +47,11 @@ public partial class Task
     public int RescheduleCount { get; set; } = 0;
     public string? DopamineType { get; set; } // 'Low' (Hard/Boring) or 'High' (Fun/Creative)
 
+    // Family Features (Nullable for backward compatibility)
+    public Guid? FamilyId { get; set; }
+    public Guid? AssignedUserId { get; set; }
+    public bool IsShared { get; set; } = false;
+
     public virtual ICollection<BrainDumpItem> BrainDumpItems { get; set; } = new List<BrainDumpItem>();
 
     public virtual Category? Category { get; set; }
@@ -58,4 +63,8 @@ public partial class Task
     public virtual ApplicationUser User { get; set; } = null!;
     public virtual Task? ParentTask { get; set; }
     public virtual ICollection<Task> SubTasks { get; set; } = new List<Task>();
+    
+    // Family Navigation
+    public virtual Family? Family { get; set; }
+    public virtual ApplicationUser? AssignedUser { get; set; }
 }

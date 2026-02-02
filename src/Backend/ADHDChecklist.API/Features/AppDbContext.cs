@@ -32,6 +32,14 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     public DbSet<ArticleBookmark> ArticleBookmarks { get; set; } = null!;
     public DbSet<ReadingProgress> ReadingProgresses { get; set; } = null!;
 
+    // Family Module
+    public DbSet<Family> Families { get; set; } = null!;
+    public DbSet<FamilyMember> FamilyMembers { get; set; } = null!;
+    public DbSet<FamilyInvitation> FamilyInvitations { get; set; } = null!;
+    public DbSet<Notification> Notifications { get; set; } = null!;
+    public DbSet<FamilyReward> FamilyRewards { get; set; } = null!;
+    public DbSet<FamilyPointHistory> FamilyPointHistory { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -47,6 +55,57 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
 
         // Apply all configurations from assembly
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+        // FAMILY CONFIGURATION
+        modelBuilder.Entity<Family>()
+            .HasOne(f => f.Owner)
+            .WithMany()
+            .HasForeignKey(f => f.OwnerId)
+            .OnDelete(DeleteBehavior.Restrict); // Prevent deleting User if they own a Family
+
+        // 1. Family -> Members: RESTRICT (Must clear members before deleting family)
+        // This avoids SQL Server "Multiple Cascade Paths" error.
+        modelBuilder.Entity<FamilyMember>()
+            .HasOne(fm => fm.Family)
+            .WithMany(f => f.Members)
+            .HasForeignKey(fm => fm.FamilyId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // 2. User -> Members: RESTRICT (User must leave family before deleting account)
+        // This breaks the cycle: Family -> Member (Cascade) AND User -> Family (Owner) -> Member (Cascade via Family)
+        modelBuilder.Entity<FamilyMember>()
+            .HasOne(fm => fm.User)
+            .WithMany(u => u.FamilyMembers)
+            .HasForeignKey(fm => fm.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<FamilyInvitation>()
+            .HasOne(fi => fi.Family)
+            .WithMany(f => f.Invitations)
+            .HasForeignKey(fi => fi.FamilyId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // TASKS & HABITS
+        // Avoid cascading from both Family and User
+        // Strategy: SetNull for Family-linked items. Data remains but unlinked.
+
+        modelBuilder.Entity<ADHDChecklist.API.Entities.Task>()
+            .HasOne(t => t.Family)
+            .WithMany()
+            .HasForeignKey(t => t.FamilyId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<ADHDChecklist.API.Entities.Task>()
+            .HasOne(t => t.AssignedUser)
+            .WithMany()
+            .HasForeignKey(t => t.AssignedUserId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<Habit>()
+            .HasOne(h => h.Family)
+            .WithMany()
+            .HasForeignKey(h => h.FamilyId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         // Knowledge Module - Avoid Cascade Cycles
         
@@ -77,6 +136,33 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
             .WithMany()
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        // Notifications
+        modelBuilder.Entity<Notification>()
+            .HasOne(n => n.User)
+            .WithMany()
+            .HasForeignKey(n => n.UserId)
+            .OnDelete(DeleteBehavior.Cascade); // If user deleted, notifications gone too? Or Restrict? 
+            // Usually Cascade is fine for notifications as they are personal.
+
+        // GAMIFICATION
+        modelBuilder.Entity<FamilyReward>()
+            .HasOne(r => r.Family)
+            .WithMany()
+            .HasForeignKey(r => r.FamilyId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<FamilyPointHistory>()
+            .HasOne(ph => ph.Family)
+            .WithMany()
+            .HasForeignKey(ph => ph.FamilyId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<FamilyPointHistory>()
+            .HasOne(ph => ph.User)
+            .WithMany()
+            .HasForeignKey(ph => ph.UserId)
+            .OnDelete(DeleteBehavior.Restrict); // Keep history even if user is removed from family? Or Cascade? RESTRICT is safer.
     }
 
     // Auto-update timestamps

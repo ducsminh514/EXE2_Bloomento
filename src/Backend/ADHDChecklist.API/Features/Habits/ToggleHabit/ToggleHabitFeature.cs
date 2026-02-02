@@ -25,10 +25,12 @@ namespace ADHDChecklist.API.Features.Habits.ToggleHabit
     public class ToggleHabitCommandHandler : IRequestHandler<ToggleHabitCommand, bool>
     {
         private readonly AppDbContext _context;
+        private readonly IMediator _mediator;
 
-        public ToggleHabitCommandHandler(AppDbContext context)
+        public ToggleHabitCommandHandler(AppDbContext context, IMediator mediator)
         {
             _context = context;
+            _mediator = mediator;
         }
 
         public async Task<bool> Handle(ToggleHabitCommand request, CancellationToken cancellationToken)
@@ -133,6 +135,17 @@ namespace ADHDChecklist.API.Features.Habits.ToggleHabit
 
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            if (isNowCompleted)
+            {
+                await _mediator.Publish(new Shared.Events.HabitCompletedEvent(
+                    habit.Id,
+                    habit.UserId,
+                    habit.FamilyId,
+                    20 // Standard points for habit completion
+                ), cancellationToken);
+            }
+
             return isNowCompleted;
         }
     }

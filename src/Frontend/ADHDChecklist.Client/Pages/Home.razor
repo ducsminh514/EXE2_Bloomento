@@ -7,8 +7,13 @@
 @using ADHDChecklist.Client.Features.Focus.Components
 @using ADHDChecklist.Client.Shared.Components
 @using ADHDChecklist.Client.Features.Habits.Components
+@using ADHDChecklist.Client.Features.Family.Services
+@using ADHDChecklist.Client.Features.Notifications.Components
+@using ADHDChecklist.Client.Features.Family.Components
 @inject ITaskService TaskService
 @inject ICategoryService CategoryService
+@inject IFamilyService FamilyService
+@inject IRewardService RewardService
 @inject IAuthService AuthService
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Navigation
@@ -57,9 +62,18 @@
                         <span>📚</span> 
                         <span class="group-hover:translate-x-0.5 transition-transform">Kiến thức</span>
                     </a>
+                    <a href="/settings/family" class="text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors flex items-center gap-1 group">
+                        <span>👨‍👩‍👧‍👦</span> 
+                        <span class="group-hover:translate-x-0.5 transition-transform">Gia đình</span>
+                    </a>
                 </div>
                 
                 <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-1.5 bg-yellow-50 text-yellow-700 px-2.5 py-1 rounded-full border border-yellow-200 text-sm font-medium shadow-sm">
+                        <span class="text-base">🪙</span>
+                        <span>@_points.ToString("N0")</span>
+                    </div>
+                    <NotificationBell />
                     <button @onclick="ShowProfileModal" class="text-sm text-gray-600 hover:text-primary-600 transition-colors flex items-center gap-2 group">
                         <span>Xin chào, <strong class="group-hover:text-primary-700">@_userName</strong></span>
                         <div class="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center text-xs font-bold text-primary-600 border border-primary-200">
@@ -88,6 +102,14 @@
                     </div>
                     <button @onclick="NextDay" class="p-1.5 hover:bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
                     <button @onclick="GoToToday" class="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-lg text-xs font-bold hover:bg-primary-100 transition-colors">📅 Hôm nay</button>
+                    
+                    @if (_familyId.HasValue)
+                    {
+                        <button @onclick="ToggleFamilyFilter" 
+                                class="px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1 @(_showFamilyTasks ? "bg-purple-100 text-purple-700 border-purple-200" : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50")">
+                            <span>@(_showFamilyTasks ? "👨‍👩‍👧‍👦 Gia đình" : "👤 Cá nhân")</span>
+                        </button>
+                    }
                 </div>
             </div>
 
@@ -167,8 +189,14 @@
                     </div>
 
                     <!-- Right Section: WORKSPACE (70%) -->
-                    <div class="w-[70%] flex flex-col gap-4 min-h-0 @(_focusedTaskId.HasValue ? "opacity-30 blur-sm grayscale pointer-events-none transition-all duration-500" : "transition-all duration-300")">
+                    <div class="w-[70%] flex flex-col gap-4 min-h-0 overflow-y-auto overflow-x-hidden pr-2 custom-scrollbar @(_focusedTaskId.HasValue ? "opacity-30 blur-sm grayscale pointer-events-none transition-all duration-500" : "transition-all duration-300")">
                         
+                        <!-- Rewards Hub Section -->
+                        <div class="flex-shrink-0">
+                            <FamilyRewardsView IsAdmin="@(_currentUser?.Role == "Admin" || _currentUser?.Role == "Parent")" 
+                                               OnPointsChanged="LoadPoints" />
+                        </div>
+
                         <!-- Stats Header -->
                         <div class="flex items-center justify-between bg-white dark:bg-gray-800 rounded-xl p-2 px-4 shadow-sm border border-gray-200 dark:border-gray-700 flex-shrink-0 transition-colors">
                             <div class="flex items-center gap-6">
@@ -194,7 +222,8 @@
                         <!-- Habit Tracker -->
                         <div class="flex-shrink-0">
                             <HabitTracker IsPremium="@(_currentUser?.IsPremium == true)" 
-                                          OnUpgradeClicked="ShowUpgradeModal" />
+                                          OnUpgradeClicked="ShowUpgradeModal"
+                                          OnHabitToggled="LoadPoints" />
                         </div>
 
                         <!-- Workspace Grid (Inbox & Analytics/Categories) -->
@@ -243,20 +272,20 @@
                             <div class="flex flex-col gap-4 min-h-0">
                                 
                                 <!-- Top: Free Tier Analytics -->
-                                <div class="flex-1 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col transition-colors">
+                                <div class="flex-none bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col transition-colors">
                                     <div class="p-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50 transition-colors">
                                         <h4 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest flex items-center gap-2">
                                             <span class="text-base">📊</span> Thống kê (Hôm nay)
                                         </h4>
                                         <span class="text-[9px] bg-primary-50 dark:bg-primary-900/30 text-primary-600 px-2 py-0.5 rounded font-bold uppercase transition-colors">@(_currentUser?.IsPremium == true ? "PREMIUM" : "FREE TIER")</span>
                                     </div>
-                                    <div class="flex-1 p-4 flex flex-col gap-4 overflow-y-auto">
+                                    <div class="p-4 flex flex-col gap-4">
                                         <!-- Summary Row -->
                                         <div class="grid grid-cols-2 gap-3 @(_currentUser?.IsPremium == true ? "sm:grid-cols-4" : "")">
                                             <div class="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3 text-center border border-gray-100 dark:border-gray-700 transition-colors">
                                                 <span class="block text-2xl font-black text-gray-800 dark:text-gray-100">@_allTasks.Count</span>
                                                 <span class="text-[10px] text-gray-500 font-bold uppercase tracking-tighter">Tổng task</span>
-                                            </div>
+                                             </div>
                                              <div class="bg-green-50 dark:bg-green-900/10 rounded-lg p-3 text-center border border-green-100 dark:border-green-800/30 transition-colors">
                                                 <span class="block text-2xl font-black text-green-600">@_completedCount</span>
                                                 <span class="text-[10px] text-green-600/70 font-bold uppercase tracking-tighter">Hoàn thành</span>
@@ -309,18 +338,18 @@
                                     </div>
                                 </div>
 
-                                <!-- Bottom: Categories (Smaller) -->
-                                <div class="h-[40%] bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col transition-colors">
+                                <!-- Categories (Smaller) -->
+                                <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col transition-colors">
                                     <div class="p-2 px-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50 transition-colors">
                                          <h4 class="font-bold text-xs text-gray-500 uppercase">Danh mục</h4>
                                          <button @onclick="ShowCreateCategoryModal" class="text-[10px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-0.5 rounded hover:bg-gray-50 dark:hover:bg-gray-700 text-primary-600 font-bold transition-all">+</button>
                                     </div>
-                                    <div class="flex-1 overflow-y-auto custom-scrollbar p-2">
+                                    <div class="p-2 px-3">
                                         <div class="flex flex-wrap gap-2">
                                             @foreach(var cat in _categories) {
-                                                <div class="flex items-center gap-2 p-1.5 pr-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm hover:border-primary-100 transition-colors w-full sm:w-auto">
-                                                    <div class="w-6 h-6 rounded-md flex items-center justify-center text-xs text-white shadow-sm" style="background-color: @cat.ColorHex">@cat.Icon</div>
-                                                    <span class="text-xs font-bold text-gray-700 dark:text-gray-200">@cat.Name</span>
+                                                <div class="flex items-center gap-2 p-1.5 pr-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm hover:border-primary-100 transition-colors">
+                                                    <div class="w-5 h-5 rounded-md flex items-center justify-center text-[10px] text-white shadow-sm" style="background-color: @cat.ColorHex">@cat.Icon</div>
+                                                    <span class="text-[10px] font-bold text-gray-700 dark:text-gray-200">@cat.Name</span>
                                                 </div>
                                             }
                                             @if(!_categories.Any()) { <span class="text-xs text-gray-400 italic p-2">Chưa có danh mục</span>}
@@ -381,6 +410,9 @@
     <CreateTaskModal OnClose="CloseCreateTaskModal" 
                      OnTaskCreated="HandleTaskCreated"
                      Categories="@_categories"
+                     FamilyMembers="@_familyMembers"
+                     FamilyId="@_familyId"
+                     CurrentUserId="@_currentUser?.UserId"
                      SelectedDate="@_selectedDate" />
 }
 
@@ -600,13 +632,17 @@
     private List<TaskResponse> _scheduledTasks = new();
     private List<TaskResponse> _inboxTasks = new();
     private List<CategoryResponse> _categories = new();
+    private List<FamilyMemberResponse> _familyMembers = new();
+    private Guid? _familyId;
+    private bool _showFamilyTasks = false; // Toggle state
     private int _overdueCount = 0;
 
     private int _completedCount => _allTasks.Count(t => t.IsCompleted);
     private int _completionRate => _allTasks.Count > 0 
         ? (int)Math.Round((double)_completedCount / _allTasks.Count * 100) 
         : 0;
-
+    private int _points = 0;
+    
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
@@ -616,7 +652,8 @@
             return;
         }
 
-        // Redirect Admin to Admin Dashboard
+        await LoadPoints();
+
         if (authState.User.IsInRole("Admin"))
         {
             Navigation.NavigateTo("/admin/dashboard");
@@ -635,6 +672,14 @@
              _userName = user.FindFirst(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value 
                         ?? user.FindFirst(c => c.Type == "name")?.Value 
                         ?? "User";
+        }
+        
+        // Fetch Family Data
+        var family = await FamilyService.GetFamilyAsync();
+        if (family != null)
+        {
+            _familyMembers = family.Members;
+            _familyId = family.Id;
         }
 
         await LoadData();
@@ -655,12 +700,7 @@
             _categories = categoriesTask.Result ?? new List<CategoryResponse>();
             _overdueCount = overdueTask.Result;
 
-            _scheduledTasks = _allTasks.Where(t => t.TimeBlockStart.HasValue)
-                                       .OrderBy(t => t.TimeBlockStart)
-                                       .ToList();
-            _inboxTasks = _allTasks.Where(t => !t.TimeBlockStart.HasValue)
-                                   .OrderBy(t => t.OrderIndex)
-                                   .ToList();
+            FilterTasks(); // Apply filtering logic
         }
         catch (Exception ex)
         {
@@ -690,6 +730,48 @@
         await LoadData();
     }
 
+    private void FilterTasks()
+    {
+        var tasksToShow = _allTasks;
+        
+        if (!_showFamilyTasks)
+        {
+            // Show only MY tasks (or tasks assigned to me)
+             // Logic: If AssignedUserId is set, it must be ME. If not set, it must be created by ME (UserId is not in DTO but API filters by Owner/Assignee).
+             // Wait, GetTasksByDate returns tasks created by user OR assigned to user OR in family (if logic was changed).
+             // My Backend logic: (t.UserId == request.UserId) || (t.FamilyId == userFamilyId).
+             // If I want to hide "Family Tasks" (tasks of others), I check AssignedUserId.
+             // If AssignedUserId is someone else -> Hide.
+             // If AssignedUserId is NULL -> Show (It's mine, created by me).
+             // If AssignedUserId is ME -> Show.
+             
+             // BUT, DTO doesn't have CurrentUserId to compare easily, unless I store _currentUser.Id.
+             // _currentUser is loaded in OnInitialized.
+             
+             if (_currentUser != null)
+             {
+                 var myId = Guid.Parse(_currentUser.UserId);
+                 tasksToShow = _allTasks.Where(t => 
+                     t.AssignedUserId == null || 
+                     t.AssignedUserId == myId).ToList();
+             }
+        }
+        // Else show all (including family members' tasks)
+
+        _scheduledTasks = tasksToShow.Where(t => t.TimeBlockStart.HasValue)
+                                   .OrderBy(t => t.TimeBlockStart)
+                                   .ToList();
+        _inboxTasks = tasksToShow.Where(t => !t.TimeBlockStart.HasValue)
+                               .OrderBy(t => t.OrderIndex)
+                               .ToList();
+    }
+    
+    private void ToggleFamilyFilter()
+    {
+        _showFamilyTasks = !_showFamilyTasks;
+        FilterTasks();
+    }
+
     private void ShowCreateTaskModal()
     {
         _showCreateModal = true;
@@ -712,6 +794,7 @@
         {
             await TaskService.ToggleTaskCompletionAsync(taskId);
             await LoadData();
+            await LoadPoints();
         }
         catch (Exception ex)
         {
@@ -1091,6 +1174,19 @@
         {
             _isLoading = false;
             await LoadData();
+        }
+    }
+
+    private async Task LoadPoints()
+    {
+        try 
+        {
+            _points = await RewardService.GetPointsAsync();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading points: {ex.Message}");
         }
     }
 }

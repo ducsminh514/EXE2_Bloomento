@@ -116,6 +116,9 @@ namespace ADHDChecklist.API.Features.Auth.GoogleLogin
 
                 _logger.LogInformation("User {UserId} logged in via Google", user.Id);
 
+                var roles = await _userManager.GetRolesAsync(user);
+                var role = roles.FirstOrDefault() ?? "Member";
+
                 return new GoogleLoginResponse(
                     Success: true,
                     Message: isNewUser ? "Đăng ký thành công qua Google!" : "Đăng nhập thành công!",
@@ -126,7 +129,8 @@ namespace ADHDChecklist.API.Features.Auth.GoogleLogin
                         Email: user.Email!,
                         FullName: user.FullName ?? user.Email!,
                         SubscriptionTier: user.SubscriptionTier.ToString(),
-                        IsPremium: user.IsPremium()
+                        IsPremium: user.IsPremium(),
+                        Role: role
                     ),
                     IsNewUser: isNewUser
                 );

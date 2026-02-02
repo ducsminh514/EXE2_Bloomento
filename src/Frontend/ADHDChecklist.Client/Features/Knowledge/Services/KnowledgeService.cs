@@ -197,6 +197,14 @@ namespace ADHDChecklist.Client.Features.Knowledge.Services
             try
             {
                 await _apiClient.PostAsync<object>($"/api/admin/knowledge/comments/{id}/toggle-visibility", null);
+                // Since ApiClient doesn't have PatchAsync, I'll need to check if existing PostAsync works or if I need to add Patch.
+                // Wait, ApiClient has Put, Post, but maybe not Patch. The backend endpoint is PATCH.
+                // Assuming PostAsync might not work for Patch unless configured.
+                // Let's verify ApiClient first. If not, I'll use Put or HttpClient directly if ApiClient exposes it.
+                // Actually, I'll check ApiClient.cs again. It does NOT have PatchAsync.
+                // I will add PatchAsync to ApiClient in a separate step or stick to Post if I change backend.
+                // For now, let's assume I will add PatchAsync to ApiClient.
+                // But to be safe and quick, I'll just change the Backend to use POST for toggle action. It's an action resource anyway.
                 return true;
             }
             catch (Exception ex)

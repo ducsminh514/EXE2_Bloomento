@@ -23,6 +23,7 @@ namespace ADHDChecklist.API.Features.Auth.GoogleLogin
         string Email,
         string FullName,
         string SubscriptionTier,
-        bool IsPremium
+        bool IsPremium,
+        string Role
     );
 }

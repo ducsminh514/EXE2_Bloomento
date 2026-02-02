@@ -39,6 +39,14 @@ using ADHDChecklist.API.Features.Users.Upgrade;
 using ADHDChecklist.API.Features.Habits.GetHabits;
 using ADHDChecklist.API.Features.Habits.CreateHabit;
 using ADHDChecklist.API.Features.Habits.ToggleHabit;
+using ADHDChecklist.API.Features.Family.CreateFamily;
+using ADHDChecklist.API.Features.Family.GetFamily;
+using ADHDChecklist.API.Features.Family.InviteMember;
+using ADHDChecklist.API.Features.Family.JoinFamily;
+using ADHDChecklist.API.Features.Notifications.GetNotifications;
+using ADHDChecklist.API.Features.Notifications.MarkAsRead;
+using ADHDChecklist.API.Features.Family.Gamification.GetPoints;
+using ADHDChecklist.API.Features.Family.Gamification.ManageRewards;
 using ADHDChecklist.API.Services;
 using ADHDChecklist.API.Services.BackgroundJobs;
 using ADHDChecklist.API.Shared.Behaviors;
@@ -388,6 +396,16 @@ app.MapToggleHabit();
 app.MapCreateBrainDumpItem();
 app.MapGetBrainDumpItems();
 app.MapDeleteBrainDumpItem();
+app.MapCreateFamily();
+app.MapGetFamily();
+app.MapInviteMember();
+app.MapJoinFamily();
+
+app.MapGetNotifications();
+app.MapMarkAsRead();
+app.MapGetPoints();
+app.MapManageRewards();
+
 app.MapBreakdownTask();
 
 

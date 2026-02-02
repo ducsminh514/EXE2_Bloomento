@@ -206,7 +206,8 @@ public class AuthService : IAuthService
                 SubscriptionTier = userInfo.SubscriptionTier,
                 IsPremium = userInfo.IsPremium,
                 IsEmailVerified = userInfo.IsEmailVerified,
-                IsAuthenticated = true
+                IsAuthenticated = true,
+                Role = userInfo.Role
             };
         }
         catch

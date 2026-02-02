@@ -24,10 +24,33 @@ public class GetTasksByDateQueryHandler : IRequestHandler<GetTasksByDateQuery, T
 
     public async Task<TaskListResponse> Handle(GetTasksByDateQuery request, CancellationToken cancellationToken)
     {
-        var tasks = await _context.Tasks
-            .Where(t => t.UserId == request.UserId && t.ScheduledDate == request.Date)
+        // 1. Check if user is in a family
+        var userFamilyId = await _context.FamilyMembers
+            .Where(fm => fm.UserId == request.UserId)
+            .Select(fm => fm.FamilyId)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        // 2. Build Query
+        var query = _context.Tasks.AsQueryable();
+
+        if (userFamilyId != Guid.Empty)
+        {
+            // Show my tasks OR family tasks
+            // Note: Simplification - showing all family tasks. Can restrict to "IsShared" if needed.
+            // For now, let's show all tasks linked to Family.
+            query = query.Where(t => 
+                (t.UserId == request.UserId && t.ScheduledDate == request.Date) || 
+                (t.FamilyId == userFamilyId && t.ScheduledDate == request.Date));
+        }
+        else
+        {
+            // Show only my tasks
+            query = query.Where(t => t.UserId == request.UserId && t.ScheduledDate == request.Date);
+        }
+
+        var tasks = await query
             .Include(t => t.Category)
-            // ✅ FIX: Chỉ load SubTasks nếu relationship được config đúng
+            .Include(t => t.AssignedUser) // Include Assignee info
             .OrderBy(t => t.TimeBlockStart ?? TimeOnly.MaxValue)
             .ThenBy(t => t.OrderIndex)
             .Select(t => new TaskResponse(
@@ -47,17 +70,22 @@ public class GetTasksByDateQueryHandler : IRequestHandler<GetTasksByDateQuery, T
                 t.IsRecurring ?? false,
                 t.RecurrencePattern,
                 t.ParentTaskId,
-                new List<TaskResponse>(), // ✅ Empty list thay vì query SubTasks
+                new List<TaskResponse>(), 
                 t.OrderIndex ?? 0,
                 t.CreatedAt,
                 t.UpdatedAt,
                 t.RescheduleCount,
-                t.DopamineType
+                t.DopamineType,
+                t.FamilyId,
+                t.AssignedUserId,
+                t.AssignedUser != null ? t.AssignedUser.FullName : null,
+                t.AssignedUser != null ? t.AssignedUser.GoogleProfilePicture : null,
+                t.IsShared
             ))
             .ToListAsync(cancellationToken);
 
-        _logger.LogInformation("Retrieved {Count} tasks for user {UserId} on {Date}",
-            tasks.Count, request.UserId, request.Date);
+        _logger.LogInformation("Retrieved {Count} tasks for user {UserId} on {Date} (FamilyId: {FamilyId})",
+            tasks.Count, request.UserId, request.Date, userFamilyId);
 
         return new TaskListResponse(
             tasks,

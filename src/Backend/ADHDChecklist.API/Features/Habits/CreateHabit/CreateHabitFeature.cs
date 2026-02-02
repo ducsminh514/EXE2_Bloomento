@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 
 namespace ADHDChecklist.API.Features.Habits.CreateHabit
 {
@@ -33,6 +34,11 @@ namespace ADHDChecklist.API.Features.Habits.CreateHabit
 
         public async Task<Guid> Handle(CreateHabitCommand request, CancellationToken cancellationToken)
         {
+            var familyId = await _context.FamilyMembers
+                .Where(fm => fm.UserId == request.UserId)
+                .Select(fm => (Guid?)fm.FamilyId)
+                .FirstOrDefaultAsync(cancellationToken);
+
             var habit = new Habit
             {
                 Name = request.Title,
@@ -44,7 +50,8 @@ namespace ADHDChecklist.API.Features.Habits.CreateHabit
                 CreatedAt = DateTime.UtcNow,
                 CurrentStreak = 0,
                 LongestStreak = 0,
-                IsActive = true
+                IsActive = true,
+                FamilyId = familyId == Guid.Empty ? null : familyId
             };
 
             _context.Habits.Add(habit);

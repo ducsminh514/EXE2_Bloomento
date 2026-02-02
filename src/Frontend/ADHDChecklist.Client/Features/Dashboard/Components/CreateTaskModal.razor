@@ -1,5 +1,6 @@
 ﻿@using ADHDChecklist.Client.Shared.Models
 @using ADHDChecklist.Client.Features.Dashboard.Services
+@using ADHDChecklist.Client.Features.Family.Services
 @inject ITaskService TaskService
 @using System.ComponentModel.DataAnnotations
 <!-- Modal Overlay -->
@@ -91,6 +92,22 @@
                              </button>
                          }
                     </div>
+                    
+                    <!-- Assign To (Family) -->
+                    @if (FamilyMembers.Any())
+                    {
+                        <div class="flex-1">
+                            <InputSelect @bind-Value="_model.AssignedUserId"
+                                         class="w-full text-xs font-medium text-gray-700 bg-white dark:bg-gray-800 border border-gray-200 rounded-full px-3 py-1.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                                <option value="">-- Giao việc cho --</option>
+                                <option value="">(Tự làm)</option>
+                                @foreach (var member in FamilyMembers.Where(m => m.UserId.ToString() != CurrentUserId))
+                                {
+                                    <option value="@member.UserId">👤 @member.FullName @(member.Nickname != null ? $"({member.Nickname})" : "")</option>
+                                }
+                            </InputSelect>
+                        </div>
+                    }
                 </div>
 
                 <!-- Row 4: Dopamine Type (Premium Visualization Data) -->
@@ -216,7 +233,12 @@
         public string? TimeEnd { get; set; }
         public int Priority { get; set; } = 1;
         public string DopamineType { get; set; } = "Low";
+        public string? AssignedUserId { get; set; }
     }
+
+    [Parameter] public List<FamilyMemberResponse> FamilyMembers { get; set; } = new();
+    [Parameter] public Guid? FamilyId { get; set; }
+    [Parameter] public string? CurrentUserId { get; set; }
 
     private async Task HandleSubmit()
     {
@@ -247,7 +269,10 @@
                 _model.Priority,
                 false,
                 null,
-                _model.DopamineType
+                _model.DopamineType,
+                FamilyId,
+                string.IsNullOrEmpty(_model.AssignedUserId) ? null : Guid.Parse(_model.AssignedUserId),
+                !string.IsNullOrEmpty(_model.AssignedUserId) // IsShared if assigned
             );
 
             await TaskService.CreateTaskAsync(request);

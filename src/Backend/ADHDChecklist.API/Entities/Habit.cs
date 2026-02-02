@@ -28,7 +28,12 @@ public partial class Habit
 
     public DateTime CreatedAt { get; set; }
 
+    // Family Features
+    public Guid? FamilyId { get; set; }
+    public bool IsShared { get; set; } = false;
+
     public virtual ICollection<HabitCompletion> HabitCompletions { get; set; } = new List<HabitCompletion>();
 
     public virtual ApplicationUser User { get; set; } = null!;
+    public virtual Family? Family { get; set; }
 }

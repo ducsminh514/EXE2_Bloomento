@@ -1,51 +1,53 @@
 using ADHDChecklist.Client.Shared.Models;
+using ADHDChecklist.Client.Infrastructure.Services;
+using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 
 namespace ADHDChecklist.Client.Features.Habits.Services
 {
     public class HabitService : IHabitService
     {
-        private readonly HttpClient _httpClient;
+        private readonly IApiClient _apiClient;
+        private readonly ILogger<HabitService> _logger;
 
-        public HabitService(HttpClient httpClient)
+        public HabitService(IApiClient apiClient, ILogger<HabitService> logger)
         {
-            _httpClient = httpClient;
+            _apiClient = apiClient;
+            _logger = logger;
         }
 
         public async Task<List<HabitResponse>> GetHabitsAsync()
         {
             try
             {
-                // Returns 200 OK with List<HabitResponse> or empty list
-                return await _httpClient.GetFromJsonAsync<List<HabitResponse>>("api/habits") 
+                return await _apiClient.GetAsync<List<HabitResponse>>("api/habits") 
                        ?? new List<HabitResponse>();
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting habits");
                 return new List<HabitResponse>();
             }
         }
 
         public async Task<Guid> CreateHabitAsync(CreateHabitRequest request)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/habits", request);
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<Guid>();
-            }
-            throw new Exception("Failed to create habit");
+            var response = await _apiClient.PostAsync<Guid>("api/habits", request);
+            return response;
         }
 
         public async Task<bool> ToggleHabitAsync(Guid habitId, DateOnly date)
         {
-            var request = new ToggleHabitRequest(date);
-            var response = await _httpClient.PostAsJsonAsync($"api/habits/{habitId}/toggle", request);
-            
-            if (response.IsSuccessStatusCode)
+            try 
             {
-                return await response.Content.ReadFromJsonAsync<bool>();
+                var request = new ToggleHabitRequest(date);
+                var result = await _apiClient.PostAsync<bool>($"api/habits/{habitId}/toggle", request);
+                return result;
             }
-            return false;
+            catch
+            {
+                return false;
+            }
         }
     }
 }

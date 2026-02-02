@@ -92,7 +92,8 @@ public record UserInfo(
     string FullName,
     string SubscriptionTier,
     bool IsPremium,
-    bool IsEmailVerified
+    bool IsEmailVerified,
+    string Role
 );
 
 // ============================================
@@ -107,6 +108,7 @@ public class CurrentUser
     public bool IsPremium { get; set; }
     public bool IsEmailVerified { get; set; }
     public bool IsAuthenticated { get; set; }
+    public string Role { get; set; } = "Member";
 }
 
 // ============================================
@@ -145,7 +147,12 @@ public record TaskResponse(
     DateTime CreatedAt,
     DateTime UpdatedAt,
     int? RescheduleCount = 0,
-    string? DopamineType = "Low"
+    string? DopamineType = "Low",
+    Guid? FamilyId = null,
+    Guid? AssignedUserId = null,
+    string? AssignedUserName = null,
+    string? AssignedUserAvatar = null,
+    bool IsShared = false
 );
 
 public record TaskListResponse(
@@ -165,7 +172,10 @@ public record CreateTaskRequest(
     int Priority,
     bool IsRecurring,
     string? RecurrencePattern,
-    string? DopamineType = "Low"
+    string? DopamineType = "Low",
+    Guid? FamilyId = null,
+    Guid? AssignedUserId = null,
+    bool IsShared = false
 );
 
 public record UpdateTaskRequest(
@@ -178,7 +188,9 @@ public record UpdateTaskRequest(
     int? Duration,
     int Priority,
     bool IsCompleted,
-    string? DopamineType = null
+    string? DopamineType = null,
+    Guid? AssignedUserId = null,
+    bool IsShared = false
 );
 
 // ============================================

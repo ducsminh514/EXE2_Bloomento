@@ -21,6 +21,7 @@ namespace ADHDChecklist.API.Features.Tasks.GetTaskById
         {
             var task = await _context.Tasks
                 .Include(t => t.Category)
+                .Include(t => t.AssignedUser)
                 .FirstOrDefaultAsync(t => t.Id == request.TaskId && t.UserId == request.UserId, cancellationToken);
 
             if (task == null)
@@ -52,7 +53,12 @@ namespace ADHDChecklist.API.Features.Tasks.GetTaskById
                 task.CreatedAt,
                 task.UpdatedAt,
                 task.RescheduleCount,
-                task.DopamineType
+                task.DopamineType,
+                task.FamilyId,
+                task.AssignedUserId,
+                task.AssignedUser?.FullName,
+                task.AssignedUser?.GoogleProfilePicture,
+                task.IsShared
             );
         }
     }

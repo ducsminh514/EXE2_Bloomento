@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using ADHDChecklist.API.Entities;
+
 namespace ADHDChecklist.API.Entities.Common;
 
 public class ApplicationUser : IdentityUser<Guid>
@@ -36,11 +38,15 @@ public class ApplicationUser : IdentityUser<Guid>
     public virtual ICollection<FocusSession> FocusSessions { get; set; } = new List<FocusSession>();
     public virtual ICollection<BrainDumpItem> BrainDumpItems { get; set; } = new List<BrainDumpItem>();
     public virtual ICollection<UserPreference?> Preferences { get; set; } = new List<UserPreference?>();
+    
+    // Family
+    public virtual ICollection<FamilyMember> FamilyMembers { get; set; } = new List<FamilyMember>();
 
     // Helper methods
     public bool IsPremium()
     {
-        return SubscriptionTier == SubscriptionTier.Premium
+        return SubscriptionTier == SubscriptionTier.Premium 
+            || SubscriptionTier == SubscriptionTier.Family
             && (SubscriptionExpiry == null || SubscriptionExpiry > DateTime.UtcNow);
     }
 
@@ -62,5 +68,6 @@ public class ApplicationUser : IdentityUser<Guid>
 public enum SubscriptionTier
 {
     Free = 0,
-    Premium = 1
+    Premium = 1,
+    Family = 2
 }
