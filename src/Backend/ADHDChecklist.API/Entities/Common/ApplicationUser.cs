@@ -46,8 +46,7 @@ public class ApplicationUser : IdentityUser<Guid>
     // Helper methods
     public bool IsPremium()
     {
-        return SubscriptionTier == SubscriptionTier.Premium 
-            || SubscriptionTier == SubscriptionTier.Family
+        return (SubscriptionTier == SubscriptionTier.Premium || SubscriptionTier == SubscriptionTier.Family)
             && (SubscriptionExpiry == null || SubscriptionExpiry > DateTime.UtcNow);
     }
 

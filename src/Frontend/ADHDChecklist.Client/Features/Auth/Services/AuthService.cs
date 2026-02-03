@@ -283,7 +283,7 @@ public class AuthService : IAuthService
                     var updatedUser = userInfo with 
                     { 
                         SubscriptionTier = request.Tier.ToString(),
-                        IsPremium = request.Tier == SubscriptionTier.Premium 
+                        IsPremium = request.Tier != SubscriptionTier.Free
                     };
                     
                     await SaveUserInfoAsync(updatedUser);

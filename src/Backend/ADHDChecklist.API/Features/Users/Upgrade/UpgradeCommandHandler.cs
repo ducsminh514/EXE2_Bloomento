@@ -30,13 +30,12 @@ public class UpgradeCommandHandler : IRequestHandler<UpgradeCommand, UpgradeResp
             // Upgrade Logic (Mock Payment Success)
             user.SubscriptionTier = request.Tier;
             
-            // If Premium, set expiry to 30 days from now
-            if (request.Tier == SubscriptionTier.Premium)
+            // If not Free, set expiry to 30 days from now
+            if (request.Tier != SubscriptionTier.Free)
             {
                 user.SubscriptionExpiry = DateTime.UtcNow.AddDays(30);
-                _logger.LogInformation("User {UserId} upgraded to Premium until {Expiry}", request.UserId, user.SubscriptionExpiry);
+                _logger.LogInformation("User {UserId} upgraded to {Tier} until {Expiry}", request.UserId, request.Tier, user.SubscriptionExpiry);
             }
-            // If downgrading to Free (optional logic, but handle it)
             else 
             {
                 user.SubscriptionExpiry = null;

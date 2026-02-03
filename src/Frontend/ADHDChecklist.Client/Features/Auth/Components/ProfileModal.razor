@@ -1,6 +1,8 @@
 @using ADHDChecklist.Client.Shared.Models
 @using ADHDChecklist.Client.Features.Auth.Services
+@using ADHDChecklist.Client.Features.Family.Services
 @inject IAuthService AuthService
+@inject NavigationManager Navigation
 @using System.ComponentModel.DataAnnotations
 
 <!-- Modal Overlay -->
@@ -30,15 +32,23 @@
                         @GetInitials(_model.FullName)
                     </div>
                     <div class="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                        @_model.SubscriptionTier Tier
-                        @_model.SubscriptionTier Tier
-                        @if (_model.SubscriptionTier != "Family")
+                        @GetTierName(_currentTier) Tier
+                        @if (_currentTier != SubscriptionTier.Family)
                         {
                             <button type="button" @onclick="Upgrade" class="text-primary-600 hover:text-primary-800 underline cursor-pointer hover:scale-105 transition-transform">
-                                @(_model.SubscriptionTier == "Free" ? "Nâng cấp" : "Nâng cấp Gia đình")
+                                @(_currentTier == SubscriptionTier.Free ? "Nâng cấp" : "Nâng cấp Gia đình")
                             </button>
                         }
                     </div>
+                    
+                    @if (_currentTier != SubscriptionTier.Free && !_hasFamily)
+                    {
+                        <div class="mt-2 pt-2 border-t border-gray-100 w-full flex justify-center">
+                            <button type="button" @onclick="ResetToFree" class="text-[10px] font-bold text-red-400 hover:text-red-600 uppercase tracking-tighter transition-colors flex items-center gap-1">
+                                <span>⚠️</span> Reset to Free (Debug)
+                            </button>
+                        </div>
+                    }
                </div>
 
                 <!-- Fields -->
@@ -67,7 +77,7 @@
                     <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Tùy chỉnh giao diện</h4>
                     
                     <ADHDChecklist.Client.Features.Preferences.Components.ThemeSelector 
-                        IsPremium="@(_model.SubscriptionTier != "Free")"
+                        IsPremium="@(_currentTier != SubscriptionTier.Free)"
                         OnUpgradeClicked="Upgrade" />
                 </div>
 
@@ -111,29 +121,47 @@
     [Parameter] public EventCallback OnUpgradeClicked { get; set; }
     [Parameter] public CurrentUser InitialUser { get; set; } = new();
 
+    [Inject] public IFamilyService FamilyService { get; set; }
+
     private ProfileFormModel _model = new();
     private bool _isSubmitting;
     private string? _message;
     private bool _isSuccess;
+    private bool _hasFamily;
+    private SubscriptionTier _currentTier = SubscriptionTier.Free;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         if (InitialUser != null)
         {
             _model.FullName = InitialUser.FullName;
             _model.Email = InitialUser.Email;
-            _model.SubscriptionTier = InitialUser.SubscriptionTier;
+
+            if (Enum.TryParse<SubscriptionTier>(InitialUser.SubscriptionTier, out var tier))
+            {
+                _currentTier = tier;
+            }
+
+            // Check if user is in a family
+            var family = await FamilyService.GetFamilyAsync();
+            _hasFamily = family != null;
         }
     }
+
+    private string GetTierName(SubscriptionTier tier) => tier switch
+    {
+        SubscriptionTier.Premium => "Premium",
+        SubscriptionTier.Family => "Family",
+        _ => "Free"
+    };
 
     private class ProfileFormModel
     {
         [Required(ErrorMessage = "Tên không được để trống")]
         [StringLength(50, MinimumLength = 2, ErrorMessage = "Tên từ 2-50 ký tự")]
         public string FullName { get; set; } = string.Empty;
-        
+
         public string Email { get; set; } = string.Empty;
-        public string SubscriptionTier { get; set; } = "Free";
     }
 
     private async Task HandleSubmit()
@@ -188,4 +216,40 @@
     {
         await OnUpgradeClicked.InvokeAsync();
     }
+
+    private async Task ResetToFree()
+    {
+        if (_hasFamily) return;
+
+        _isSubmitting = true;
+        try
+        {
+            var result = await AuthService.UpgradeAccountAsync(new UpgradeRequest(SubscriptionTier.Free));
+            if (result.Success)
+            {
+                _message = "Đã reset về Free Tier!";
+                _isSuccess = true;
+                _currentTier = SubscriptionTier.Free; // Update UI
+                await Task.Delay(1000);
+                await Close();
+                // Optionally force page reload or notify parent to refresh
+                Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+            }
+            else
+            {
+                _message = "Lỗi: " + result.Message;
+                _isSuccess = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            _message = "Lỗi: " + ex.Message;
+            _isSuccess = false;
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
+
 }
