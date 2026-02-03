@@ -31,14 +31,22 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
                     request.DopamineType,
                     userId,
                     request.AssignedUserId,
-                    request.IsShared
+                    request.IsShared,
+                    request.IsMandatory
                 );
 
-                var result = await mediator.Send(command, ct);
+                try
+                {
+                    var result = await mediator.Send(command, ct);
 
-                return result != null
-                    ? Results.Ok(result)
-                    : Results.NotFound(new { message = "Task không tồn tại" });
+                    return result != null
+                        ? Results.Ok(result)
+                        : Results.NotFound(new { message = "Task không tồn tại" });
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return Results.Conflict(new { message = ex.Message });
+                }
             })
             .RequireAuthorization()
             .WithTags("Tasks")

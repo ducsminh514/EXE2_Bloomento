@@ -17,7 +17,8 @@ public record CreateTaskRequest(
     string? DopamineType = "Low",
     Guid? FamilyId = null,
     Guid? AssignedUserId = null,
-    bool IsShared = false
+    bool IsShared = false,
+    bool IsMandatory = false
 );
 
 public record UpdateTaskRequest(
@@ -32,7 +33,8 @@ public record UpdateTaskRequest(
     bool IsCompleted,
     string? DopamineType = null,
     Guid? AssignedUserId = null,
-    bool IsShared = false
+    bool IsShared = false,
+    bool IsMandatory = false
 );
 
 public record MoveTaskRequest(
@@ -74,7 +76,10 @@ public record TaskResponse(
     string? AssignedUserColor,
     bool IsShared,
     string? AssignmentStatus,
-    string? RejectionReason
+    string? RejectionReason,
+    string CompletionApprovalStatus, // "None", "Pending", "Approved", "ReworkRequested"
+    bool IsMandatory,
+    Guid CreatorId // New property
 );
 
 public record TaskListResponse(

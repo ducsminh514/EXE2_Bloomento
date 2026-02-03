@@ -13,6 +13,7 @@ public interface IApiClient
     Task<T?> PostFileAsync<T>(string endpoint, MultipartFormDataContent content);
     Task<T?> PutAsync<T>(string endpoint, object data);
     Task PatchAsync(string endpoint, object? data = null);
+    Task DeleteAsync(string endpoint);
     Task<T?> DeleteAsync<T>(string endpoint);
     void SetAuthToken(string token);
     void ClearAuthToken();
@@ -77,7 +78,7 @@ public class ApiClient : IApiClient
                 _logger.LogWarning("POST request failed: {Endpoint}, Status: {Status}, Error: {Error}",
                     endpoint, response.StatusCode, error);
                 
-                return default;
+                throw new HttpRequestException(error, null, response.StatusCode);
             }
 
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
@@ -200,6 +201,30 @@ public class ApiClient : IApiClient
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in PUT request to {Endpoint}", endpoint);
+            throw;
+        }
+    }
+
+    public async Task DeleteAsync(string endpoint)
+    {
+        try
+        {
+            await SetAuthHeaderAsync();
+
+            var response = await _httpClient.DeleteAsync(endpoint);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("DELETE request failed: {Endpoint}, Status: {Status}, Error: {Error}",
+                    endpoint, response.StatusCode, error);
+                
+                throw new HttpRequestException(error, null, response.StatusCode);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in DELETE request to {Endpoint}", endpoint);
             throw;
         }
     }

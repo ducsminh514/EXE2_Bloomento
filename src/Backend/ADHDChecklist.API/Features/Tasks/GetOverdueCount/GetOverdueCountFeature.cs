@@ -25,7 +25,7 @@ namespace ADHDChecklist.API.Features.Tasks.GetOverdueCount
         {
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
             return await _context.Tasks
-                .CountAsync(t => t.UserId == request.UserId 
+                .CountAsync(t => (t.UserId == request.UserId || t.AssignedUserId == request.UserId) 
                                  && !t.IsCompleted 
                                  && t.ScheduledDate < today, cancellationToken);
         }

@@ -1,0 +1,86 @@
+@using ADHDChecklist.Client.Shared.Models
+@using ADHDChecklist.Client.Infrastructure.Services
+@inject IApiClient ApiClient
+
+@if (TaskItem == null) return;
+
+<div class="flex items-center gap-2 mt-2">
+    @if (TaskItem.CompletionApprovalStatus == "Pending")
+    {
+        <div class="flex items-center gap-2 animate-pulse">
+            <span class="text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full">
+                ⏳ Chờ duyệt
+            </span>
+            
+            @if (IsParent)
+            {
+                <button @onclick="ApproveTask" 
+                        disabled="@_isProcessing"
+                        class="px-3 py-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold rounded-full shadow-sm transition-all transform hover:scale-105 disabled:opacity-50">
+                    ✅ Duyệt
+                </button>
+                <button @onclick="RequestRework" 
+                        disabled="@_isProcessing"
+                        class="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-600 text-xs font-bold rounded-full transition-colors disabled:opacity-50">
+                    ↩️ Làm lại
+                </button>
+            }
+        </div>
+    }
+    else if (TaskItem.CompletionApprovalStatus == "ReworkRequested")
+    {
+        <span class="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded-full">
+            ⚠️ Cần làm lại
+        </span>
+    }
+    else if (TaskItem.CompletionApprovalStatus == "Approved")
+    {
+        <span class="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full" title="Đã được duyệt bởi phụ huynh">
+            🌟 Đã duyệt (+Điểm)
+        </span>
+    }
+</div>
+
+@code {
+    [Parameter] public TaskResponse TaskItem { get; set; } = null!;
+    [Parameter] public bool IsParent { get; set; } = false;
+    [Parameter] public EventCallback OnStatusChanged { get; set; }
+
+    private bool _isProcessing = false;
+
+    private async Task ApproveTask()
+    {
+        _isProcessing = true;
+        try
+        {
+            var response = await ApiClient.PostAsync<object>($"api/tasks/{TaskItem.Id}/approve", null);
+            await OnStatusChanged.InvokeAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error approving task: {ex.Message}");
+        }
+        finally
+        {
+            _isProcessing = false;
+        }
+    }
+
+    private async Task RequestRework()
+    {
+        _isProcessing = true;
+        try
+        {
+            var response = await ApiClient.PostAsync<object>($"api/tasks/{TaskItem.Id}/rework", null);
+            await OnStatusChanged.InvokeAsync();
+        }
+        catch (Exception ex)
+        {
+             Console.WriteLine($"Error requesting rework: {ex.Message}");
+        }
+        finally
+        {
+            _isProcessing = false;
+        }
+    }
+}

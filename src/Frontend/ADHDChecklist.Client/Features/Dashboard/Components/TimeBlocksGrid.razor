@@ -145,6 +145,13 @@
                                     <span class="text-[10px] font-black text-red-500 shrink-0">@string.Concat(Enumerable.Repeat("!", task.Priority-1))</span> 
                                 }
                             </div>
+                            
+                            <!-- APPROVAL ACTIONS -->
+                            <div @onclick:stopPropagation>
+                                <TaskApprovalActions TaskItem="@task" 
+                                                    IsParent="@(CurrentUserId == task.AssignedUserId || CurrentUserId == Guid.Empty ? false : true)" 
+                                                    OnStatusChanged="@(() => OnTaskUpdated.InvokeAsync())" />
+                            </div>
 
                             <!-- Meta: Time Range & Category -->
                             @if (!isBlurred) {
@@ -206,12 +213,14 @@
     [Parameter] public DateOnly _selectedDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
     [Parameter] public Guid? FocusedTaskId { get; set; } // New Param
     [Parameter] public bool IsPremium { get; set; } = false; // New Param
+    [Parameter] public Guid CurrentUserId { get; set; } // New Param
     [Parameter] public EventCallback<Guid> OnToggleComplete { get; set; }
     [Parameter] public EventCallback<Guid> OnEdit { get; set; }
     [Parameter] public EventCallback<Guid> OnDelete { get; set; }
     [Parameter] public EventCallback<(TaskResponse task, TimeOnly startTime)> OnTaskDropped { get; set; }
     [Parameter] public EventCallback<(TaskResponse task, int newDuration)> OnTaskResized { get; set; }
     [Parameter] public EventCallback<(TaskResponse task, double x, double y)> OnTaskClick { get; set; }
+    [Parameter] public EventCallback OnTaskUpdated { get; set; }
 
     private TaskResponse? _resizingTask; // Track resizing task
 

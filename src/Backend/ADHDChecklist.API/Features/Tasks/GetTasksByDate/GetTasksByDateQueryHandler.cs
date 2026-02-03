@@ -35,22 +35,30 @@ public class GetTasksByDateQueryHandler : IRequestHandler<GetTasksByDateQuery, T
 
         if (userFamilyId != Guid.Empty)
         {
-            // Show my tasks OR family tasks
-            // Note: Simplification - showing all family tasks. Can restrict to "IsShared" if needed.
-            // For now, let's show all tasks linked to Family.
+            // Show:
+            // 1. My Created Tasks (UserId == Me)
+            // 2. Tasks Assigned to Me (AssignedUserId == Me)
+            // 3. Shared Family Tasks (FamilyId == Family AND IsShared == true)
             query = query.Where(t => 
-                (t.UserId == request.UserId && t.ScheduledDate == request.Date) || 
-                (t.FamilyId == userFamilyId && t.ScheduledDate == request.Date));
+                (t.ScheduledDate == request.Date || (t.ScheduledDate == null && !t.IsCompleted)) && // Common Date Filter
+                (
+                    t.UserId == request.UserId || 
+                    t.AssignedUserId == request.UserId ||
+                    (t.FamilyId == userFamilyId && t.IsShared)
+                )
+            );
         }
         else
         {
-            // Show only my tasks
-            query = query.Where(t => t.UserId == request.UserId && t.ScheduledDate == request.Date);
+            // Show only my tasks (Scheduled today OR Unscheduled)
+            query = query.Where(t => t.UserId == request.UserId && (t.ScheduledDate == request.Date || (t.ScheduledDate == null && !t.IsCompleted)));
         }
 
         var tasks = await query
             .Include(t => t.Category)
             .Include(t => t.AssignedUser) // Include Assignee info
+            .Include(t => t.Family)
+                .ThenInclude(f => f.Members)
             .OrderBy(t => t.TimeBlockStart ?? TimeOnly.MaxValue)
             .ThenBy(t => t.OrderIndex)
             .Select(t => new TaskResponse(
@@ -85,7 +93,10 @@ public class GetTasksByDateQueryHandler : IRequestHandler<GetTasksByDateQuery, T
                     : null,
                 t.IsShared,
                 t.AssignmentStatus,
-                t.RejectionReason
+                t.RejectionReason,
+                t.CompletionApprovalStatus,
+                t.IsMandatory,
+                t.UserId // CreatorId
             ))
             .ToListAsync(cancellationToken);
 

@@ -73,6 +73,11 @@ public class Handler : IRequestHandler<Command, bool>
         // Only assigned user can respond
         if (task.AssignedUserId.ToString() != userId) return false;
 
+        if (request.Status == "Rejected" && task.IsMandatory)
+        {
+            throw new InvalidOperationException("Công việc này là BẮT BUỘC (Mandatory), bạn không thể từ chối!");
+        }
+
         if (request.Status == "Accepted")
         {
             task.AssignmentStatus = "Accepted";

@@ -4,16 +4,19 @@ using ADHDChecklist.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace ADHDChecklist.API.Migrations
+namespace ADHDChecklist.API.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260203101204_AddTaskCompletionApproval")]
+    partial class AddTaskCompletionApproval
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -392,9 +395,6 @@ namespace ADHDChecklist.API.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<int?>("PreviousSubscriptionTier")
-                        .HasColumnType("int");
 
                     b.Property<string>("RefreshToken")
                         .HasMaxLength(500)
@@ -1046,9 +1046,6 @@ namespace ADHDChecklist.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
-
-                    b.Property<bool>("IsMandatory")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsRecurring")
                         .ValueGeneratedOnAdd()

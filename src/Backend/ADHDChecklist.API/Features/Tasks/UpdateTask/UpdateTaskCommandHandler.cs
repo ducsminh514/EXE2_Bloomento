@@ -25,7 +25,7 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
             var task = await _context.Tasks
                 .Include(t => t.Category)
                 .Include(t => t.AssignedUser)
-                .FirstOrDefaultAsync(t => t.Id == request.TaskId && t.UserId == request.UserId, cancellationToken);
+                .FirstOrDefaultAsync(t => t.Id == request.TaskId && (t.UserId == request.UserId || t.AssignedUserId == request.UserId), cancellationToken);
 
             if (task == null)
             {
@@ -41,6 +41,8 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
             }
 
             // Overlap Check (if time block is being set or changed)
+            // DISABLED: Frontend handles confirmation. Backend should allow overlaps if user confirms.
+            /*
             if (request.TimeBlockStart.HasValue && request.TimeBlockEnd.HasValue)
             {
                 var targetUserId = request.AssignedUserId ?? task.AssignedUserId ?? task.UserId;
@@ -58,20 +60,10 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
 
                 if (hasConflict)
                 {
-                    var conflictingTask = await _context.Tasks
-                        .Where(t =>
-                            t.Id != request.TaskId &&
-                            t.DeletedAt == null &&
-                            t.ScheduledDate == request.ScheduledDate &&
-                            (t.UserId == targetUserId || t.AssignedUserId == targetUserId) &&
-                            t.TimeBlockStart.HasValue && t.TimeBlockEnd.HasValue &&
-                            t.TimeBlockStart < end && t.TimeBlockEnd > start)
-                        .Select(t => t.Title)
-                        .FirstOrDefaultAsync(cancellationToken);
-
-                    throw new InvalidOperationException($"Trùng lịch! Người được giao đã có công việc '{conflictingTask}' trong khung giờ này.");
+                    // ... (Logic removed to allow overlaps)
                 }
             }
+            */
 
             task.Title = request.Title;
             task.Description = request.Description;
@@ -81,6 +73,13 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
             task.TimeBlockEnd = request.TimeBlockEnd;
             task.Duration = request.Duration;
             task.Priority = request.Priority;
+            
+            task.Priority = request.Priority;
+            
+            if (task.UserId == request.UserId) // Only owner can change Mandatory status
+            {
+                task.IsMandatory = request.IsMandatory;
+            }
             
             // Allow re-assignment
             // Allow re-assignment
@@ -188,7 +187,10 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
             null, // AssignedUserColor
             task.IsShared,
             task.AssignmentStatus,
-            task.RejectionReason
+            task.RejectionReason,
+            task.CompletionApprovalStatus,
+            task.IsMandatory,
+            task.UserId // CreatorId
         );
         }
     }

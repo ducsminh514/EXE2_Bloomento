@@ -23,7 +23,7 @@ namespace ADHDChecklist.API.Features.Tasks.GetTaskById
                 .Include(t => t.Category)
                 .Include(t => t.AssignedUser)
                 .Include(t => t.Family).ThenInclude(f => f.Members)
-                .FirstOrDefaultAsync(t => t.Id == request.TaskId && t.UserId == request.UserId, cancellationToken);
+                .FirstOrDefaultAsync(t => t.Id == request.TaskId && (t.UserId == request.UserId || t.AssignedUserId == request.UserId), cancellationToken);
 
             if (task == null)
             {
@@ -64,7 +64,10 @@ namespace ADHDChecklist.API.Features.Tasks.GetTaskById
                     : null,
                 task.IsShared,
                 task.AssignmentStatus,
-                task.RejectionReason
+                task.RejectionReason,
+                task.CompletionApprovalStatus,
+                task.IsMandatory,
+                task.UserId // CreatorId
             );
         }
     }

@@ -30,7 +30,7 @@
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
             </div>
         }
-        else if (_analytics != null)
+        @if (_analytics != null)
         {
             <!-- Top Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -124,10 +124,14 @@
                     </div>
                 </div>
             </div>
+        <!-- Rewards Section -->
+        <div class="mt-8 bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+            <FamilyRewardsView IsAdmin="_isAdmin" OnPointsChanged="HandlePointsChanged" />
+        </div>
 
-            @if (_premiumAnalytics != null)
-            {
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        @if (_premiumAnalytics != null)
+        {
+                <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- 1. Time Blindness Chart -->
                     <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
                         <div class="flex items-center justify-between mb-6">
@@ -214,36 +218,40 @@
                         </div>
                     </div>
 
-                    <!-- 4. Procrastination Debt -->
+                    <!-- 4. Procrastination Debt Chart -->
                     <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
                         <div class="flex items-center justify-between mb-6">
-                            <h3 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest">Nợ công việc (BỊ DỜI LỊCH)</h3>
+                            <h3 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest">Biểu đồ nợ trì hoãn</h3>
                             <span class="text-[18px]">👻</span>
                         </div>
-                        <div class="space-y-3">
+                        <div class="flex flex-col gap-4">
                             @foreach (var task in _premiumAnalytics.ProcrastinationDebt)
                             {
-                                <div class="flex items-center gap-3 p-3 bg-red-50/50 dark:bg-red-900/10 rounded-2xl border border-red-100/50 dark:border-red-900/20">
-                                    <div class="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center text-red-600 font-black text-xs">
-                                        @task.RescheduleCount
+                                <div class="space-y-1">
+                                    <div class="flex justify-between text-[10px] font-bold">
+                                        <span class="text-gray-700 dark:text-gray-300 truncate max-w-[70%]">@task.Title</span>
+                                        <span class="text-red-500">@task.RescheduleCount lần dời</span>
                                     </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h5 class="text-xs font-bold text-gray-800 dark:text-gray-100 truncate">@task.Title</h5>
-                                        <p class="text-[9px] font-bold text-red-500 uppercase">Dời lịch quá nhiều lần</p>
+                                    <div class="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                        @{
+                                            var debtPercent = Math.Min(task.RescheduleCount * 20, 100); // 5+ times = max debt red
+                                        }
+                                        <div class="h-full bg-gradient-to-r from-orange-400 to-red-600 rounded-full transition-all duration-1000" 
+                                             style="width: @debtPercent%"></div>
                                     </div>
-                                    <button class="p-2 hover:bg-white dark:hover:bg-gray-800 rounded-xl transition-colors shadow-sm">
-                                        <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
-                                    </button>
                                 </div>
                             }
                             @if (!_premiumAnalytics.ProcrastinationDebt.Any())
                             {
-                                <div class="h-full flex flex-col items-center justify-center text-gray-400 py-8">
+                                <div class="h-32 flex flex-col items-center justify-center text-gray-400">
                                     <span class="text-3xl mb-2">🎈</span>
                                     <p class="text-[10px] font-bold uppercase tracking-widest">Không có nợ tồn đọng!</p>
                                 </div>
                             }
                         </div>
+                         <p class="mt-4 text-[9px] text-gray-400 leading-tight">
+                            * Công việc bị dời lịch nhiều lần gây ra "nợ trí óc" và làm giảm động lực. Hãy thử chia nhỏ hoặc ưu tiên chúng ngay hôm nay.
+                        </p>
                     </div>
                 </div>
             }
@@ -252,14 +260,26 @@
 </div>
 
 @code {
+    [Parameter] public EventCallback OnPointsChanged { get; set; }
+
     private WeeklyAnalyticsResponse? _analytics;
     private PremiumAnalyticsResponse? _premiumAnalytics;
     private List<CategoryResponse> _categories = new();
     private bool _isLoading = true;
+    private bool _isAdmin = false;
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        _isAdmin = user.IsInRole("Admin") || user.IsInRole("Parent");
+        
         await LoadData();
+    }
+
+    private async Task HandlePointsChanged()
+    {
+        await OnPointsChanged.InvokeAsync();
     }
 
     private async Task LoadData()
@@ -281,7 +301,9 @@
             // Fetch Premium stats if user is premium
             var authState = await AuthStateProvider.GetAuthenticationStateAsync();
             var user = authState.User;
-            var isPremium = user.FindFirst("IsPremium")?.Value == "true" || user.FindFirst("subscription")?.Value == "Premium";
+            var isPremium = user.FindFirst("IsPremium")?.Value.Equals("true", StringComparison.OrdinalIgnoreCase) == true 
+                            || user.FindFirst("SubscriptionTier")?.Value == "1" 
+                            || user.FindFirst("SubscriptionTier")?.Value == "2";
 
             if (isPremium)
             {

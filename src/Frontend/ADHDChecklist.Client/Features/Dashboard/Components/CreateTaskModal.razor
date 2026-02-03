@@ -96,16 +96,26 @@
                     <!-- Assign To (Family) -->
                     @if (FamilyMembers.Any())
                     {
-                        <div class="flex-1">
-                            <InputSelect @bind-Value="_model.AssignedUserId"
-                                         class="w-full text-xs font-medium text-gray-700 bg-white dark:bg-gray-800 border border-gray-200 rounded-full px-3 py-1.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
-                                <option value="">-- Giao việc cho --</option>
-                                <option value="">(Tự làm)</option>
-                                @foreach (var member in FamilyMembers.Where(m => m.UserId.ToString() != CurrentUserId))
-                                {
-                                    <option value="@member.UserId">👤 @member.FullName @(member.Nickname != null ? $"({member.Nickname})" : "")</option>
-                                }
-                            </InputSelect>
+                        <div class="flex-1 flex gap-2">
+                             <div class="flex-1">
+                                <InputSelect @bind-Value="_model.AssignedUserId"
+                                             class="w-full text-xs font-medium text-gray-700 bg-white dark:bg-gray-800 border border-gray-200 rounded-full px-3 py-1.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                                    <option value="">-- Giao việc cho --</option>
+                                    <option value="">(Tự làm)</option>
+                                    @foreach (var member in FamilyMembers.Where(m => m.UserId.ToString() != CurrentUserId))
+                                    {
+                                        <option value="@member.UserId">👤 @member.FullName @(member.Nickname != null ? $"({member.Nickname})" : "")</option>
+                                    }
+                                </InputSelect>
+                            </div>
+                            
+                            @if (!string.IsNullOrEmpty(_model.AssignedUserId))
+                            {
+                                <label class="flex items-center gap-1.5 cursor-pointer bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 px-3 py-1.5 rounded-full border border-red-100 dark:border-red-800/50 transition-all hover:bg-red-100 dark:hover:bg-red-900/30 whitespace-nowrap" title="Người được giao sẽ KHÔNG THỂ từ chối công việc này">
+                                    <InputCheckbox @bind-Value="_model.IsMandatory" class="rounded text-red-600 focus:ring-red-500 border-red-300 w-3.5 h-3.5" />
+                                    <span class="text-[10px] font-bold uppercase tracking-wide">Bắt buộc</span>
+                                </label>
+                            }
                         </div>
                     }
                 </div>
@@ -136,9 +146,9 @@
                         <span class="text-lg">⚠️</span>
                         <div class="flex-1">
                             <span class="text-red-600 block">@_errorMessage</span>
-                            @if (_errorMessage.Contains("giới hạn"))
+                            @if (_errorMessage.Contains("giới hạn") || _errorMessage.Contains("Premium") || _errorMessage.Contains("🔒"))
                             {
-                                <button type="button" class="mt-1 text-[10px] font-bold text-white bg-gradient-to-r from-amber-400 to-orange-500 px-3 py-1 rounded-full shadow hover:scale-105 transition-transform">
+                                <button type="button" @onclick="OnUpgradeClicked" class="mt-1 text-[10px] font-bold text-white bg-gradient-to-r from-amber-400 to-orange-500 px-3 py-1 rounded-full shadow hover:scale-105 transition-transform">
                                     Nâng cấp Premium ngay 👑
                                 </button>
                             }
@@ -186,6 +196,12 @@
     {
         if (string.IsNullOrWhiteSpace(_model.Title)) return;
 
+        if (!IsPremium)
+        {
+            _errorMessage = "🔒 Tính năng phân tích AI chỉ dành cho gói Premium và Family.";
+            return;
+        }
+
         _isBreakingDown = true;
         try
         {
@@ -212,7 +228,14 @@
         }
         catch (Exception ex)
         {
-            _errorMessage = "Lỗi khi gọi AI: " + ex.Message;
+            if (ex.Message.Contains("Premium") || ex.Message.Contains("403"))
+            {
+                 _errorMessage = "🔒 Tính năng phân tích AI chỉ dành cho gói Premium và Family.";
+            }
+            else
+            {
+                _errorMessage = "Lỗi khi gọi AI: " + ex.Message;
+            }
         }
         finally
         {
@@ -234,11 +257,14 @@
         public int Priority { get; set; } = 1;
         public string DopamineType { get; set; } = "Low";
         public string? AssignedUserId { get; set; }
+        public bool IsMandatory { get; set; }
     }
 
     [Parameter] public List<FamilyMemberResponse> FamilyMembers { get; set; } = new();
     [Parameter] public Guid? FamilyId { get; set; }
     [Parameter] public string? CurrentUserId { get; set; }
+    [Parameter] public bool IsPremium { get; set; }
+    [Parameter] public EventCallback OnUpgradeClicked { get; set; }
 
     private async Task HandleSubmit()
     {
@@ -272,7 +298,8 @@
                 _model.DopamineType,
                 FamilyId,
                 string.IsNullOrEmpty(_model.AssignedUserId) ? null : Guid.Parse(_model.AssignedUserId),
-                !string.IsNullOrEmpty(_model.AssignedUserId) // IsShared if assigned
+                !string.IsNullOrEmpty(_model.AssignedUserId), // IsShared if assigned
+                _model.IsMandatory
             );
 
             await TaskService.CreateTaskAsync(request);

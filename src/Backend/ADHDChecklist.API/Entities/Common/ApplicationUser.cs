@@ -11,6 +11,7 @@ public class ApplicationUser : IdentityUser<Guid>
     // Subscription
     public SubscriptionTier SubscriptionTier { get; set; } = SubscriptionTier.Free;
     public DateTime? SubscriptionExpiry { get; set; }
+    public SubscriptionTier? PreviousSubscriptionTier { get; set; }
 
     // Email verification
     public bool IsEmailVerified { get; set; } = false;

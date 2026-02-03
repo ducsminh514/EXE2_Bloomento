@@ -9,6 +9,7 @@ public interface IFamilyService
     Task<Guid> CreateFamilyAsync(string name);
     Task<string> InviteMemberAsync(string email);
     Task<Guid> JoinFamilyAsync(string inviteCode);
+    Task RemoveMemberAsync(Guid familyId, Guid memberId);
 }
 
 public class FamilyService : IFamilyService
@@ -54,6 +55,11 @@ public class FamilyService : IFamilyService
         var result = await _apiClient.PostAsync<Guid>("api/family/join", new { InviteCode = inviteCode });
         if (result == Guid.Empty) throw new Exception("Failed to join family");
         return result;
+    }
+
+    public async Task RemoveMemberAsync(Guid familyId, Guid memberId)
+    {
+        await _apiClient.DeleteAsync($"api/family/{familyId}/members/{memberId}");
     }
 }
 

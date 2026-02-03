@@ -17,7 +17,7 @@ namespace ADHDChecklist.API.Features.Tasks.MoveTask
         public async Task<bool> Handle(MoveTaskToInboxCommand request, CancellationToken cancellationToken)
         {
             var task = await _context.Tasks
-                .FirstOrDefaultAsync(t => t.Id == request.TaskId && t.UserId == request.UserId, cancellationToken);
+                .FirstOrDefaultAsync(t => t.Id == request.TaskId && (t.UserId == request.UserId || t.AssignedUserId == request.UserId), cancellationToken);
 
             if (task == null) return false;
 

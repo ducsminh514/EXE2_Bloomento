@@ -53,8 +53,13 @@ public partial class Task
     public bool IsShared { get; set; } = false;
     
     // Assignment Status: "Pending", "Accepted", "Rejected"
-    public string? AssignmentStatus { get; set; } = ""; 
+    public string? AssignmentStatus { get; set; } = "Pending"; 
     public string? RejectionReason { get; set; }
+    public bool IsMandatory { get; set; } = false; // "Bắt buộc làm" - Cannot be rejected
+
+    // Completion Approval: "None", "Pending", "Approved", "ReworkRequested"
+    public string CompletionApprovalStatus { get; set; } = "None";
+    public Guid? ApproverUserId { get; set; }
 
     public virtual ICollection<BrainDumpItem> BrainDumpItems { get; set; } = new List<BrainDumpItem>();
 

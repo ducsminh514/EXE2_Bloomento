@@ -102,7 +102,8 @@ public static class GetFamilyEndpoint
             
             // Return 200 OK with null if no family found, simpler for frontend to handle than 404
             // Return 404 Not Found if no family found, so client can handle it gracefully
-            return result != null ? Results.Ok(result) : Results.NotFound();
+            // Return 204 No Content if no family found, so client handles it gracefully without 404 error
+            return result != null ? Results.Ok(result) : Results.NoContent();
         })
         .RequireAuthorization()
         .WithTags("Family")

@@ -212,7 +212,9 @@
                                                 OnTaskResized="HandleTaskResized"
                                                 OnTaskClick="ShowTaskQuickView" 
                                                 FocusedTaskId="@_focusedTaskId"
-                                                IsPremium="@(_currentUser?.IsPremium == true)" />
+                                                IsPremium="@(_currentUser?.IsPremium == true)"
+                                                CurrentUserId="@(_currentUser?.UserId != null ? Guid.Parse(_currentUser.UserId) : Guid.Empty)" 
+                                                OnTaskUpdated="LoadData" />
                             </div>
                         </div>
                     </div>
@@ -254,92 +256,156 @@
                         <!-- Workspace Grid (Inbox & Analytics/Categories) -->
                         <div class="flex-1 flex gap-4 min-h-0 items-stretch">
                             
-                            <!-- Col 1: INBOX (Fixed width or 30%) -->
-                            <div class="w-[30%] min-w-[250px] flex flex-col bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors">
-                                <div class="p-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex justify-between items-center transition-colors">
-                                    <h4 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest flex items-center gap-2">
-                                        <span class="w-2 h-2 rounded-full bg-orange-500"></span> Inbox
-                                    </h4>
-                                    <span class="text-[10px] bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full font-bold text-gray-600 dark:text-gray-400">@_inboxTasks.Count</span>
-                                </div>
-                                <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2 transition-colors @(_dragState.DraggedTask != null ? "bg-primary-50/30 dark:bg-primary-900/10" : "")"
-                                     ondragover="event.preventDefault();"
-                                     @ondrop="HandleInboxDropWrapper">
-                                    @if (_inboxTasks.Any()) {
-                                        @foreach (var task in _inboxTasks) {
-                                            <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all cursor-pointer active:cursor-grabbing group"
-                                                 draggable="true" @ondragstart="() => HandleDragStart(task)"
-                                                 @onclick="(e) => ShowTaskQuickViewFromClick(task, e)">
-                                                <div class="flex justify-between items-start gap-2">
-                                                    <h5 class="text-sm font-bold text-gray-800 dark:text-gray-100 line-clamp-2">@task.Title</h5>
-                                                    <div class="flex gap-1">
-                                                        @if (task.AssignmentStatus == "Pending")
-                                                        {
-                                                            <span class="text-[10px] bg-blue-100 text-blue-700 font-bold px-1.5 py-0.5 rounded border border-blue-200 animate-pulse">
-                                                                🔔 New
-                                                            </span>
-                                                        }
-                                                        @if(task.Priority > 1) { <span class="text-xs text-red-500 font-black">@string.Concat(Enumerable.Repeat("!", task.Priority-1))</span> }
-                                                    </div>
-                                                </div>
-                                                <div class="flex items-center justify-between mt-2">
-                                                    <div class="flex items-center gap-2">
-                                                        @if(!string.IsNullOrEmpty(task.CategoryName)) { <span class="text-[10px] px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-gray-600 dark:text-gray-400 font-medium">@task.CategoryName</span> }
-                                                        <span class="text-[10px] text-gray-400 font-bold">@task.Duration m</span>
-                                                    </div>
-                                                    <div class="opacity-0 group-hover:opacity-100 flex gap-1 transition-opacity">
-                                                        <button @onclick="() => EditTask(task.Id)" class="p-1 hover:bg-primary-50 dark:hover:bg-primary-900/30 text-primary-600 rounded transition-colors"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        }
-                                    } else {
-                                        <div class="h-full flex flex-col items-center justify-center text-gray-400 opacity-60">
-                                            <span class="text-2xl mb-2">📥</span>
-                                            <span class="text-xs font-medium uppercase tracking-tighter">Hộp thư đến trống</span>
+                            <!-- MIDDLE: INBOX -->
+                            <div class="flex-1 min-w-0 flex gap-3">
+                                
+                                @if (_familyId.HasValue)
+                                {
+                                    <!-- FAMILY MODE: SPLIT INBOX -->
+                                    <!-- Personal Inbox -->
+                                    <div class="flex-1 flex flex-col bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors">
+                                        <div class="p-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex justify-between items-center">
+                                            <h4 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest flex items-center gap-2">
+                                                <span class="w-2 h-2 rounded-full bg-blue-500"></span> Cá nhân
+                                            </h4>
+                                            <span class="text-[10px] bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full font-bold text-gray-600 dark:text-gray-400">@_personalInboxTasks.Count</span>
                                         </div>
-                                    }
-                                </div>
+                                        <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2"
+                                             ondragover="event.preventDefault();"
+                                             @ondrop="HandleInboxDropWrapper">
+                                            @if (_personalInboxTasks.Any()) {
+                                                @foreach (var task in _personalInboxTasks) {
+                                                    <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all cursor-pointer active:cursor-grabbing group"
+                                                         draggable="true" @ondragstart="() => HandleDragStart(task)"
+                                                         @onclick="(e) => ShowTaskQuickViewFromClick(task, e)">
+                                                        <div class="flex justify-between items-start gap-2">
+                                                            <h5 class="text-sm font-bold text-gray-800 dark:text-gray-100 line-clamp-2">@task.Title</h5>
+                                                            @if(task.Priority > 1) { <span class="text-xs text-red-500 font-black">@string.Concat(Enumerable.Repeat("!", task.Priority-1))</span> }
+                                                        </div>
+                                                        <div class="flex items-center justify-between mt-2">
+                                                             @if(!string.IsNullOrEmpty(task.CategoryName)) { <span class="text-[10px] px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-gray-600 dark:text-gray-400 font-medium">@task.CategoryName</span> }
+                                                             <span class="text-[10px] text-gray-400 font-bold">@task.Duration m</span>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            } else {
+                                                <div class="h-full flex flex-col items-center justify-center text-gray-300 opacity-60">
+                                                    <span class="text-xl mb-1">👤</span>
+                                                    <span class="text-[10px]">Trống</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- Family Inbox -->
+                                    <div class="flex-1 flex flex-col bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors">
+                                        <div class="p-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex justify-between items-center">
+                                            <h4 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest flex items-center gap-2">
+                                                <span class="w-2 h-2 rounded-full bg-purple-500"></span> Gia đình
+                                            </h4>
+                                            <span class="text-[10px] bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full font-bold text-gray-600 dark:text-gray-400">@_familyInboxTasks.Count</span>
+                                        </div>
+                                        <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2"
+                                             ondragover="event.preventDefault();"
+                                             @ondrop="HandleInboxDropWrapper">
+                                            @if (_familyInboxTasks.Any()) {
+                                                @foreach (var task in _familyInboxTasks) {
+                                                    <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+                                                         draggable="true" @ondragstart="() => HandleDragStart(task)"
+                                                         @onclick="(e) => ShowTaskQuickViewFromClick(task, e)">
+                                                        <div class="flex justify-between items-start gap-2">
+                                                            <h5 class="text-sm font-bold text-gray-800 dark:text-gray-100 line-clamp-2">@task.Title</h5>
+                                                            <!-- Avatar for Family Member -->
+                                                            @if (!string.IsNullOrEmpty(task.AssignedUserAvatar)) {
+                                                                <img src="@task.AssignedUserAvatar" class="w-4 h-4 rounded-full border border-gray-100" />
+                                                            } else {
+                                                                 <span class="text-[10px] font-bold text-purple-600">@(task.AssignedUserName?.FirstOrDefault())</span>
+                                                            }
+                                                        </div>
+                                                        <div class="flex items-center justify-between mt-2">
+                                                            <span class="text-[10px] text-gray-400">Cho: @task.AssignedUserName</span>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            } else {
+                                                 <div class="h-full flex flex-col items-center justify-center text-gray-300 opacity-60">
+                                                    <span class="text-xl mb-1">👨‍👩‍👧‍👦</span>
+                                                    <span class="text-[10px]">Trống</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <!-- SINGLE USER MODE: UNIFIED INBOX -->
+                                    <div class="w-full flex flex-col bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors">
+                                        <div class="p-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex justify-between items-center transition-colors">
+                                            <h4 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest flex items-center gap-2">
+                                                <span class="w-2 h-2 rounded-full bg-orange-500"></span> Inbox
+                                            </h4>
+                                            <span class="text-[10px] bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full font-bold text-gray-600 dark:text-gray-400">@_personalInboxTasks.Count</span>
+                                        </div>
+                                        <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2 transition-colors @(_dragState.DraggedTask != null ? "bg-primary-50/30 dark:bg-primary-900/10" : "")"
+                                             ondragover="event.preventDefault();"
+                                             @ondrop="HandleInboxDropWrapper">
+                                            @if (_personalInboxTasks.Any()) {
+                                                @foreach (var task in _personalInboxTasks) {
+                                                    <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all cursor-pointer active:cursor-grabbing group"
+                                                         draggable="true" @ondragstart="() => HandleDragStart(task)"
+                                                         @onclick="(e) => ShowTaskQuickViewFromClick(task, e)">
+                                                        <div class="flex justify-between items-start gap-2">
+                                                            <h5 class="text-sm font-bold text-gray-800 dark:text-gray-100 line-clamp-2">@task.Title</h5>
+                                                            @if(task.Priority > 1) { <span class="text-xs text-red-500 font-black">@string.Concat(Enumerable.Repeat("!", task.Priority-1))</span> }
+                                                        </div>
+                                                        <div class="flex items-center justify-between mt-2">
+                                                            <div class="flex items-center gap-2">
+                                                                @if(!string.IsNullOrEmpty(task.CategoryName)) { <span class="text-[10px] px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-gray-600 dark:text-gray-400 font-medium">@task.CategoryName</span> }
+                                                                <span class="text-[10px] text-gray-400 font-bold">@task.Duration m</span>
+                                                            </div>
+                                                            <div class="opacity-0 group-hover:opacity-100 flex gap-1 transition-opacity">
+                                                                <button @onclick="() => EditTask(task.Id)" class="p-1 hover:bg-primary-50 dark:hover:bg-primary-900/30 text-primary-600 rounded transition-colors"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            } else {
+                                                <div class="h-full flex flex-col items-center justify-center text-gray-400 opacity-60">
+                                                    <span class="text-2xl mb-2">📥</span>
+                                                    <span class="text-xs font-medium uppercase tracking-tighter">Hộp thư đến trống</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
                             </div>
 
-                            <!-- Col 2: ANALYTICS & CATEGORIES -->
-                            <div class="flex flex-col gap-4 min-h-0">
+                            <!-- RIGHT: ANALYTICS & CATEGORIES (Fixed 25%) -->
+                            <div class="w-[30%] min-w-[250px] flex flex-col gap-4 min-h-0">
                                 
                                 <!-- Top: Free Tier Analytics -->
                                 <div class="flex-none bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col transition-colors">
                                     <div class="p-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50 transition-colors">
                                         <h4 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest flex items-center gap-2">
-                                            <span class="text-base">📊</span> Thống kê (Hôm nay)
+                                            <span class="text-base">📊</span> Thống kê
                                         </h4>
-                                        <span class="text-[9px] bg-primary-50 dark:bg-primary-900/30 text-primary-600 px-2 py-0.5 rounded font-bold uppercase transition-colors">@(_currentUser?.IsPremium == true ? "PREMIUM" : "FREE TIER")</span>
+                                        <span class="text-[9px] bg-primary-50 dark:bg-primary-900/30 text-primary-600 px-2 py-0.5 rounded font-bold uppercase transition-colors">@(_currentUser?.IsPremium == true ? "PREMIUM" : "FREE")</span>
                                     </div>
                                     <div class="p-4 flex flex-col gap-4">
-                                        <!-- Summary Row -->
-                                        <div class="grid grid-cols-2 gap-3 @(_currentUser?.IsPremium == true ? "sm:grid-cols-4" : "")">
-                                            <div class="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3 text-center border border-gray-100 dark:border-gray-700 transition-colors">
-                                                <span class="block text-2xl font-black text-gray-800 dark:text-gray-100">@_allTasks.Count</span>
-                                                <span class="text-[10px] text-gray-500 font-bold uppercase tracking-tighter">Tổng task</span>
+                                        <!-- Keep stats content same... -->
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div class="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3 text-center border border-gray-100 dark:border-gray-700">
+                                                <span class="block text-xl font-black text-gray-800 dark:text-gray-100">@_allTasks.Count</span>
+                                                <span class="text-[9px] text-gray-500 font-bold uppercase">Tổng</span>
                                              </div>
-                                             <div class="bg-green-50 dark:bg-green-900/10 rounded-lg p-3 text-center border border-green-100 dark:border-green-800/30 transition-colors">
-                                                <span class="block text-2xl font-black text-green-600">@_completedCount</span>
-                                                <span class="text-[10px] text-green-600/70 font-bold uppercase tracking-tighter">Hoàn thành</span>
+                                             <div class="bg-green-50 dark:bg-green-900/10 rounded-lg p-3 text-center border border-green-100 dark:border-green-800/30">
+                                                <span class="block text-xl font-black text-green-600">@_completedCount</span>
+                                                <span class="text-[9px] text-green-600/70 font-bold uppercase">Xong</span>
                                             </div>
-                                            @if (_currentUser?.IsPremium == true)
-                                            {
-                                                <div class="bg-primary-50 dark:bg-primary-900/10 rounded-lg p-3 text-center border border-primary-100 dark:border-primary-800/30">
-                                                    <span class="block text-2xl font-black text-primary-600">7</span>
-                                                    <span class="text-[10px] text-primary-500 font-bold uppercase tracking-tighter">Streak</span>
-                                                </div>
-                                                <div class="bg-orange-50 dark:bg-orange-900/10 rounded-lg p-3 text-center border border-orange-100 dark:border-orange-800/30">
-                                                    <span class="block text-2xl font-black text-orange-600">A+</span>
-                                                    <span class="text-[10px] text-orange-500 font-bold uppercase tracking-tighter">Rank</span>
-                                                </div>
-                                            }
                                         </div>
 
                                         <!-- Category Breakdown (Mini Chart) -->
                                         <div class="flex-1 min-h-0">
-                                            <h5 class="text-[10px] font-bold text-gray-400 uppercase mb-2">Phân bổ danh mục</h5>
                                             <div class="space-y-2">
                                                 @foreach(var cat in _categories.Take(3)) 
                                                 {
@@ -348,45 +414,52 @@
                                                     if (count > 0) {
                                                         <div class="flex items-center gap-2 text-xs">
                                                             <span class="flex-1 truncate font-medium text-gray-600 dark:text-gray-400">@cat.Name</span>
-                                                            <div class="w-24 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                                            <div class="w-16 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                                                                 <div class="h-full rounded-full" style="width: @percent%; background-color: @cat.ColorHex"></div>
                                                             </div>
-                                                            <span class="text-[10px] text-gray-400 w-4 text-right">@count</span>
                                                         </div>
                                                     }
                                                 }
                                             </div>
                                         </div>
-                                        
-                                        <!-- Upgrade Teaser / Detail Link -->
-                                       <div class="mt-auto pt-4 text-center">
-                                           @if (_currentUser?.IsPremium == true)
-                                           {
-                                               <button @onclick="() => SetView(AppView.Analytics)" class="text-[10px] font-bold text-primary-600 hover:text-primary-800 underline transition-colors">Xem báo cáo chi tiết &rarr;</button>
-                                           }
-                                           else
-                                           {
-                                               <button @onclick="ShowUpgradeModal" class="text-[10px] font-bold text-gray-400 hover:text-primary-600 transition-colors">Nâng cấp để xem chi tiết &rarr;</button>
-                                           }
-                                       </div>
                                     </div>
                                 </div>
 
-                                <!-- Categories (Smaller) -->
-                                <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col transition-colors">
+                                <!-- Advanced Stats (Replacer for Categories) -->
+                                <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col transition-colors flex-1 min-h-0">
                                     <div class="p-2 px-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50 transition-colors">
-                                         <h4 class="font-bold text-xs text-gray-500 uppercase">Danh mục</h4>
-                                         <button @onclick="ShowCreateCategoryModal" class="text-[10px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-0.5 rounded hover:bg-gray-50 dark:hover:bg-gray-700 text-primary-600 font-bold transition-all">+</button>
+                                         <h4 class="font-bold text-xs text-gray-500 uppercase">Hiệu suất tuần</h4>
                                     </div>
-                                    <div class="p-2 px-3">
-                                        <div class="flex flex-wrap gap-2">
-                                            @foreach(var cat in _categories) {
-                                                <div class="flex items-center gap-2 p-1.5 pr-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-sm hover:border-primary-100 transition-colors">
-                                                    <div class="w-5 h-5 rounded-md flex items-center justify-center text-[10px] text-white shadow-sm" style="background-color: @cat.ColorHex">@cat.Icon</div>
-                                                    <span class="text-[10px] font-bold text-gray-700 dark:text-gray-200">@cat.Name</span>
-                                                </div>
-                                            }
-                                            @if(!_categories.Any()) { <span class="text-xs text-gray-400 italic p-2">Chưa có danh mục</span>}
+                                    <div class="p-4 flex-1 flex flex-col justify-center gap-4">
+                                        <!-- Weekly Focus Placeholder -->
+                                        <div>
+                                            <div class="flex justify-between items-end mb-2">
+                                                <span class="text-[10px] font-bold text-gray-400 uppercase">Độ tập trung</span>
+                                                <span class="text-xs font-bold text-primary-600">Avg 4.2h</span>
+                                            </div>
+                                            <div class="flex items-end justify-between h-20 gap-1">
+                                                @for(int i = 0; i < 7; i++)
+                                                {
+                                                    var h = new Random().Next(20, 100);
+                                                    <div class="w-full bg-primary-100 dark:bg-gray-700 rounded-t-sm relative group">
+                                                        <div class="absolute bottom-0 left-0 right-0 bg-primary-500 rounded-t-sm transition-all duration-500 group-hover:bg-primary-400" style="height: @h%"></div>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="flex justify-between mt-1 text-[9px] text-gray-400 font-bold">
+                                                <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Completion Trend -->
+                                        <div>
+                                            <div class="flex justify-between items-end mb-2">
+                                                <span class="text-[10px] font-bold text-gray-400 uppercase">Hoàn thành</span>
+                                                <span class="text-xs font-bold text-green-600">85%</span>
+                                            </div>
+                                            <div class="w-full bg-gray-100 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+                                                <div class="bg-green-500 h-full rounded-full" style="width: 85%"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -446,17 +519,21 @@
                      Categories="@_categories"
                      FamilyMembers="@_familyMembers"
                      FamilyId="@_familyId"
+                     IsPremium="@(_currentUser?.IsPremium == true)"
                      CurrentUserId="@_currentUser?.UserId"
+                     OnUpgradeClicked="ShowUpgradeModal"
                      SelectedDate="@_selectedDate" />
 }
 
 <!-- Edit Task Modal -->
 @if (_showEditModal && _editingTaskId.HasValue)
 {
-    <EditTaskModal TaskId="@_editingTaskId.Value"
-                   OnClose="CloseEditTaskModal"
-                   OnTaskUpdated="HandleTaskUpdated"
-                   Categories="@_categories" />
+     <EditTaskModal TaskId="@_editingTaskId.Value"
+                    OnClose="CloseEditTaskModal"
+                    OnTaskUpdated="HandleTaskUpdated"
+                    OnUpgradeClicked="ShowUpgradeModal"
+                    IsPremium="@(_currentUser?.IsPremium == true)"
+                    Categories="@_categories" />
 }
 
 <!-- Task Quick View Popover -->
@@ -689,7 +766,9 @@
 
     private List<TaskResponse> _allTasks = new();
     private List<TaskResponse> _scheduledTasks = new();
-    private List<TaskResponse> _inboxTasks = new();
+    private List<TaskResponse> _inboxTasks = new(); // Legacy, maybe unused or combined?
+    private List<TaskResponse> _personalInboxTasks = new();
+    private List<TaskResponse> _familyInboxTasks = new();
     private List<CategoryResponse> _categories = new();
     private List<FamilyMemberResponse> _familyMembers = new();
     private Guid? _familyId;
@@ -829,12 +908,48 @@
             }
         }
 
-        _scheduledTasks = tasksToShow.Where(t => t.TimeBlockStart.HasValue)
+        _scheduledTasks = tasksToShow.Where(t => t.TimeBlockStart.HasValue && t.ScheduledDate == _selectedDate)
                                    .OrderBy(t => t.TimeBlockStart)
                                    .ToList();
-        _inboxTasks = tasksToShow.Where(t => !t.TimeBlockStart.HasValue)
-                               .OrderBy(t => t.OrderIndex)
-                               .ToList();
+
+        // INBOX LOGIC: Unscheduled tasks (ScheduledDate == null) (and not completed?)
+        // Filter out completed tasks from Inbox to avoid clutter? Usually yes.
+        // GetTasksByDate query already filters !IsCompleted for Unscheduled.
+        
+        // INBOX LOGIC: 
+        // 1. Completely Unscheduled (No Date)
+        // 2. Scheduled for Today but NO Time Block (To-do list for today)
+        var allUnscheduled = tasksToShow.Where(t => 
+            t.ScheduledDate == null || 
+            (t.ScheduledDate == _selectedDate && t.TimeBlockStart == null)
+        ).ToList();
+
+        if (_currentUser != null) 
+        {
+            var myId = Guid.Parse(_currentUser.UserId);
+            
+            // Personal: Created by Me AND Not Shared AND (Assigned to Me OR Unassigned)
+            // If I assign to someone else, it goes to Family box.
+            _personalInboxTasks = allUnscheduled.Where(t => 
+                t.CreatorId == myId && !t.IsShared && (!t.AssignedUserId.HasValue || t.AssignedUserId == myId)
+            ).OrderBy(t => t.OrderIndex).ToList();
+            
+            // Family: Everything else relevant to family context
+            // - Shared Tasks
+            // - Created by Others (e.g. Parent assigned to me)
+            // - Created by Me but Assigned to Others
+            _familyInboxTasks = allUnscheduled.Where(t => 
+                t.FamilyId != null && (t.IsShared || t.CreatorId != myId || (t.AssignedUserId.HasValue && t.AssignedUserId != myId))
+            ).OrderBy(t => t.OrderIndex).ToList();
+        }
+        else 
+        {
+            _personalInboxTasks = allUnscheduled;
+            _familyInboxTasks = new();
+        }
+        
+        // Combine for Drag logic if needed? _inboxTasks used mainly for count?
+        _inboxTasks = allUnscheduled;
     }
     
     private void ToggleFamilyFilter()
@@ -1246,6 +1361,11 @@
             _isLoading = false;
             await LoadData();
         }
+    }
+
+    private async Task HandlePointsChanged()
+    {
+        await LoadPoints();
     }
 
     private async Task LoadPoints()

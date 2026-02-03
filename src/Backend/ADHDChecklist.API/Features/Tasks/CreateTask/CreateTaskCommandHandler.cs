@@ -107,7 +107,8 @@ namespace ADHDChecklist.API.Features.Tasks.CreateTask
                 FamilyId = familyId,
                 AssignedUserId = request.AssignedUserId ?? request.UserId, // Default to self
                 IsShared = request.IsShared,
-                AssignmentStatus = (request.AssignedUserId.HasValue && request.AssignedUserId != request.UserId) ? "Pending" : "Accepted"
+                AssignmentStatus = (request.AssignedUserId.HasValue && request.AssignedUserId != request.UserId) ? "Pending" : "Accepted",
+                IsMandatory = request.IsMandatory
             };
 
             _context.Tasks.Add(task);
@@ -172,7 +173,10 @@ namespace ADHDChecklist.API.Features.Tasks.CreateTask
                 null, // AssignedUserColor
                 task.IsShared,
                 task.AssignmentStatus,
-                task.RejectionReason
+                task.RejectionReason,
+                task.CompletionApprovalStatus, // "None"
+                task.IsMandatory,
+                task.UserId // CreatorId
             );
         }
     }
@@ -207,7 +211,8 @@ namespace ADHDChecklist.API.Features.Tasks.CreateTask
                     request.DopamineType,
                     request.FamilyId,
                     request.AssignedUserId,
-                    request.IsShared // Pass IsShared
+                    request.IsShared, // Pass IsShared
+                    request.IsMandatory
                 );
 
                 var result = await mediator.Send(command, ct);

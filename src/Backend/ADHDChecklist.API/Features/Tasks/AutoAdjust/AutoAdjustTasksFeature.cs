@@ -34,7 +34,7 @@ namespace ADHDChecklist.API.Features.Tasks.AutoAdjust
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
             var overdueTasks = await _context.Tasks
-                .Where(t => t.UserId == request.UserId 
+                .Where(t => (t.UserId == request.UserId || t.AssignedUserId == request.UserId) 
                             && !t.IsCompleted 
                             && t.ScheduledDate < today)
                 .ToListAsync(cancellationToken);

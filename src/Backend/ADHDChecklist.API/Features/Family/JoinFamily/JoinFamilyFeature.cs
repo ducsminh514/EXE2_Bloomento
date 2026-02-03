@@ -60,6 +60,7 @@ public class JoinFamilyHandler : IRequestHandler<JoinFamilyCommand, Guid>
         invitation.Status = "Accepted";
         
         // Upgrade User
+        user.PreviousSubscriptionTier = (SubscriptionTier)user.SubscriptionTier;
         user.SubscriptionTier = SubscriptionTier.Family;
 
         _context.FamilyMembers.Add(member);
