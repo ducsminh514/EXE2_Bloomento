@@ -31,10 +31,11 @@
                     </div>
                     <div class="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
                         @_model.SubscriptionTier Tier
-                        @if (_model.SubscriptionTier == "Free")
+                        @_model.SubscriptionTier Tier
+                        @if (_model.SubscriptionTier != "Family")
                         {
                             <button type="button" @onclick="Upgrade" class="text-primary-600 hover:text-primary-800 underline cursor-pointer hover:scale-105 transition-transform">
-                                Nâng cấp
+                                @(_model.SubscriptionTier == "Free" ? "Nâng cấp" : "Nâng cấp Gia đình")
                             </button>
                         }
                     </div>

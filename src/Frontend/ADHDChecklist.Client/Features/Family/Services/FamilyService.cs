@@ -10,6 +10,7 @@ public interface IFamilyService
     Task<string> InviteMemberAsync(string email);
     Task<Guid> JoinFamilyAsync(string inviteCode);
     Task RemoveMemberAsync(Guid familyId, Guid memberId);
+    Task UpdateMemberRoleAsync(Guid familyId, Guid memberId, string role);
 }
 
 public class FamilyService : IFamilyService
@@ -60,6 +61,11 @@ public class FamilyService : IFamilyService
     public async Task RemoveMemberAsync(Guid familyId, Guid memberId)
     {
         await _apiClient.DeleteAsync($"api/family/{familyId}/members/{memberId}");
+    }
+
+    public async Task UpdateMemberRoleAsync(Guid familyId, Guid memberId, string role)
+    {
+        await _apiClient.PatchAsync($"api/family/{familyId}/members/{memberId}/role", new { Role = role });
     }
 }
 

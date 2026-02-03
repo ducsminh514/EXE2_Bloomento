@@ -47,10 +47,13 @@ using ADHDChecklist.API.Features.Family.GetFamily;
 using ADHDChecklist.API.Features.Family.InviteMember;
 using ADHDChecklist.API.Features.Family.JoinFamily;
 using ADHDChecklist.API.Features.Family.RemoveMember;
+using ADHDChecklist.API.Features.Family.UpdateMemberRole;
 using ADHDChecklist.API.Features.Notifications.GetNotifications;
 using ADHDChecklist.API.Features.Notifications.MarkAsRead;
 using ADHDChecklist.API.Features.Family.Gamification.GetPoints;
 using ADHDChecklist.API.Features.Family.Gamification.ManageRewards;
+using ADHDChecklist.API.Features.Payments.CreatePayment;
+using ADHDChecklist.API.Features.Payments.Webhook;
 using ADHDChecklist.API.Services;
 using ADHDChecklist.API.Services.BackgroundJobs;
 using ADHDChecklist.API.Shared.Behaviors;
@@ -62,6 +65,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ADHDChecklist.API.Features.AI.BreakdownTask;
 using Microsoft.AspNetCore.RateLimiting;
+using PayOS;
 
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -205,7 +209,14 @@ builder.Services.AddScoped<KnowledgeSeeder>();
 builder.Services.AddScoped<IdentitySeeder>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
-// ... (existing code)
+// PayOS Configuration
+var payOSSettings = builder.Configuration.GetSection("PayOS");
+PayOSClient payOS = new PayOSClient(
+    payOSSettings["ClientId"] ?? "",
+    payOSSettings["ApiKey"] ?? "",
+    payOSSettings["ChecksumKey"] ?? ""
+);
+builder.Services.AddSingleton(payOS);
 
 
 
@@ -409,11 +420,16 @@ app.MapGetFamily();
 app.MapInviteMember();
 app.MapJoinFamily();
 app.MapRemoveMember();
+app.MapUpdateMemberRole();
 
 app.MapGetNotifications();
 app.MapMarkAsRead();
 app.MapGetPoints();
 app.MapManageRewards();
+
+// Payment endpoints
+app.MapCreatePayment();
+app.MapPayOSWebhook();
 
 app.MapBreakdownTask();
 

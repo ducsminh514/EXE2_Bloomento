@@ -25,12 +25,40 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
             var task = await _context.Tasks
                 .Include(t => t.Category)
                 .Include(t => t.AssignedUser)
-                .FirstOrDefaultAsync(t => t.Id == request.TaskId && (t.UserId == request.UserId || t.AssignedUserId == request.UserId), cancellationToken);
+                .FirstOrDefaultAsync(t => t.Id == request.TaskId, cancellationToken);
 
             if (task == null)
             {
-                _logger.LogWarning("Task {TaskId} not found or unauthorized for user {UserId}",
-                    request.TaskId, request.UserId);
+                _logger.LogWarning("Task {TaskId} not found", request.TaskId);
+                return null;
+            }
+
+            // AUTHORIZATION CHECK
+            bool isAuthorized = task.UserId == request.UserId || task.AssignedUserId == request.UserId;
+
+            if (!isAuthorized && task.FamilyId.HasValue)
+            {
+                var currentUserMember = await _context.FamilyMembers
+                    .FirstOrDefaultAsync(m => m.FamilyId == task.FamilyId.Value && m.UserId == request.UserId, cancellationToken);
+                
+                if (currentUserMember != null)
+                {
+                    // 1. Family Admins/Parents can update all family tasks
+                    if (currentUserMember.Role == "Admin" || currentUserMember.Role == "Parent")
+                    {
+                        isAuthorized = true;
+                    }
+                    // 2. Family Members can update tasks marked as Shared
+                    else if (task.IsShared)
+                    {
+                        isAuthorized = true;
+                    }
+                }
+            }
+
+            if (!isAuthorized)
+            {
+                _logger.LogWarning("Task {TaskId} unauthorized for user {UserId}", request.TaskId, request.UserId);
                 return null;
             }
 

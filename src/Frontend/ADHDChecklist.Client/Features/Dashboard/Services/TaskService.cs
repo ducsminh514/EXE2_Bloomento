@@ -166,6 +166,32 @@ namespace ADHDChecklist.Client.Features.Dashboard.Services
                 return false;
             }
         }
+
+        public async Task<bool> ApproveTaskCompletionAsync(Guid id)
+        {
+            try
+            {
+                await _apiClient.PostAsync<object>($"/api/tasks/{id}/approve-completion");
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestTaskReworkAsync(Guid id)
+        {
+            try
+            {
+                await _apiClient.PostAsync<object>($"/api/tasks/{id}/request-rework");
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 
     public record BreakdownTaskResponse(string[] Steps);

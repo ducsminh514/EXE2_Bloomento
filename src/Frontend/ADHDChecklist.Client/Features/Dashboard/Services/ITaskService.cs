@@ -19,5 +19,7 @@ namespace ADHDChecklist.Client.Features.Dashboard.Services
         Task<int> GetOverdueCountAsync();
         Task<string[]> BreakdownTaskAsync(string taskTitle);
         Task<bool> RespondAssignmentAsync(Guid taskId, string status, string? reason = null);
+        Task<bool> ApproveTaskCompletionAsync(Guid taskId);
+        Task<bool> RequestTaskReworkAsync(Guid taskId);
     }
 }

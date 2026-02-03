@@ -39,6 +39,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     public DbSet<Notification> Notifications { get; set; } = null!;
     public DbSet<FamilyReward> FamilyRewards { get; set; } = null!;
     public DbSet<FamilyPointHistory> FamilyPointHistory { get; set; } = null!;
+    public DbSet<Transaction> Transactions { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -163,6 +164,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
             .WithMany()
             .HasForeignKey(ph => ph.UserId)
             .OnDelete(DeleteBehavior.Restrict); // Keep history even if user is removed from family? Or Cascade? RESTRICT is safer.
+
+        modelBuilder.Entity<Transaction>()
+            .HasOne(t => t.User)
+            .WithMany()
+            .HasForeignKey(t => t.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 
     // Auto-update timestamps

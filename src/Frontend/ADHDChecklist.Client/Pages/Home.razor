@@ -62,10 +62,13 @@
                         <span>📚</span> 
                         <span class="group-hover:translate-x-0.5 transition-transform">Kiến thức</span>
                     </a>
-                    <a href="/settings/family" class="text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors flex items-center gap-1 group">
-                        <span>👨‍👩‍👧‍👦</span> 
-                        <span class="group-hover:translate-x-0.5 transition-transform">Gia đình</span>
-                    </a>
+                    @if (_currentUser?.SubscriptionTier == "Family")
+                    {
+                        <a href="/settings/family" class="text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors flex items-center gap-1 group">
+                            <span>👨‍👩‍👧‍👦</span> 
+                            <span class="group-hover:translate-x-0.5 transition-transform">Gia đình</span>
+                        </a>
+                    }
                 </div>
                 
                 <div class="flex items-center gap-4">
@@ -103,7 +106,7 @@
                     <button @onclick="NextDay" class="p-1.5 hover:bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
                     <button @onclick="GoToToday" class="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-lg text-xs font-bold hover:bg-primary-100 transition-colors">📅 Hôm nay</button>
                     
-                    @if (_familyId.HasValue)
+                    @if (IsFamilyPlan && _familyId.HasValue)
                     {
                         <div class="flex items-center gap-2 bg-white dark:bg-gray-800 p-1 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
                             <button @onclick="ToggleFamilyFilter" 
@@ -297,44 +300,47 @@
                                         </div>
                                     </div>
 
-                                    <!-- Family Inbox -->
-                                    <div class="flex-1 flex flex-col bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors">
-                                        <div class="p-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex justify-between items-center">
-                                            <h4 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest flex items-center gap-2">
-                                                <span class="w-2 h-2 rounded-full bg-purple-500"></span> Gia đình
-                                            </h4>
-                                            <span class="text-[10px] bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full font-bold text-gray-600 dark:text-gray-400">@_familyInboxTasks.Count</span>
-                                        </div>
-                                        <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2"
-                                             ondragover="event.preventDefault();"
-                                             @ondrop="HandleInboxDropWrapper">
-                                            @if (_familyInboxTasks.Any()) {
-                                                @foreach (var task in _familyInboxTasks) {
-                                                    <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all cursor-pointer group"
-                                                         draggable="true" @ondragstart="() => HandleDragStart(task)"
-                                                         @onclick="(e) => ShowTaskQuickViewFromClick(task, e)">
-                                                        <div class="flex justify-between items-start gap-2">
-                                                            <h5 class="text-sm font-bold text-gray-800 dark:text-gray-100 line-clamp-2">@task.Title</h5>
-                                                            <!-- Avatar for Family Member -->
-                                                            @if (!string.IsNullOrEmpty(task.AssignedUserAvatar)) {
-                                                                <img src="@task.AssignedUserAvatar" class="w-4 h-4 rounded-full border border-gray-100" />
-                                                            } else {
-                                                                 <span class="text-[10px] font-bold text-purple-600">@(task.AssignedUserName?.FirstOrDefault())</span>
-                                                            }
+                                    @if (IsFamilyPlan)
+                                    {
+                                        <!-- Family Inbox -->
+                                        <div class="flex-1 flex flex-col bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors">
+                                            <div class="p-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex justify-between items-center">
+                                                <h4 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest flex items-center gap-2">
+                                                    <span class="w-2 h-2 rounded-full bg-purple-500"></span> Gia đình
+                                                </h4>
+                                                <span class="text-[10px] bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full font-bold text-gray-600 dark:text-gray-400">@_familyInboxTasks.Count</span>
+                                            </div>
+                                            <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2"
+                                                 ondragover="event.preventDefault();"
+                                                 @ondrop="HandleInboxDropWrapper">
+                                                @if (_familyInboxTasks.Any()) {
+                                                    @foreach (var task in _familyInboxTasks) {
+                                                        <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+                                                             draggable="true" @ondragstart="() => HandleDragStart(task)"
+                                                             @onclick="(e) => ShowTaskQuickViewFromClick(task, e)">
+                                                            <div class="flex justify-between items-start gap-2">
+                                                                <h5 class="text-sm font-bold text-gray-800 dark:text-gray-100 line-clamp-2">@task.Title</h5>
+                                                                <!-- Avatar for Family Member -->
+                                                                @if (!string.IsNullOrEmpty(task.AssignedUserAvatar)) {
+                                                                    <img src="@task.AssignedUserAvatar" class="w-4 h-4 rounded-full border border-gray-100" />
+                                                                } else {
+                                                                     <span class="text-[10px] font-bold text-purple-600">@(task.AssignedUserName?.FirstOrDefault())</span>
+                                                                }
+                                                            </div>
+                                                            <div class="flex items-center justify-between mt-2">
+                                                                <span class="text-[10px] text-gray-400">Cho: @task.AssignedUserName</span>
+                                                            </div>
                                                         </div>
-                                                        <div class="flex items-center justify-between mt-2">
-                                                            <span class="text-[10px] text-gray-400">Cho: @task.AssignedUserName</span>
-                                                        </div>
+                                                    }
+                                                } else {
+                                                     <div class="h-full flex flex-col items-center justify-center text-gray-300 opacity-60">
+                                                        <span class="text-xl mb-1">👨‍👩‍👧‍👦</span>
+                                                        <span class="text-[10px]">Trống</span>
                                                     </div>
                                                 }
-                                            } else {
-                                                 <div class="h-full flex flex-col items-center justify-center text-gray-300 opacity-60">
-                                                    <span class="text-xl mb-1">👨‍👩‍👧‍👦</span>
-                                                    <span class="text-[10px]">Trống</span>
-                                                </div>
-                                            }
+                                            </div>
                                         </div>
-                                    </div>
+                                    }
                                 }
                                 else
                                 {
@@ -551,6 +557,7 @@
                        IsPremium="@(_currentUser?.IsPremium == true)"
                        OnUpgradeClicked="ShowUpgradeModal"
                        CurrentUserId="@_currentUser?.UserId"
+                       CurrentUserRole="@_currentUserRole"
                        OnRespondSuccess="LoadData" />
 }
 
@@ -658,7 +665,10 @@
     }
 
     private string _userName = "User";
+    private string? _currentUserRole; // Store user role in family
     private CurrentUser? _currentUser; // Add current user storage
+
+    private bool IsFamilyPlan => _currentUser?.SubscriptionTier == "Family";
     private DateOnly _selectedDate = DateOnly.FromDateTime(DateTime.Now);
     private bool _isLoading = true;
     private bool _showCreateModal = false;
@@ -813,11 +823,21 @@
         }
         
         // Fetch Family Data
-        var family = await FamilyService.GetFamilyAsync();
-        if (family != null)
+        if (IsFamilyPlan)
         {
-            _familyMembers = family.Members;
-            _familyId = family.Id;
+            var family = await FamilyService.GetFamilyAsync();
+            if (family != null)
+            {
+                _familyMembers = family.Members;
+                _familyId = family.Id;
+                
+                // Determine current user role
+                if (_currentUser != null)
+                {
+                    var myMember = _familyMembers.FirstOrDefault(m => string.Equals(m.UserId.ToString(), _currentUser.UserId, StringComparison.OrdinalIgnoreCase));
+                    _currentUserRole = myMember?.Role;
+                }
+            }
         }
 
         await LoadData();
@@ -1138,6 +1158,18 @@
             }
 
             // 2. Proceed if Valid or Confirmed
+            // Logic: Auto-assign tasks to current user if dropped into timeline 
+            // from family inbox or if unassigned.
+            var targetAssigneeId = task.AssignedUserId;
+            if (_currentUser != null)
+            {
+                var currentUserIdGuid = Guid.Parse(_currentUser.UserId);
+                if (task.AssignedUserId == null || task.AssignedUserId != currentUserIdGuid)
+                {
+                    targetAssigneeId = currentUserIdGuid;
+                }
+            }
+
             var updateRequest = new UpdateTaskRequest(
                 task.Title,
                 task.Description,
@@ -1147,7 +1179,11 @@
                 endTime,
                 durationMinutes,
                 task.Priority,
-                task.IsCompleted
+                task.IsCompleted,
+                task.DopamineType,
+                targetAssigneeId,
+                task.IsShared,
+                task.IsMandatory
             );
 
             await TaskService.UpdateTaskAsync(task.Id, updateRequest);

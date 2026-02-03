@@ -40,11 +40,10 @@ public record UpdateProfileResponse(
     string? NewFullName = null
 );
 
-public record UpgradeResponse(
-    bool Success,
-    string Message,
-    DateTime? ExpiryDate
-);
+public record UpgradeResponse(bool Success, string Message, DateTime? ExpiryDate);
+
+public record CreatePaymentRequest(SubscriptionTier Tier);
+public record CreatePaymentResponse(string CheckoutUrl, long OrderCode);
 
 
 // ============================================
@@ -132,7 +131,7 @@ public record TaskResponse(
     Guid? CategoryId,
     string? CategoryName,
     string? CategoryColor,
-    DateOnly ScheduledDate,
+    DateOnly? ScheduledDate,
     TimeOnly? TimeBlockStart,
     TimeOnly? TimeBlockEnd,
     int? Duration,
@@ -164,14 +163,14 @@ public record TaskResponse(
 public record TaskListResponse(
     List<TaskResponse> Tasks,
     int TotalCount,
-    DateOnly Date
+    DateOnly? Date
 );
 
 public record CreateTaskRequest(
     string Title,
     string? Description,
     Guid? CategoryId,
-    DateOnly ScheduledDate,
+    DateOnly? ScheduledDate,
     TimeOnly? TimeBlockStart,
     TimeOnly? TimeBlockEnd,
     int? Duration,
@@ -189,7 +188,7 @@ public record UpdateTaskRequest(
     string Title,
     string? Description,
     Guid? CategoryId,
-    DateOnly ScheduledDate,
+    DateOnly? ScheduledDate,
     TimeOnly? TimeBlockStart,
     TimeOnly? TimeBlockEnd,
     int? Duration,
@@ -280,7 +279,8 @@ public record DopamineBalanceData(
 public enum SubscriptionTier
 {
     Free = 0,
-    Premium = 1
+    Premium = 1,
+    Family = 2
 }
 
 // ============================================

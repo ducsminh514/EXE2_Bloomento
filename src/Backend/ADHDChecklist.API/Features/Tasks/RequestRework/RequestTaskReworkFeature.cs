@@ -28,10 +28,25 @@ public class RequestTaskReworkCommandHandler : IRequestHandler<RequestTaskRework
 
         if (task == null) return false;
 
-        // AUTH CHECK
-        if (task.UserId != request.UserId)
+        // AUTH CHECK: 
+        // 1. Task Owner (Creator) can always request rework.
+        // 2. Any Family "Admin" can request rework for tasks within their family.
+        bool isAuthorized = task.UserId == request.UserId;
+
+        if (!isAuthorized && task.FamilyId.HasValue)
         {
-            throw new UnauthorizedAccessException("Only the task owner can request rework.");
+            var currentUserMember = await _context.FamilyMembers
+                .FirstOrDefaultAsync(m => m.FamilyId == task.FamilyId.Value && m.UserId == request.UserId, cancellationToken);
+            
+            if (currentUserMember != null && (currentUserMember.Role == "Admin" || currentUserMember.Role == "Parent"))
+            {
+                isAuthorized = true;
+            }
+        }
+
+        if (!isAuthorized)
+        {
+            throw new UnauthorizedAccessException("Bạn không có quyền yêu cầu làm lại cho công việc này. Chỉ người tạo hoặc Quản trị viên gia đình mới có quyền.");
         }
 
         // Rework Logic

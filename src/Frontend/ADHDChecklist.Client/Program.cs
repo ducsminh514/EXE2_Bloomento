@@ -35,6 +35,7 @@ builder.Services.AddScoped<DragDropState>();
 builder.Services.AddScoped<IApiClient, ApiClient>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 // ============================================
 // FEATURE SERVICES

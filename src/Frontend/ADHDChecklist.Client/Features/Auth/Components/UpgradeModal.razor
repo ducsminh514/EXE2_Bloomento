@@ -1,9 +1,13 @@
 @using ADHDChecklist.Client.Shared.Models
 @using ADHDChecklist.Client.Features.Auth.Services
+@using Microsoft.Extensions.Configuration
 @inject IAuthService AuthService
+@inject IConfiguration Config
+@inject IPaymentService PaymentService
+@inject NavigationManager Navigation
 
 <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in" @onclick="HandleBackdropClick">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden animate-scale-up border border-gray-100" @onclick:stopPropagation>
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl overflow-hidden animate-scale-up border border-gray-100" @onclick:stopPropagation>
         
         <!-- Header -->
         <div class="flex justify-between items-center p-6 border-b border-gray-100 bg-gradient-to-r from-primary-50 to-purple-50">
@@ -22,18 +26,18 @@
         </div>
 
         <!-- Body -->
-        <div class="p-8 bg-gray-50">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="p-8 bg-gray-50 overflow-y-auto max-h-[80vh]">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
                 <!-- Free Plan -->
-                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm relative overflow-hidden">
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm relative overflow-hidden flex flex-col">
                     <div class="flex justify-between items-start mb-4">
                         <div>
                             <h3 class="text-xl font-bold text-gray-800">Miễn phí</h3>
                             <div class="text-3xl font-bold text-gray-900 mt-2">0đ<span class="text-base text-gray-500 font-normal">/tháng</span></div>
                         </div>
                     </div>
-                    <ul class="space-y-3 mb-8">
+                    <ul class="space-y-3 mb-8 flex-1">
                         <li class="flex items-center text-gray-600">
                             <span class="mr-2 text-green-500">✓</span> Tối đa 50 công việc
                         </li>
@@ -44,45 +48,58 @@
                             <span class="mr-2 text-green-500">✓</span> Session tập trung (Pomodoro)
                         </li>
                         <li class="flex items-center text-gray-600">
-                            <span class="mr-2 text-green-500">✓</span> Thống kê 7 ngày
+                            <span class="mr-2 text-green-500">✓</span> Thống kê đơn giản
                         </li>
                     </ul>
-                    <button class="w-full py-3 px-4 rounded-xl bg-gray-100 text-gray-500 font-medium cursor-not-allowed" disabled>
-                        Gói hiện tại
+                    <button class="w-full py-3 px-4 rounded-xl relative overflow-hidden transition-all
+                            @(_currentTierEnum == SubscriptionTier.Free 
+                                ? "bg-gray-100 text-gray-500 font-medium cursor-not-allowed" 
+                                : "bg-white border-2 border-gray-200 text-gray-400 font-medium cursor-not-allowed")" disabled>
+                        @if (_currentTierEnum == SubscriptionTier.Free)
+                        {
+                            <span>Gói hiện tại</span>
+                        }
+                        else
+                        {
+                            <span>Đã bao gồm</span>
+                        }
                     </button>
                 </div>
 
                 <!-- Premium Plan -->
-                <div class="bg-white p-6 rounded-xl border-2 border-purple-500 shadow-xl relative overflow-hidden transform md:-translate-y-2 transition-transform">
-                    <div class="absolute top-0 right-0 bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-bl-xl">
-                        KHUYÊN DÙNG
+                <div class="bg-white p-6 rounded-xl border-2 border-primary-500 shadow-lg relative overflow-hidden transform lg:-translate-y-2 transition-transform flex flex-col">
+                    <div class="absolute top-0 right-0 bg-primary-500 text-white text-[10px] font-black px-3 py-1 rounded-bl-xl uppercase tracking-widest">
+                        PHỔ BIẾN
                     </div>
                     <div class="flex justify-between items-start mb-4">
                         <div>
                             <h3 class="text-xl font-bold text-gray-800">Premium</h3>
-                            <div class="text-3xl font-bold text-purple-600 mt-2">99.000đ<span class="text-base text-gray-500 font-normal">/tháng</span></div>
+                            <div class="text-3xl font-bold text-primary-600 mt-2">@GetPremiumPrice()đ<span class="text-base text-gray-500 font-normal">/tháng</span></div>
                         </div>
                     </div>
-                    <ul class="space-y-3 mb-8">
+                    <ul class="space-y-3 mb-8 flex-1">
                         <li class="flex items-center text-gray-700 font-medium">
-                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Không giới hạn công việc
+                            <span class="mr-2 text-primary-500 bg-primary-100 rounded-full p-0.5">✓</span> Không giới hạn công việc
                         </li>
                         <li class="flex items-center text-gray-700 font-medium">
-                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Trợ lý AI thông minh
+                            <span class="mr-2 text-primary-500 bg-primary-100 rounded-full p-0.5">✓</span> Trợ lý AI (Magic Breakdown)
                         </li>
                         <li class="flex items-center text-gray-700 font-medium">
-                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Thống kê nâng cao trọn đời
+                            <span class="mr-2 text-primary-500 bg-primary-100 rounded-full p-0.5">✓</span> Thống kê Premium nâng cao
                         </li>
                         <li class="flex items-center text-gray-700 font-medium">
-                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Tùy chỉnh giao diện & Theme
-                        </li>
-                        <li class="flex items-center text-gray-700 font-medium">
-                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Hỗ trợ ưu tiên 24/7
+                            <span class="mr-2 text-primary-500 bg-primary-100 rounded-full p-0.5">✓</span> Tùy chỉnh Theme & Màu sắc
                         </li>
                     </ul>
-                    <button @onclick="HandleUpgrade" disabled="@_isProcessing" 
-                            class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-primary-500 to-purple-600 text-white font-bold shadow-lg hover:shadow-purple-500/30 transition-all hover:scale-[1.02] flex justify-center items-center">
-                        @if (_isProcessing)
+                    <button @onclick="() => HandleUpgrade(SubscriptionTier.Premium)" 
+                            disabled="@(_isProcessing || !CanUpgrade(SubscriptionTier.Premium))" 
+                            class="w-full py-3 px-4 rounded-xl transition-all flex justify-center items-center shadow-lg hover:scale-[1.02]
+                            @(IsCurrentPlan(SubscriptionTier.Premium) 
+                                ? "bg-gray-100 text-gray-500 font-medium cursor-not-allowed shadow-none hover:scale-100" 
+                                : (_currentTierEnum > SubscriptionTier.Premium
+                                    ? "bg-white border-2 border-gray-200 text-gray-400 font-medium cursor-not-allowed shadow-none hover:scale-100"
+                                    : "bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold hover:shadow-primary-500/30"))">
+                        @if (_isProcessing && _selectedTier == SubscriptionTier.Premium)
                         {
                             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -90,14 +107,75 @@
                             </svg>
                             <span>Đang xử lý...</span>
                         }
+                        else if (IsCurrentPlan(SubscriptionTier.Premium))
+                        {
+                            <span>Gói hiện tại</span>
+                        }
+                        else if (_currentTierEnum > SubscriptionTier.Premium)
+                        {
+                             <span>Đã bao gồm</span>
+                        }
                         else
                         {
-                            <span>Nâng cấp ngay</span>
+                            <span>Nâng cấp Cá nhân</span>
                         }
                     </button>
-                    <p class="text-center text-xs text-gray-400 mt-3">Thanh toán an toàn (Mock)</p>
+                </div>
+
+                <!-- Family Plan -->
+                <div class="bg-white p-6 rounded-xl border-2 border-purple-500 shadow-xl relative overflow-hidden flex flex-col">
+                    <div class="absolute top-0 right-0 bg-purple-500 text-white text-[10px] font-black px-3 py-1 rounded-bl-xl uppercase tracking-widest">
+                        TIẾT KIỆM NHẤT
+                    </div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Family</h3>
+                            <div class="text-3xl font-bold text-purple-600 mt-2">@GetFamilyPrice()đ<span class="text-base text-gray-500 font-normal">/tháng</span></div>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 mb-8 flex-1">
+                        <li class="flex items-center text-gray-700 font-medium">
+                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Bao gồm mọi tính năng Premium
+                        </li>
+                        <li class="flex items-center text-gray-700 font-medium">
+                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Chia sẻ cho tối đa 5 thành viên
+                        </li>
+                        <li class="flex items-center text-gray-700 font-medium">
+                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Quản lý & Giao việc gia đình
+                        </li>
+                        <li class="flex items-center text-gray-700 font-medium">
+                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Hệ thống tích điểm & Phần thưởng
+                        </li>
+                        <li class="flex items-center text-gray-700 font-medium">
+                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Bố mẹ quản lý con cái
+                        </li>
+                    </ul>
+                    <button @onclick="() => HandleUpgrade(SubscriptionTier.Family)" 
+                            disabled="@(_isProcessing || !CanUpgrade(SubscriptionTier.Family))" 
+                            class="w-full py-3 px-4 rounded-xl transition-all flex justify-center items-center shadow-lg hover:scale-[1.02]
+                            @(IsCurrentPlan(SubscriptionTier.Family)
+                                ? "bg-gray-100 text-gray-500 font-medium cursor-not-allowed shadow-none hover:scale-100"
+                                : "bg-gradient-to-r from-purple-500 to-purple-700 text-white font-bold hover:shadow-purple-500/30")">
+                        @if (_isProcessing && _selectedTier == SubscriptionTier.Family)
+                        {
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>Đang xử lý...</span>
+                        }
+                        else if (IsCurrentPlan(SubscriptionTier.Family))
+                        {
+                            <span>Gói hiện tại</span>
+                        }
+                        else
+                        {
+                            <span>Sở hữu Gói Gia đình</span>
+                        }
+                    </button>
                 </div>
             </div>
+            <p class="text-center text-xs text-gray-400 mt-6 italic">* Mọi giao dịch hiện tại chỉ nhằm mục đích minh họa trải nghiệm người dùng (Mock Payment).</p>
         </div>
     </div>
 </div>
@@ -127,8 +205,26 @@
     [Parameter] public EventCallback OnUpgradeSuccess { get; set; }
 
     private bool _isProcessing = false;
+    private SubscriptionTier? _selectedTier;
     private string? _successMessage;
     private string? _errorMessage;
+    private CurrentUser? _currentUser;
+    private SubscriptionTier _currentTierEnum = SubscriptionTier.Free;
+
+    private string GetPremiumPrice() => Config["Pricing:Premium"] ?? "49.000";
+    private string GetFamilyPrice() => Config["Pricing:Family"] ?? "99.000";
+
+    protected override async Task OnInitializedAsync()
+    {
+        _currentUser = await AuthService.GetCurrentUserAsync();
+        if (_currentUser != null && Enum.TryParse<SubscriptionTier>(_currentUser.SubscriptionTier, out var tier))
+        {
+            _currentTierEnum = tier;
+        }
+    }
+
+    private bool IsCurrentPlan(SubscriptionTier tier) => _currentTierEnum == tier;
+    private bool CanUpgrade(SubscriptionTier tier) => _currentTierEnum < tier; // Only allow upgrade to higher tiers
 
     private async Task CloseModal()
     {
@@ -140,31 +236,26 @@
         await CloseModal();
     }
 
-    private async Task HandleUpgrade()
+    private async Task HandleUpgrade(SubscriptionTier tier)
     {
+        _selectedTier = tier;
         _isProcessing = true;
         _errorMessage = null;
         StateHasChanged();
 
         try
         {
-            // Simulate payment delay
-            await Task.Delay(1500);
+            var request = new CreatePaymentRequest(tier);
+            var response = await PaymentService.CreatePaymentLinkAsync(request);
 
-            var request = new UpgradeRequest(SubscriptionTier.Premium);
-            var response = await AuthService.UpgradeAccountAsync(request);
-
-            if (response.Success)
+            if (response != null && !string.IsNullOrEmpty(response.CheckoutUrl))
             {
-                _successMessage = "Nâng cấp thành công! Chào mừng Premium Member.";
-                StateHasChanged();
-                await Task.Delay(2000); // Show success message for a bit
-                await OnUpgradeSuccess.InvokeAsync();
-                await CloseModal();
+                // Redirect user to PayOS Checkout page
+                Navigation.NavigateTo(response.CheckoutUrl);
             }
             else
             {
-                _errorMessage = response.Message;
+                _errorMessage = "Không thể tạo liên kết thanh toán. Vui lòng thử lại sau.";
             }
         }
         catch (Exception ex)
@@ -174,6 +265,7 @@
         finally
         {
             _isProcessing = false;
+            _selectedTier = null;
             StateHasChanged();
         }
     }

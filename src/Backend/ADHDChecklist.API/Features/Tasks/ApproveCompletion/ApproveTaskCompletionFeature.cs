@@ -31,11 +31,25 @@ public class ApproveTaskCompletionCommandHandler : IRequestHandler<ApproveTaskCo
 
         if (task == null) return false;
 
-        // AUTH CHECK: Only Setup User (Creator) or the Approver (if designated) can approve?
-        // Simpler: Only the Task Owner (Creator) can approve tasks assigned to others.
-        if (task.UserId != request.UserId)
+        // AUTH CHECK: 
+        // 1. Task Owner (Creator) can always approve.
+        // 2. Any Family "Admin" can approve tasks within their family.
+        bool isAuthorized = task.UserId == request.UserId;
+        
+        if (!isAuthorized && task.FamilyId.HasValue)
         {
-            throw new UnauthorizedAccessException("Only the task owner can approve completion.");
+            var currentUserMember = await _context.FamilyMembers
+                .FirstOrDefaultAsync(m => m.FamilyId == task.FamilyId.Value && m.UserId == request.UserId, cancellationToken);
+            
+            if (currentUserMember != null && (currentUserMember.Role == "Admin" || currentUserMember.Role == "Parent"))
+            {
+                isAuthorized = true;
+            }
+        }
+
+        if (!isAuthorized)
+        {
+            throw new UnauthorizedAccessException("Bạn không có quyền duyệt hoàn thành cho công việc này. Chỉ người tạo hoặc Quản trị viên gia đình mới có quyền.");
         }
 
         if (task.CompletionApprovalStatus == "Approved" && task.IsCompleted)

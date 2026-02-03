@@ -254,7 +254,7 @@
                 _model.Title = task.Title;
                 _model.Description = task.Description;
                 _model.CategoryId = task.CategoryId?.ToString() ?? "";
-                _model.ScheduledDate = task.ScheduledDate.ToString("yyyy-MM-dd");
+                _model.ScheduledDate = task.ScheduledDate?.ToString("yyyy-MM-dd") ?? "";
                 _model.TimeStart = task.TimeBlockStart?.ToString("HH:mm");
                 _model.TimeEnd = task.TimeBlockEnd?.ToString("HH:mm");
                 _model.Priority = task.Priority;
