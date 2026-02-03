@@ -184,8 +184,11 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
             task.FamilyId,
             task.AssignedUserId,
             task.AssignedUser?.FullName,
-            task.AssignedUser?.GoogleProfilePicture,
-            task.IsShared
+            task.AssignedUser != null ? task.AssignedUser.GoogleProfilePicture : null,
+            null, // AssignedUserColor
+            task.IsShared,
+            task.AssignmentStatus,
+            task.RejectionReason
         );
         }
     }

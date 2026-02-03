@@ -105,10 +105,39 @@
                     
                     @if (_familyId.HasValue)
                     {
-                        <button @onclick="ToggleFamilyFilter" 
-                                class="px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1 @(_showFamilyTasks ? "bg-purple-100 text-purple-700 border-purple-200" : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50")">
-                            <span>@(_showFamilyTasks ? "👨‍👩‍👧‍👦 Gia đình" : "👤 Cá nhân")</span>
-                        </button>
+                        <div class="flex items-center gap-2 bg-white dark:bg-gray-800 p-1 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+                            <button @onclick="ToggleFamilyFilter" 
+                                    class="px-3 py-1.5 rounded-md text-xs font-bold transition-colors flex items-center gap-1 @(_showFamilyTasks ? "bg-purple-100 text-purple-700" : "hover:bg-gray-50 text-gray-600")">
+                                <span>@(_showFamilyTasks ? "👨‍👩‍👧‍👦 Gia đình" : "👤 Cá nhân")</span>
+                            </button>
+                            
+                            @if (_showFamilyTasks && _familyMembers.Any())
+                            {
+                                <div class="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-1"></div>
+                                <div class="flex items-center gap-1">
+                                    @foreach (var member in _familyMembers)
+                                    {
+                                        var isHidden = _filteredMemberIds.Contains(member.UserId);
+                                        <button @onclick="() => ToggleMemberFilter(member.UserId)"
+                                                class="relative group transition-all duration-200 @(isHidden ? "opacity-40 grayscale" : "opacity-100 hover:scale-110")"
+                                                title="@(isHidden ? $"Hiện {member.Nickname}" : $"Ẩn {member.Nickname}")">
+                                            @if (!string.IsNullOrEmpty(member.AvatarUrl))
+                                            {
+                                                <img src="@member.AvatarUrl" class="w-6 h-6 rounded-full border-2 border-white dark:border-gray-800 shadow-sm object-cover" 
+                                                     style="@(isHidden ? "" : $"border-color: {member.Color}")" />
+                                            }
+                                            else
+                                            {
+                                                <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm border-2 border-white dark:border-gray-800"
+                                                     style="background-color: @(member.Color ?? "#6366f1"); @(isHidden ? "background-color: #9ca3af;" : "")">
+                                                    @member.Nickname?.FirstOrDefault().ToString().ToUpper()
+                                                </div>
+                                            }
+                                        </button>
+                                    }
+                                </div>
+                            }
+                        </div>
                     }
                 </div>
             </div>
@@ -173,7 +202,7 @@
                                 </div>
                                 <span class="bg-white dark:bg-gray-800/20 px-2 py-0.5 rounded text-[11px] font-bold">@_scheduledTasks.Count Tasks</span>
                             </div>
-                            <div class="flex-1 min-h-0">
+                            <div class="flex-1 min-h-0 relative">
                                  <TimeBlocksGrid Tasks="@_scheduledTasks"
                                                 _selectedDate="@_selectedDate"
                                                 OnToggleComplete="ToggleTaskComplete"
@@ -191,11 +220,7 @@
                     <!-- Right Section: WORKSPACE (70%) -->
                     <div class="w-[70%] flex flex-col gap-4 min-h-0 overflow-y-auto overflow-x-hidden pr-2 custom-scrollbar @(_focusedTaskId.HasValue ? "opacity-30 blur-sm grayscale pointer-events-none transition-all duration-500" : "transition-all duration-300")">
                         
-                        <!-- Rewards Hub Section -->
-                        <div class="flex-shrink-0">
-                            <FamilyRewardsView IsAdmin="@(_currentUser?.Role == "Admin" || _currentUser?.Role == "Parent")" 
-                                               OnPointsChanged="LoadPoints" />
-                        </div>
+
 
                         <!-- Stats Header -->
                         <div class="flex items-center justify-between bg-white dark:bg-gray-800 rounded-xl p-2 px-4 shadow-sm border border-gray-200 dark:border-gray-700 flex-shrink-0 transition-colors">
@@ -227,10 +252,10 @@
                         </div>
 
                         <!-- Workspace Grid (Inbox & Analytics/Categories) -->
-                        <div class="flex-1 grid grid-cols-[30%_1fr] gap-4 min-h-0">
+                        <div class="flex-1 flex gap-4 min-h-0 items-stretch">
                             
-                            <!-- Col 1: INBOX (Full Height) -->
-                            <div class="flex flex-col bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors">
+                            <!-- Col 1: INBOX (Fixed width or 30%) -->
+                            <div class="w-[30%] min-w-[250px] flex flex-col bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors">
                                 <div class="p-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex justify-between items-center transition-colors">
                                     <h4 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest flex items-center gap-2">
                                         <span class="w-2 h-2 rounded-full bg-orange-500"></span> Inbox
@@ -242,11 +267,20 @@
                                      @ondrop="HandleInboxDropWrapper">
                                     @if (_inboxTasks.Any()) {
                                         @foreach (var task in _inboxTasks) {
-                                            <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing group"
-                                                 draggable="true" @ondragstart="() => HandleDragStart(task)">
+                                            <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all cursor-pointer active:cursor-grabbing group"
+                                                 draggable="true" @ondragstart="() => HandleDragStart(task)"
+                                                 @onclick="(e) => ShowTaskQuickViewFromClick(task, e)">
                                                 <div class="flex justify-between items-start gap-2">
                                                     <h5 class="text-sm font-bold text-gray-800 dark:text-gray-100 line-clamp-2">@task.Title</h5>
-                                                    @if(task.Priority > 1) { <span class="text-xs text-red-500 font-black">@string.Concat(Enumerable.Repeat("!", task.Priority-1))</span> }
+                                                    <div class="flex gap-1">
+                                                        @if (task.AssignmentStatus == "Pending")
+                                                        {
+                                                            <span class="text-[10px] bg-blue-100 text-blue-700 font-bold px-1.5 py-0.5 rounded border border-blue-200 animate-pulse">
+                                                                🔔 New
+                                                            </span>
+                                                        }
+                                                        @if(task.Priority > 1) { <span class="text-xs text-red-500 font-black">@string.Concat(Enumerable.Repeat("!", task.Priority-1))</span> }
+                                                    </div>
                                                 </div>
                                                 <div class="flex items-center justify-between mt-2">
                                                     <div class="flex items-center gap-2">
@@ -368,7 +402,7 @@
         {
             @if (_currentUser?.IsPremium == true)
             {
-                <AnalyticsView />
+                <AnalyticsView OnPointsChanged="LoadPoints" />
             }
             else
             {
@@ -438,7 +472,9 @@
                        OnFocus="HandleFocusTask"
                        OnMagicBreakdown="HandleMagicBreakdown"
                        IsPremium="@(_currentUser?.IsPremium == true)"
-                       OnUpgradeClicked="ShowUpgradeModal" />
+                       OnUpgradeClicked="ShowUpgradeModal"
+                       CurrentUserId="@_currentUser?.UserId"
+                       OnRespondSuccess="LoadData" />
 }
 
 <!-- Focus Mode Overlay / Controls -->
@@ -600,6 +636,13 @@
         _quickViewY = data.y;
     }
 
+    private void ShowTaskQuickViewFromClick(TaskResponse task, MouseEventArgs e)
+    {
+        _selectedTaskForQuickView = task;
+        _quickViewX = e.ClientX;
+        _quickViewY = e.ClientY;
+    }
+
     private void CloseTaskQuickView()
     {
         _selectedTaskForQuickView = null;
@@ -626,6 +669,22 @@
         {
             await _confetti.Shoot();
         }
+    }
+
+    private HashSet<Guid> _filteredMemberIds = new(); // Members to HIDE
+
+    private void ToggleMemberFilter(Guid memberUserId)
+    {
+        if (_filteredMemberIds.Contains(memberUserId))
+        {
+            _filteredMemberIds.Remove(memberUserId);
+        }
+        else
+        {
+            _filteredMemberIds.Add(memberUserId);
+        }
+        FilterTasks(); // Re-apply filter
+        StateHasChanged();
     }
 
     private List<TaskResponse> _allTasks = new();
@@ -733,30 +792,42 @@
     private void FilterTasks()
     {
         var tasksToShow = _allTasks;
+
+        // Hide rejected tasks for Assignee
+        if (_currentUser != null)
+        {
+             tasksToShow = tasksToShow.Where(t => 
+                t.AssignmentStatus != "Rejected" || 
+                string.Equals(t.AssignedUserId?.ToString(), _currentUser.UserId, StringComparison.OrdinalIgnoreCase) == false
+             ).ToList();
+        }
         
         if (!_showFamilyTasks)
         {
-            // Show only MY tasks (or tasks assigned to me)
-             // Logic: If AssignedUserId is set, it must be ME. If not set, it must be created by ME (UserId is not in DTO but API filters by Owner/Assignee).
-             // Wait, GetTasksByDate returns tasks created by user OR assigned to user OR in family (if logic was changed).
-             // My Backend logic: (t.UserId == request.UserId) || (t.FamilyId == userFamilyId).
-             // If I want to hide "Family Tasks" (tasks of others), I check AssignedUserId.
-             // If AssignedUserId is someone else -> Hide.
-             // If AssignedUserId is NULL -> Show (It's mine, created by me).
-             // If AssignedUserId is ME -> Show.
-             
-             // BUT, DTO doesn't have CurrentUserId to compare easily, unless I store _currentUser.Id.
-             // _currentUser is loaded in OnInitialized.
-             
              if (_currentUser != null)
              {
                  var myId = Guid.Parse(_currentUser.UserId);
-                 tasksToShow = _allTasks.Where(t => 
+                 tasksToShow = tasksToShow.Where(t => 
                      t.AssignedUserId == null || 
                      t.AssignedUserId == myId).ToList();
              }
         }
-        // Else show all (including family members' tasks)
+        else
+        {
+            // Shared View: Filter out hidden members
+            if (_filteredMemberIds.Any())
+            {
+                tasksToShow = tasksToShow.Where(t => 
+                    t.AssignedUserId == null || // Always show Owner tasks? Or if owner is filtered? 
+                    // Let's assume t.AssignedUserId covers it. If null, it's usually "Self" (Creator).
+                    // If creator is filtered? API logic: tasks contain mixed creators.
+                    // Better: If AssignedUser is known, check against filter.
+                    // If AssignedUserId is NULL, it means "Unassigned" or "Self".
+                    // For now, let's filter only if AssignedUserId matches a hidden ID.
+                    !t.AssignedUserId.HasValue || !_filteredMemberIds.Contains(t.AssignedUserId.Value)
+                ).ToList();
+            }
+        }
 
         _scheduledTasks = tasksToShow.Where(t => t.TimeBlockStart.HasValue)
                                    .OrderBy(t => t.TimeBlockStart)

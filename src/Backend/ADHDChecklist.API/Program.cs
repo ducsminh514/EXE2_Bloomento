@@ -28,6 +28,7 @@ using ADHDChecklist.API.Features.Tasks.GetTasksByDate;
 using ADHDChecklist.API.Features.Tasks.MoveTask;
 using ADHDChecklist.API.Features.Tasks.ToggleTask;
 using ADHDChecklist.API.Features.Tasks.UpdateTask;
+using ADHDChecklist.API.Features.Tasks.RespondAssignment;
 using ADHDChecklist.API.Features.Preferences.GetPreferences;
 using ADHDChecklist.API.Features.Preferences.UpdatePreferences;
 using ADHDChecklist.API.Features.BrainDump.CreateBrainDumpItem;
@@ -199,6 +200,7 @@ builder.Services.AddScoped<ADHDChecklist.API.Services.BackgroundJobs.ReminderJob
 builder.Services.AddHttpClient<IGeminiService, GeminiService>();
 builder.Services.AddScoped<KnowledgeSeeder>();
 builder.Services.AddScoped<IdentitySeeder>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 // ... (existing code)
 
@@ -341,6 +343,7 @@ app.MapToggleTaskCompletion();
 app.MapMoveTaskToTimeSlot();
 app.MapMoveTaskToInbox();
 app.MapUpdateTaskOrder();
+app.MapRespondAssignment();
 app.MapAutoAdjustTasks();
 app.MapGetOverdueCount();
 // Category endpoints

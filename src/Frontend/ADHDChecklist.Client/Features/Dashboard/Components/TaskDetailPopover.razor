@@ -1,5 +1,7 @@
 @using ADHDChecklist.Client.Shared.Models
+@using ADHDChecklist.Client.Features.Dashboard.Services
 @inject IJSRuntime JS
+@inject ITaskService TaskService
 
 @if (Task != null)
 {
@@ -29,6 +31,64 @@
 
         <!-- Body -->
         <div class="p-5 flex-1 overflow-y-auto min-h-0">
+            @if (Task.AssignmentStatus == "Pending" && IsAssignedToMe)
+            {
+                <div class="mb-4 bg-blue-50 border border-blue-100 p-3 rounded-lg flex flex-col gap-2">
+                    <div class="flex items-center gap-2 text-blue-800">
+                        <span class="text-lg">👋</span>
+                        <p class="text-xs font-bold leading-tight">
+                            Người thân đã gán việc này cho bạn.
+                        </p>
+                    </div>
+                    <div class="mt-2"> <!-- Container for actions -->
+                        @if (_showRejectionReasonInput)
+                        {
+                            <div class="animate-fade-in-up">
+                                <textarea @bind="_rejectionReason" 
+                                          class="w-full text-xs p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none mb-2" 
+                                          placeholder="Nhập lý do từ chối (Ví dụ: Đang bận...)" 
+                                          rows="2"></textarea>
+                                <div class="flex gap-2">
+                                     <button @onclick="@(async () => await Respond("Rejected", _rejectionReason))" 
+                                             class="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1.5 rounded-md transition-colors disabled:opacity-50"
+                                             disabled="@string.IsNullOrWhiteSpace(_rejectionReason)">
+                                        Gửi từ chối
+                                    </button>
+                                    <button @onclick="CancelRejection" class="px-3 bg-white border border-gray-300 text-gray-600 text-xs font-bold py-1.5 rounded-md hover:bg-gray-50 transition-colors">
+                                        Hủy
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="flex gap-2">
+                                <button @onclick="@(async () => await Respond("Accepted"))" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-1.5 rounded-md cursor-pointer transition-colors shadow-sm">
+                                    Chấp nhận
+                                </button>
+                                <button @onclick="ShowRejectionInput" class="flex-1 bg-white hover:bg-red-50 text-red-600 border border-red-200 text-xs font-bold py-1.5 rounded-md cursor-pointer transition-colors">
+                                    Từ chối
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (Task.AssignmentStatus == "Rejected")
+            {
+                <div class="mb-4 bg-red-50 border border-red-100 p-3 rounded-lg flex flex-col gap-1 text-red-800">
+                     <div class="flex items-center gap-2">
+                         <span class="text-lg">🚫</span>
+                         <p class="text-xs font-bold">Việc này đã bị từ chối.</p>
+                     </div>
+                     @if (!string.IsNullOrEmpty(Task.RejectionReason))
+                     {
+                         <p class="text-xs italic pl-7 text-red-600">"@Task.RejectionReason"</p>
+                     }
+                </div>
+            }
+
             <div class="flex items-start gap-3 mb-4">
                 <div class="mt-1 flex-shrink-0">
                     <div class="w-5 h-5 rounded-full border-2 cursor-pointer flex items-center justify-center transition-colors @(Task.IsCompleted ? "border-green-500 bg-green-500" : "border-gray-300 hover:border-primary-500")"
@@ -131,12 +191,48 @@
     [Parameter] public EventCallback<Guid> OnMagicBreakdown { get; set; }
     [Parameter] public bool IsPremium { get; set; }
     [Parameter] public EventCallback OnUpgradeClicked { get; set; }
+    [Parameter] public string? CurrentUserId { get; set; }
+    [Parameter] public EventCallback OnRespondSuccess { get; set; }
 
+    private bool IsAssignedToMe => !string.IsNullOrEmpty(CurrentUserId) && 
+                                   Task != null && 
+                                   Task.AssignedUserId.HasValue && 
+                                   string.Equals(Task.AssignedUserId.ToString(), CurrentUserId, StringComparison.OrdinalIgnoreCase);
+    
     private string _userDescription = "";
     private List<string> _magicBreakdownItems = new();
+    
+    // Rejection State
+    private bool _showRejectionReasonInput = false;
+    private string _rejectionReason = "";
+
+    private async Task Respond(string status, string? reason = null)
+    {
+        if (Task == null) return;
+        var success = await TaskService.RespondAssignmentAsync(Task.Id, status, reason);
+        if (success)
+        {
+            await OnRespondSuccess.InvokeAsync();
+            await OnClose.InvokeAsync();
+        }
+    }
+    
+    private void ShowRejectionInput()
+    {
+        _showRejectionReasonInput = true;
+    }
+    
+    private void CancelRejection()
+    {
+        _showRejectionReasonInput = false;
+        _rejectionReason = "";
+    }
 
     protected override void OnParametersSet()
     {
+        // Reset state when task changes (or Popover opens)
+        _showRejectionReasonInput = false;
+        _rejectionReason = "";
         ParseDescription();
     }
 
@@ -146,20 +242,18 @@
         _magicBreakdownItems = new();
 
         if (Task == null || string.IsNullOrWhiteSpace(Task.Description)) return;
-
-        var parts = Task.Description.Split(new[] { "**✨ Magic Breakdown:**" }, StringSplitOptions.None);
         
+        // ... (Keep existing simple logic if possible, or simplified version for diff)
+        var parts = Task.Description.Split(new[] { "**✨ Magic Breakdown:**" }, StringSplitOptions.None);
         _userDescription = parts[0].Trim();
 
         if (parts.Length > 1)
         {
             var breakdownText = parts[1];
-            // Split by lines and clean up checklist items
-            var lines = breakdownText.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+             var lines = breakdownText.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var line in lines)
             {
                 var cleaned = line.Trim();
-                // Matches "- [ ] Item" or "- Item"
                 if (cleaned.StartsWith("- [ ]") || cleaned.StartsWith("- [x]") || cleaned.StartsWith("-"))
                 {
                     cleaned = cleaned.Replace("- [ ]", "").Replace("- [x]", "").Replace("-", "").Trim();

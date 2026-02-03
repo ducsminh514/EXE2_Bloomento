@@ -30,7 +30,8 @@ public record FamilyMemberResponse(
     string FullName, 
     string Role, 
     string? Nickname,
-    string? AvatarUrl
+    string? AvatarUrl,
+    string? Color
 );
 
 public class GetFamilyHandler : IRequestHandler<GetFamilyQuery, FamilyResponse?>
@@ -64,7 +65,8 @@ public class GetFamilyHandler : IRequestHandler<GetFamilyQuery, FamilyResponse?>
             m.User.FullName ?? "Unknown",
             m.Role,
             m.Nickname,
-            m.User.GoogleProfilePicture // Assuming this exists or falls back
+            m.User.GoogleProfilePicture, // Assuming this exists or falls back
+            m.Color
         )).ToList();
 
         var pendingInvitations = await _context.FamilyInvitations

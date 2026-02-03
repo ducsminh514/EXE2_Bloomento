@@ -80,7 +80,8 @@ public record FamilyMemberResponse(
     string FullName, 
     string Role, 
     string? Nickname,
-    string? AvatarUrl
+    string? AvatarUrl,
+    string? Color
 );
 
 public record InviteResponse(string Code);

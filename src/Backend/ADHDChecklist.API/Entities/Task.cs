@@ -51,6 +51,10 @@ public partial class Task
     public Guid? FamilyId { get; set; }
     public Guid? AssignedUserId { get; set; }
     public bool IsShared { get; set; } = false;
+    
+    // Assignment Status: "Pending", "Accepted", "Rejected"
+    public string? AssignmentStatus { get; set; } = ""; 
+    public string? RejectionReason { get; set; }
 
     public virtual ICollection<BrainDumpItem> BrainDumpItems { get; set; } = new List<BrainDumpItem>();
 

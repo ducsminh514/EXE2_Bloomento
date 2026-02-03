@@ -123,7 +123,7 @@
                     var isFocused = FocusedTaskId.HasValue && FocusedTaskId == task.Id;
                     var isBlurred = FocusedTaskId.HasValue && FocusedTaskId != task.Id;
 
-                    var focusClass = isFocused ? "z-50 ring-4 ring-primary-500/50 shadow-2xl scale-105" : "";
+                     var focusClass = isFocused ? "z-50 ring-4 ring-primary-500/50 shadow-2xl scale-105" : "";
                     var blurClass = isBlurred ? "opacity-30 blur-sm grayscale pointer-events-none" : "pointer-events-auto";
                     var baseClass = "absolute w-full px-1 transition-all duration-500 ease-in-out transform";
 
@@ -133,7 +133,8 @@
                          @ondragstart="() => HandleDragStart(task)"
                          @onclick="(e) => HandleTaskClick(task, e)">
                         
-                        <div class="h-full w-full rounded-md border-l-4 shadow-sm @GetTaskBorderColor(task) @GetTaskBgColor(task) bg-opacity-90 backdrop-blur-sm border border-gray-200/60 p-2 overflow-hidden flex flex-col group/card hover:shadow-md cursor-pointer active:scale-[0.98]">
+                        <div class="h-full w-full rounded-md border-l-4 shadow-sm bg-opacity-90 backdrop-blur-sm border border-gray-200/60 p-2 overflow-hidden flex flex-col group/card hover:shadow-md cursor-pointer active:scale-[0.98]"
+                             style="@GetTaskStyle(task)">
                             
                             <!-- Header: Title & Priority -->
                             <div class="flex justify-between items-start gap-1">
@@ -147,13 +148,28 @@
 
                             <!-- Meta: Time Range & Category -->
                             @if (!isBlurred) {
-                                <div class="flex items-center gap-2 mt-0.5 text-[10px] opacity-80">
-                                    <span class="font-medium text-primary-700 bg-primary-50/80 px-1 rounded">
-                                        @start.ToString("HH:mm") - @start.AddMinutes(taskDuration).ToString("HH:mm")
-                                    </span>
-                                    @if (!string.IsNullOrEmpty(task.CategoryName))
+                                <div class="flex items-center justify-between mt-auto">
+                                    <div class="flex items-center gap-2 text-[10px] opacity-80">
+                                        <span class="font-medium text-gray-700 bg-white/50 px-1 rounded truncate">
+                                            @start.ToString("HH:mm") - @start.AddMinutes(taskDuration).ToString("HH:mm")
+                                        </span>
+                                    </div>
+                                    
+                                    <!-- Assignee Avatar (Mini) -->
+                                    @if (!string.IsNullOrEmpty(task.AssignedUserAvatar) && task.AssignedUserAvatar.Length > 0)
                                     {
-                                        <span class="flex items-center gap-1 truncate text-gray-600">
+                                         <img src="@task.AssignedUserAvatar" class="w-4 h-4 rounded-full border border-white shadow-sm flex-shrink-0" title="@task.AssignedUserName" />
+                                    }
+                                    else if (!string.IsNullOrEmpty(task.AssignedUserColor) && !string.IsNullOrEmpty(task.AssignedUserName))
+                                    {
+                                        <div class="w-4 h-4 rounded-full border border-white shadow-sm flex items-center justify-center text-[8px] font-bold text-white flex-shrink-0"
+                                             style="background-color: @task.AssignedUserColor" title="@task.AssignedUserName">
+                                             @task.AssignedUserName.FirstOrDefault().ToString().ToUpper()
+                                        </div>
+                                    }
+                                    else if (!string.IsNullOrEmpty(task.CategoryName))
+                                    {
+                                        <span class="flex items-center gap-1 truncate text-gray-600 text-[10px]">
                                             <span class="w-1.5 h-1.5 rounded-full" style="background-color: @task.CategoryColor"></span>
                                             @task.CategoryName
                                         </span>
@@ -243,20 +259,51 @@
         }
     }
 
-    private string GetTaskBorderColor(TaskResponse task)
+    private string GetTaskStyle(TaskResponse task)
     {
-        if (task.IsCompleted) return "border-green-400";
-        return task.Priority switch
+        var style = "";
+        
+        // Border Color
+        if (task.IsCompleted == true) 
         {
-            3 => "border-red-500",
-            2 => "border-orange-400",
-            _ => "border-indigo-400"
-        };
-    }
+            style += "border-left-color: #4ade80;"; // Green-400
+        }
+        else if (!string.IsNullOrEmpty(task.AssignedUserColor))
+        {
+            style += $"border-left-color: {task.AssignedUserColor};";
+        }
+        else 
+        {
+            // Fallback for My Tasks
+            style += task.Priority switch
+            {
+                3 => "border-left-color: #ef4444;", // Red-500
+                2 => "border-left-color: #fb923c;", // Orange-400
+                _ => "border-left-color: #818cf8;"  // Indigo-400
+            };
+        }
 
-    private string GetTaskBgColor(TaskResponse task)
-    {
-        if (task.IsCompleted) return "bg-gray-50";
-        return "bg-white";
+        // Background Tint (Ultra light)
+        if (task.IsCompleted == true)
+        {
+            style += "background-color: #f9fafb;"; // Gray-50
+        }
+        else if (!string.IsNullOrEmpty(task.AssignedUserColor))
+        {
+            // Hex to RGBA for tint? 
+            // Simple approach: Use white with opacity or mix-blend-mode if parent has color.
+            // Since we receive Hex, we can't easily make it transparent in inline pure CSS without conversion logic.
+            // Let's use a very light trick: background: linear-gradient(to right, {color}0D, #ffffff);
+            // Assuming color is Hex, we can append "1A" (10% alpha) if it's 6 digits.
+            // Safe fallback: just white background, maybe colored border is enough to avoid contrast issues.
+            // User requested "tint based on user's color".
+            style += $"background-color: #ffffff; background-image: linear-gradient(to right, {task.AssignedUserColor}15, transparent);";
+        }
+        else
+        {
+            style += "background-color: #ffffff;";
+        }
+
+        return style;
     }
 }

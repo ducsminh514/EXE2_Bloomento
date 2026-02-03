@@ -22,6 +22,7 @@ namespace ADHDChecklist.API.Features.Tasks.GetTaskById
             var task = await _context.Tasks
                 .Include(t => t.Category)
                 .Include(t => t.AssignedUser)
+                .Include(t => t.Family).ThenInclude(f => f.Members)
                 .FirstOrDefaultAsync(t => t.Id == request.TaskId && t.UserId == request.UserId, cancellationToken);
 
             if (task == null)
@@ -56,9 +57,14 @@ namespace ADHDChecklist.API.Features.Tasks.GetTaskById
                 task.DopamineType,
                 task.FamilyId,
                 task.AssignedUserId,
-                task.AssignedUser?.FullName,
-                task.AssignedUser?.GoogleProfilePicture,
-                task.IsShared
+                task.AssignedUser != null ? task.AssignedUser.FullName : null,
+                task.AssignedUser != null ? task.AssignedUser.GoogleProfilePicture : null,
+                task.FamilyId.HasValue && task.AssignedUserId.HasValue 
+                    ? task.Family?.Members?.FirstOrDefault(m => m.UserId == task.AssignedUserId)?.Color 
+                    : null,
+                task.IsShared,
+                task.AssignmentStatus,
+                task.RejectionReason
             );
         }
     }

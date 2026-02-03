@@ -143,16 +143,19 @@ public record TaskResponse(
     string? RecurrencePattern,
     Guid? ParentTaskId,
     List<TaskResponse> SubTasks,
-    int? OrderIndex,
+    int OrderIndex,
     DateTime CreatedAt,
     DateTime UpdatedAt,
-    int? RescheduleCount = 0,
-    string? DopamineType = "Low",
-    Guid? FamilyId = null,
-    Guid? AssignedUserId = null,
-    string? AssignedUserName = null,
-    string? AssignedUserAvatar = null,
-    bool IsShared = false
+    int RescheduleCount,
+    string? DopamineType,
+    Guid? FamilyId,
+    Guid? AssignedUserId,
+    string? AssignedUserName,
+    string? AssignedUserAvatar,
+    string? AssignedUserColor,
+    bool IsShared,
+    string? AssignmentStatus, // "Pending", "Accepted", "Rejected"
+    string? RejectionReason
 );
 
 public record TaskListResponse(

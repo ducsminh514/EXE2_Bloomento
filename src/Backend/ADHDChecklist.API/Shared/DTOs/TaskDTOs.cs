@@ -71,7 +71,10 @@ public record TaskResponse(
     Guid? AssignedUserId,
     string? AssignedUserName,
     string? AssignedUserAvatar,
-    bool IsShared
+    string? AssignedUserColor,
+    bool IsShared,
+    string? AssignmentStatus,
+    string? RejectionReason
 );
 
 public record TaskListResponse(

@@ -16,6 +16,8 @@ public class FamilyMember
     
     public string? Nickname { get; set; }
     
+    public string Color { get; set; } = "#3B82F6"; // Default Blue
+    
     public DateTime JoinedAt { get; set; }
 
     // Navigation properties

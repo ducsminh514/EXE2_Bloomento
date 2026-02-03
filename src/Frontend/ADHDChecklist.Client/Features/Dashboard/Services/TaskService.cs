@@ -150,6 +150,22 @@ namespace ADHDChecklist.Client.Features.Dashboard.Services
             );
             return response?.Steps ?? Array.Empty<string>();
         }
+
+        public async Task<bool> RespondAssignmentAsync(Guid id, string status, string? reason = null)
+        {
+            try
+            {
+                await _apiClient.PostAsync<object>(
+                    $"/api/tasks/{id}/respond",
+                    new { Status = status, Reason = reason }
+                );
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 
     public record BreakdownTaskResponse(string[] Steps);

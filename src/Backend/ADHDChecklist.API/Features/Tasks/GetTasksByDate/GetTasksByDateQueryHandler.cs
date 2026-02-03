@@ -80,7 +80,12 @@ public class GetTasksByDateQueryHandler : IRequestHandler<GetTasksByDateQuery, T
                 t.AssignedUserId,
                 t.AssignedUser != null ? t.AssignedUser.FullName : null,
                 t.AssignedUser != null ? t.AssignedUser.GoogleProfilePicture : null,
-                t.IsShared
+                t.FamilyId.HasValue && t.AssignedUserId.HasValue
+                    ? t.Family.Members.FirstOrDefault(m => m.UserId == t.AssignedUserId).Color 
+                    : null,
+                t.IsShared,
+                t.AssignmentStatus,
+                t.RejectionReason
             ))
             .ToListAsync(cancellationToken);
 

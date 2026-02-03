@@ -106,7 +106,8 @@ namespace ADHDChecklist.API.Features.Tasks.CreateTask
                 DopamineType = request.DopamineType ?? "Low",
                 FamilyId = familyId,
                 AssignedUserId = request.AssignedUserId ?? request.UserId, // Default to self
-                IsShared = request.IsShared
+                IsShared = request.IsShared,
+                AssignmentStatus = (request.AssignedUserId.HasValue && request.AssignedUserId != request.UserId) ? "Pending" : "Accepted"
             };
 
             _context.Tasks.Add(task);
@@ -168,7 +169,10 @@ namespace ADHDChecklist.API.Features.Tasks.CreateTask
                 task.AssignedUserId,
                 task.AssignedUser?.FullName,
                 task.AssignedUser?.GoogleProfilePicture,
-                task.IsShared
+                null, // AssignedUserColor
+                task.IsShared,
+                task.AssignmentStatus,
+                task.RejectionReason
             );
         }
     }
