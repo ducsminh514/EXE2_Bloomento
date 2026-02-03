@@ -62,6 +62,20 @@ namespace ADHDChecklist.API.Features.Tasks.UpdateTask
                 return null;
             }
 
+            // ASSIGNEE-ONLY SCHEDULING CHECK
+            // If task is assigned to someone else, only that person can change the schedule/timeblock
+            bool isTimeChanging = task.ScheduledDate != request.ScheduledDate || 
+                                 task.TimeBlockStart != request.TimeBlockStart || 
+                                 task.TimeBlockEnd != request.TimeBlockEnd;
+
+            if (isTimeChanging && task.AssignedUserId.HasValue && task.AssignedUserId != request.UserId)
+            {
+                _logger.LogWarning("User {UserId} attempted to change schedule for task {TaskId} assigned to {AssignedUserId}", 
+                    request.UserId, task.Id, task.AssignedUserId);
+                // We return null to indicate Unauthorized/Forbidden for this specific field change
+                return null; 
+            }
+
             // Update fields
             if (task.ScheduledDate != request.ScheduledDate)
             {

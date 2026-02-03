@@ -50,21 +50,30 @@
                         <div class="flex-1 space-y-1">
                             <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Ngày</label>
                             <InputText @bind-Value="_model.ScheduledDate" type="date"
-                                       class="w-full text-sm font-medium text-gray-700 bg-gray-50 border-gray-100 rounded-lg focus:ring-primary-500 focus:border-primary-500" />
+                                       disabled="@(!CanChangeSchedule)"
+                                       class="w-full text-sm font-medium text-gray-700 bg-gray-50 border-gray-100 rounded-lg focus:ring-primary-500 focus:border-primary-500 disabled:opacity-50 disabled:cursor-not-allowed" />
                         </div>
                         <div class="flex-[1.5] flex gap-2">
                             <div class="flex-1 space-y-1">
                                 <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Bắt đầu</label>
                                 <InputText @bind-Value="_model.TimeStart" type="time"
-                                           class="w-full text-sm font-medium text-gray-700 bg-gray-50 border-gray-100 rounded-lg focus:ring-primary-500 focus:border-primary-500" />
+                                           disabled="@(!CanChangeSchedule)"
+                                           class="w-full text-sm font-medium text-gray-700 bg-gray-50 border-gray-100 rounded-lg focus:ring-primary-500 focus:border-primary-500 disabled:opacity-50 disabled:cursor-not-allowed" />
                             </div>
                             <div class="flex-1 space-y-1">
                                 <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Kết thúc</label>
                                 <InputText @bind-Value="_model.TimeEnd" type="time"
-                                           class="w-full text-sm font-medium text-gray-700 bg-gray-50 border-gray-100 rounded-lg focus:ring-primary-500 focus:border-primary-500" />
+                                           disabled="@(!CanChangeSchedule)"
+                                           class="w-full text-sm font-medium text-gray-700 bg-gray-50 border-gray-100 rounded-lg focus:ring-primary-500 focus:border-primary-500 disabled:opacity-50 disabled:cursor-not-allowed" />
                             </div>
                         </div>
                     </div>
+                    @if (!CanChangeSchedule)
+                    {
+                        <p class="text-[9px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded flex items-center gap-1">
+                            <span>💡</span> Chỉ người được giao việc mới có quyền thay đổi thời gian.
+                        </p>
+                    }
 
                     <!-- Row 2: Description -->
                     <div>
@@ -166,12 +175,17 @@
     [Parameter] public List<CategoryResponse> Categories { get; set; } = new();
     [Parameter] public EventCallback OnUpgradeClicked { get; set; }
     [Parameter] public bool IsPremium { get; set; }
+    [Parameter] public string? CurrentUserId { get; set; }
 
     private TaskFormModel _model = new();
     private bool _isLoading = true;
     private bool _isSubmitting;
     private bool _isBreakingDown;
     private string? _errorMessage;
+    private Guid? _assignedUserId;
+
+    private bool CanChangeSchedule => !_assignedUserId.HasValue || 
+                                     string.Equals(_assignedUserId.Value.ToString(), CurrentUserId, StringComparison.OrdinalIgnoreCase);
 
     private async Task HandleAutoBreakdown()
     {
@@ -236,6 +250,8 @@
         public int Priority { get; set; } = 1;
         public bool IsCompleted { get; set; }
         public string DopamineType { get; set; } = "Low";
+        public bool IsShared { get; set; }
+        public bool IsMandatory { get; set; }
     }
 
     protected override async Task OnInitializedAsync()
@@ -260,6 +276,9 @@
                 _model.Priority = task.Priority;
                 _model.IsCompleted = task.IsCompleted;
                 _model.DopamineType = task.DopamineType ?? "Low";
+                _assignedUserId = task.AssignedUserId;
+                _model.IsShared = task.IsShared;
+                _model.IsMandatory = task.IsMandatory;
             }
         }
         catch (Exception ex)
@@ -300,7 +319,10 @@
                 duration,
                 _model.Priority,
                 _model.IsCompleted,
-                _model.DopamineType
+                _model.DopamineType,
+                _assignedUserId,
+                _model.IsShared,
+                _model.IsMandatory
             );
 
             await TaskService.UpdateTaskAsync(TaskId, request);

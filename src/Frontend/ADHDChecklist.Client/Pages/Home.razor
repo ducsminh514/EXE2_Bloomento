@@ -216,7 +216,7 @@
                                                 OnTaskClick="ShowTaskQuickView" 
                                                 FocusedTaskId="@_focusedTaskId"
                                                 IsPremium="@(_currentUser?.IsPremium == true)"
-                                                CurrentUserId="@(_currentUser?.UserId != null ? Guid.Parse(_currentUser.UserId) : Guid.Empty)" 
+                                                CurrentUserId="@_currentUser?.UserId" 
                                                 OnTaskUpdated="LoadData" />
                             </div>
                         </div>
@@ -278,8 +278,9 @@
                                              @ondrop="HandleInboxDropWrapper">
                                             @if (_personalInboxTasks.Any()) {
                                                 @foreach (var task in _personalInboxTasks) {
+                                                    var isAssignee = !task.AssignedUserId.HasValue || string.Equals(task.AssignedUserId.Value.ToString(), _currentUser?.UserId, StringComparison.OrdinalIgnoreCase);
                                                     <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all cursor-pointer active:cursor-grabbing group"
-                                                         draggable="true" @ondragstart="() => HandleDragStart(task)"
+                                                         draggable="@(isAssignee ? "true" : "false")" @ondragstart="() => HandleDragStart(task)"
                                                          @onclick="(e) => ShowTaskQuickViewFromClick(task, e)">
                                                         <div class="flex justify-between items-start gap-2">
                                                             <h5 class="text-sm font-bold text-gray-800 dark:text-gray-100 line-clamp-2">@task.Title</h5>
@@ -315,8 +316,9 @@
                                                  @ondrop="HandleInboxDropWrapper">
                                                 @if (_familyInboxTasks.Any()) {
                                                     @foreach (var task in _familyInboxTasks) {
+                                                        var isAssignee = !task.AssignedUserId.HasValue || string.Equals(task.AssignedUserId.Value.ToString(), _currentUser?.UserId, StringComparison.OrdinalIgnoreCase);
                                                         <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all cursor-pointer group"
-                                                             draggable="true" @ondragstart="() => HandleDragStart(task)"
+                                                             draggable="@(isAssignee ? "true" : "false")" @ondragstart="() => HandleDragStart(task)"
                                                              @onclick="(e) => ShowTaskQuickViewFromClick(task, e)">
                                                             <div class="flex justify-between items-start gap-2">
                                                                 <h5 class="text-sm font-bold text-gray-800 dark:text-gray-100 line-clamp-2">@task.Title</h5>
@@ -539,6 +541,7 @@
                     OnTaskUpdated="HandleTaskUpdated"
                     OnUpgradeClicked="ShowUpgradeModal"
                     IsPremium="@(_currentUser?.IsPremium == true)"
+                    CurrentUserId="@_currentUser?.UserId"
                     Categories="@_categories" />
 }
 
@@ -1158,17 +1161,18 @@
             }
 
             // 2. Proceed if Valid or Confirmed
-            // Logic: Auto-assign tasks to current user if dropped into timeline 
-            // from family inbox or if unassigned.
-            var targetAssigneeId = task.AssignedUserId;
+            // Check if current user is the assignee (if task is assigned)
             if (_currentUser != null)
             {
-                var currentUserIdGuid = Guid.Parse(_currentUser.UserId);
-                if (task.AssignedUserId == null || task.AssignedUserId != currentUserIdGuid)
+                if (task.AssignedUserId.HasValue && !string.Equals(task.AssignedUserId.Value.ToString(), _currentUser.UserId, StringComparison.OrdinalIgnoreCase))
                 {
-                    targetAssigneeId = currentUserIdGuid;
+                    await JS.InvokeVoidAsync("alert", "⚠️ Chỉ người được giao việc mới có quyền sắp xếp lịch trình cho công việc này.");
+                    return;
                 }
             }
+
+            var myId = _currentUser != null ? Guid.Parse(_currentUser.UserId) : (Guid?)null;
+            var assignedUserId = task.AssignedUserId ?? myId;
 
             var updateRequest = new UpdateTaskRequest(
                 task.Title,
@@ -1181,7 +1185,7 @@
                 task.Priority,
                 task.IsCompleted,
                 task.DopamineType,
-                targetAssigneeId,
+                assignedUserId, // Auto-assign if unassigned
                 task.IsShared,
                 task.IsMandatory
             );
@@ -1229,6 +1233,16 @@
                  
                  if (!confirmed) return;
              }
+
+            // Check if current user is the assignee
+            if (_currentUser != null)
+            {
+                if (task.AssignedUserId.HasValue && !string.Equals(task.AssignedUserId.Value.ToString(), _currentUser.UserId, StringComparison.OrdinalIgnoreCase))
+                {
+                    await JS.InvokeVoidAsync("alert", "⚠️ Chỉ người được giao việc mới có quyền thay đổi thời lượng của công việc này.");
+                    return;
+                }
+            }
 
             var updateRequest = new UpdateTaskRequest(
                 task.Title,
