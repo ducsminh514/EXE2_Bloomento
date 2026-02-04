@@ -15,10 +15,12 @@ public record JoinFamilyCommand(string InviteCode, Guid UserId) : IRequest<Guid>
 public class JoinFamilyHandler : IRequestHandler<JoinFamilyCommand, Guid>
 {
     private readonly AppDbContext _context;
+    private readonly Microsoft.Extensions.Configuration.IConfiguration _configuration;
 
-    public JoinFamilyHandler(AppDbContext context)
+    public JoinFamilyHandler(AppDbContext context, Microsoft.Extensions.Configuration.IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
     }
 
     public async Task<Guid> Handle(JoinFamilyCommand request, CancellationToken cancellationToken)
@@ -44,6 +46,15 @@ public class JoinFamilyHandler : IRequestHandler<JoinFamilyCommand, Guid>
         if (invitation == null)
         {
             throw new InvalidOperationException("Invitation code is invalid or expired.");
+        }
+
+        // Check Limit
+        var currentMemberCount = await _context.FamilyMembers.CountAsync(m => m.FamilyId == invitation.FamilyId, cancellationToken);
+        var maxMembers = _configuration.GetValue<int>("FamilySettings:MaxMembers", 5);
+
+        if (currentMemberCount >= maxMembers)
+        {
+            throw new InvalidOperationException($"Gia đình này đã đạt giới hạn {maxMembers} thành viên.");
         }
 
         // Add Member

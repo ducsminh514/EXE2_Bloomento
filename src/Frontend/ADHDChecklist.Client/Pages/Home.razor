@@ -22,7 +22,7 @@
 @inject DragDropState _dragState
 @attribute [Authorize]
 
-<PageTitle>Dashboard - ADHD Checklist</PageTitle>
+<PageTitle>Bloomento</PageTitle>
 
 <div class="min-h-screen bg-gray-50">
     <!-- Top Nav -->
@@ -30,7 +30,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-4">
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">📝 ADHD Checklist</h1>
+                    <div class="flex items-center gap-2">
+                        <img src="logo.png" class="h-8 w-8 object-contain" alt="Bloomento Logo" />
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Bloomento</h1>
+                    </div>
                     @if (_currentUser?.IsPremium == true)
                     {
                         <span class="px-3 py-1 bg-gradient-to-r from-purple-500 to-primary-600 text-white text-xs rounded-full font-bold shadow-sm flex items-center gap-1">

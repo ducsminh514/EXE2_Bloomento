@@ -14,7 +14,8 @@ public record FamilyResponse(
     Guid OwnerId, 
     bool IsOwner,
     List<FamilyMemberResponse> Members,
-    List<PendingInvitationResponse> PendingInvitations
+    List<PendingInvitationResponse> PendingInvitations,
+    int MaxMembers
 );
 
 public record PendingInvitationResponse(
@@ -37,10 +38,12 @@ public record FamilyMemberResponse(
 public class GetFamilyHandler : IRequestHandler<GetFamilyQuery, FamilyResponse?>
 {
     private readonly AppDbContext _context;
+    private readonly Microsoft.Extensions.Configuration.IConfiguration _configuration;
 
-    public GetFamilyHandler(AppDbContext context)
+    public GetFamilyHandler(AppDbContext context, Microsoft.Extensions.Configuration.IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
     }
 
     public async Task<FamilyResponse?> Handle(GetFamilyQuery request, CancellationToken cancellationToken)
@@ -75,13 +78,16 @@ public class GetFamilyHandler : IRequestHandler<GetFamilyQuery, FamilyResponse?>
             .Select(i => new PendingInvitationResponse(i.Id, i.Email, i.Status, i.CreatedAt, i.ExpiresAt))
             .ToListAsync(cancellationToken);
 
+        var maxMembers = _configuration.GetValue<int>("FamilySettings:MaxMembers", 5);
+
         return new FamilyResponse(
             family.Id,
             family.Name,
             family.OwnerId,
             isOwner,
             members,
-            pendingInvitations
+            pendingInvitations,
+            maxMembers
         );
     }
 }

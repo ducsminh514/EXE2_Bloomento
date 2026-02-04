@@ -24,11 +24,13 @@ public class InviteMemberHandler : IRequestHandler<InviteMemberCommand, string>
 {
     private readonly AppDbContext _context;
     private readonly IEmailService _emailService;
+    private readonly Microsoft.Extensions.Configuration.IConfiguration _configuration;
 
-    public InviteMemberHandler(AppDbContext context, IEmailService emailService)
+    public InviteMemberHandler(AppDbContext context, IEmailService emailService, Microsoft.Extensions.Configuration.IConfiguration configuration)
     {
         _context = context;
         _emailService = emailService;
+        _configuration = configuration;
     }
 
     public async Task<string> Handle(InviteMemberCommand request, CancellationToken cancellationToken)
@@ -42,6 +44,16 @@ public class InviteMemberHandler : IRequestHandler<InviteMemberCommand, string>
         if (memberRecord == null || memberRecord.Role != "Admin")
         {
             throw new UnauthorizedAccessException("Chỉ có Quản trị viên gia đình mới có thể mời thành viên.");
+        }
+
+        // Check Limit
+        var currentMemberCount = await _context.FamilyMembers.CountAsync(m => m.FamilyId == memberRecord.FamilyId, cancellationToken);
+        var pendingInviteCount = await _context.FamilyInvitations.CountAsync(i => i.FamilyId == memberRecord.FamilyId && i.Status == "Pending" && i.ExpiresAt > DateTime.UtcNow, cancellationToken);
+        var maxMembers = _configuration.GetValue<int>("FamilySettings:MaxMembers", 5);
+
+        if (currentMemberCount + pendingInviteCount >= maxMembers)
+        {
+            throw new InvalidOperationException($"Gia đình đã đạt (hoặc sẽ đạt) giới hạn {maxMembers} thành viên. Vui lòng xóa bớt thành viên hoặc lời mời cũ.");
         }
 
         // Generate Code

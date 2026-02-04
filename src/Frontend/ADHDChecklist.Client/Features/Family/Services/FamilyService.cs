@@ -76,7 +76,8 @@ public record FamilyResponse(
     Guid OwnerId, 
     bool IsOwner,
     List<FamilyMemberResponse> Members,
-    List<PendingInvitationResponse> PendingInvitations
+    List<PendingInvitationResponse> PendingInvitations,
+    int MaxMembers
 );
 
 public record PendingInvitationResponse(
