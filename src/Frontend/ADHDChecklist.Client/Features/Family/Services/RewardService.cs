@@ -16,6 +16,7 @@ public class RewardService : IRewardService
         _logger = logger;
     }
 
+
     public async Task<int> GetPointsAsync()
     {
         try 
@@ -57,6 +58,20 @@ public class RewardService : IRewardService
         }
         catch
         {
+            return false;
+        }
+    }
+
+    public async Task<bool> ApproveRewardAsync(Guid rewardId, ApproveRewardRequest request)
+    {
+        try
+        {
+            await _apiClient.PostAsync<object>($"api/family/rewards/{rewardId}/approve", request);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error approving reward");
             return false;
         }
     }

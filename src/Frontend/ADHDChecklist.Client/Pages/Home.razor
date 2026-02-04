@@ -482,7 +482,7 @@
             </div>
         }
     }
-        else if (_currentView == AppView.Analytics)
+    else if (_currentView == AppView.Analytics)
         {
             @if (_currentUser?.IsPremium == true)
             {
@@ -499,11 +499,16 @@
                 </div>
             }
         }
+        else if (_currentView == AppView.Rewards)
+        {
+            <RewardsStoreView />
+        }
 
         <!-- View Switcher (Fixed Bottom) -->
         <ViewSwitcher CurrentView="@_currentView" 
                       OnViewChanged="SetView" 
-                      IsPremium="@(_currentUser?.IsPremium == true)" />
+                      IsPremium="@(_currentUser?.IsPremium == true)"
+                      IsFamily="IsFamilyPlan" />
             
         <style>
             .btn-premium {

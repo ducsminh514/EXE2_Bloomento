@@ -87,6 +87,12 @@
                         <li class="flex items-center text-gray-700 font-medium">
                             <span class="mr-2 text-primary-500 bg-primary-100 rounded-full p-0.5">✓</span> Thống kê Premium nâng cao
                         </li>
+                         <li class="flex items-center text-gray-700 font-medium">
+                            <span class="mr-2 text-primary-500 bg-primary-100 rounded-full p-0.5">✓</span> Theo dõi thói quen (Habit Tracker)
+                        </li>
+                         <li class="flex items-center text-gray-700 font-medium">
+                            <span class="mr-2 text-primary-500 bg-primary-100 rounded-full p-0.5">✓</span> Âm thanh tập trung (White Noise)
+                        </li>
                         <li class="flex items-center text-gray-700 font-medium">
                             <span class="mr-2 text-primary-500 bg-primary-100 rounded-full p-0.5">✓</span> Tùy chỉnh Theme & Màu sắc
                         </li>
@@ -124,13 +130,19 @@
 
                 <!-- Family Plan -->
                 <div class="bg-white p-6 rounded-xl border-2 border-purple-500 shadow-xl relative overflow-hidden flex flex-col">
-                    <div class="absolute top-0 right-0 bg-purple-500 text-white text-[10px] font-black px-3 py-1 rounded-bl-xl uppercase tracking-widest">
-                        TIẾT KIỆM NHẤT
+                    <div class="absolute top-0 right-0 bg-purple-500 text-white text-[10px] font-black px-3 py-1 rounded-bl-xl uppercase tracking-widest flex flex-col items-center">
+                        <span>TIẾT KIỆM NHẤT</span>
                     </div>
-                    <div class="flex justify-between items-start mb-4">
+                    <div class="absolute top-8 right-0 pr-3 pt-1">
+                        <span class="text-[10px] text-purple-600 font-bold bg-purple-50 px-2 py-0.5 rounded-md border border-purple-100">
+                             Tiết kiệm đến @GetSavingsAmount()đ
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-start mb-4 mt-6">
                         <div>
                             <h3 class="text-xl font-bold text-gray-800">Family</h3>
                             <div class="text-3xl font-bold text-purple-600 mt-2">@GetFamilyPrice()đ<span class="text-base text-gray-500 font-normal">/tháng</span></div>
+                            <p class="text-xs text-green-600 font-bold mt-1">✨ Tiết kiệm đến @GetSavingsAmount()đ so với mua lẻ</p>
                         </div>
                     </div>
                     <ul class="space-y-3 mb-8 flex-1">
@@ -138,7 +150,7 @@
                             <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Bao gồm mọi tính năng Premium
                         </li>
                         <li class="flex items-center text-gray-700 font-medium">
-                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Chia sẻ cho tối đa 5 thành viên
+                            <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Chia sẻ cho tối đa @GetMaxMembers() thành viên
                         </li>
                         <li class="flex items-center text-gray-700 font-medium">
                             <span class="mr-2 text-purple-500 bg-purple-100 rounded-full p-0.5">✓</span> Quản lý & Giao việc gia đình
@@ -213,6 +225,24 @@
 
     private string GetPremiumPrice() => Config["Pricing:Premium"] ?? "49.000";
     private string GetFamilyPrice() => Config["Pricing:Family"] ?? "99.000";
+    private int GetMaxMembers() => Config.GetValue<int>("FamilySettings:MaxMembers", 5);
+
+    private string GetSavingsAmount()
+    {
+        try 
+        {
+            long premium = long.Parse(GetPremiumPrice().Replace(".", "").Replace(",", ""));
+            long family = long.Parse(GetFamilyPrice().Replace(".", "").Replace(",", ""));
+            long savings = (premium * GetMaxMembers()) - family;
+            if (savings < 0) return "0";
+            // Simple manual formatting to avoid CultureInfo issues if needed, or use N0
+            return savings.ToString("N0").Replace(",", ".");
+        }
+        catch
+        {
+            return "???";
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {

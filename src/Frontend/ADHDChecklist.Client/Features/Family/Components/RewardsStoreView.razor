@@ -1,0 +1,427 @@
+@using ADHDChecklist.Client.Features.Family.Services
+@using ADHDChecklist.Client.Features.Auth.Services
+@inject IRewardService RewardService
+@inject IFamilyService FamilyService
+@inject IAuthService AuthService
+@inject IJSRuntime JS
+
+<div class="flex-1 flex flex-col min-h-0 bg-gray-50 dark:bg-gray-900 animate-fade-in relative overflow-hidden">
+    <!-- Header with Background Gradient -->
+    <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm z-10">
+        <div class="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="bg-yellow-100 dark:bg-yellow-900/30 p-2.5 rounded-2xl shadow-inner">
+                        <span class="text-3xl">🎁</span>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Cửa hàng phần thưởng</h2>
+                        <div class="flex items-center gap-2 mt-1">
+                             <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                             <p class="text-sm text-gray-500 font-medium lowercase">@(_activeRewards.Count) Phần quà đang sẵn sàng</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                 <div class="bg-white dark:bg-gray-700/50 p-4 rounded-3xl border border-gray-200 dark:border-gray-600 shadow-sm flex flex-col items-center min-w-[160px]">
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Số dư của bạn</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-3xl font-black text-yellow-600">@_userPoints.ToString("N0")</span>
+                        <span class="text-sm font-bold text-yellow-600/60 uppercase">pts</span>
+                    </div>
+                </div>
+                <button @onclick="ShowCreateModal" class="h-14 px-8 bg-gradient-to-r from-yellow-500 to-amber-600 text-white rounded-2xl font-black text-sm shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/40 hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-2">
+                    <span>✨</span> @(IsAdmin ? "TẠO QUÀ MỚI" : "ĐỀ XUẤT QUÀ")
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto custom-scrollbar p-6">
+        <div class="max-w-7xl mx-auto space-y-8">
+            
+            @if (_isLoading)
+            {
+                <div class="py-20 flex flex-col items-center justify-center gap-4">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
+                    <p class="text-sm font-bold text-gray-400 uppercase tracking-widest animate-pulse">Đang tải cửa hàng...</p>
+                </div>
+            }
+            else
+            {
+                <!-- Pending Approvals Section (Only if Admin or has own pending) -->
+                @if (IsAdmin && _pendingRewards.Any() || _pendingRewards.Any(r => r.CreatorId == _currentGuidId))
+                {
+                    <section class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-xl">⏳</span>
+                            <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest">Đang chờ duyệt</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            @foreach (var reward in _pendingRewards)
+                            {
+                                @if (IsAdmin || reward.CreatorId == _currentGuidId)
+                                {
+                                    <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 border-2 border-dashed border-gray-200 dark:border-gray-700 relative overflow-hidden group">
+                                        <div class="flex justify-between items-start mb-3">
+                                            <div class="flex-1 min-w-0">
+                                                <h4 class="font-bold text-gray-900 dark:text-gray-100 truncate">@reward.Title</h4>
+                                                <p class="text-[10px] text-gray-500 font-bold uppercase mt-0.5 italic">Gửi bởi @(reward.CreatorName ?? "Thành viên")</p>
+                                            </div>
+                                            <span class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg text-[10px] font-black text-gray-500 uppercase">PENDING</span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 line-clamp-2">@reward.Description</p>
+
+                                        @if (IsAdmin)
+                                        {
+                                            <div class="flex gap-2">
+                                                <button @onclick="() => OpenApprovalModal(reward)" class="flex-1 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl text-xs font-black transition-all shadow-sm">
+                                                    DUYỆT & ĐẶT GIÁ
+                                                </button>
+                                                <button @onclick="() => RejectReward(reward.Id)" class="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-xl text-xs font-bold transition-all">
+                                                    BỎ QUA
+                                                </button>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="text-center py-2 bg-gray-50 dark:bg-gray-900 rounded-xl">
+                                                <span class="text-[10px] font-bold text-gray-400 uppercase">Đang chờ cha mẹ đặt giá...</span>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </section>
+                }
+                }
+
+                <!-- Rejected Rewards Section (Feedback for Child) -->
+                @if (_rejectedRewards.Any())
+                {
+                   <section class="animate-in fade-in slide-in-from-bottom-5 duration-600 mb-8">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-xl">❌</span>
+                            <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest">Đề xuất bị từ chối</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            @foreach (var reward in _rejectedRewards)
+                            {
+                                <div class="bg-red-50 dark:bg-red-900/10 rounded-3xl p-5 border border-red-100 dark:border-red-900/30 relative overflow-hidden opacity-80 hover:opacity-100 transition-opacity">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div class="flex-1 min-w-0">
+                                            <h4 class="font-bold text-gray-900 dark:text-gray-100 truncate decoration-slice">@reward.Title</h4>
+                                            <p class="text-[10px] text-gray-500 font-bold uppercase mt-0.5">@reward.CreatedAt.ToString("dd/MM/yyyy")</p>
+                                        </div>
+                                        <span class="bg-white/50 dark:bg-black/20 px-2 py-1 rounded-lg text-[10px] font-black text-red-500 uppercase">REJECTED</span>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(reward.RejectionReason))
+                                    {
+                                        <div class="bg-white/60 dark:bg-black/20 p-3 rounded-xl border border-red-100/50">
+                                            <p class="text-[10px] font-black text-red-400 uppercase mb-1">Lý do từ chối:</p>
+                                            <p class="text-xs text-red-600 dark:text-red-300 italic">"@reward.RejectionReason"</p>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </section>
+                }
+                <section class="animate-in fade-in slide-in-from-bottom-6 duration-700">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-xl">🎈</span>
+                        <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest">Quà đang sẵn có</h3>
+                    </div>
+
+                    @if (!_activeRewards.Any())
+                    {
+                        <div class="bg-white dark:bg-gray-800 rounded-3xl p-12 flex flex-col items-center justify-center text-center border border-gray-100 dark:border-gray-700">
+                            <div class="text-6xl mb-6 grayscale opacity-20">🛒</div>
+                            <h4 class="text-lg font-bold text-gray-400 mb-2 uppercase">Cửa hàng trống</h4>
+                            <p class="text-sm text-gray-400 max-w-xs">Hãy @(IsAdmin ? "tạo" : "đề xuất") phần thưởng đầu tiên để bắt đầu hành trình đổi thưởng!</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            @foreach (var reward in _activeRewards)
+                            {
+                                var canAfford = _userPoints >= reward.CostPoints;
+                                <div class="group relative bg-white dark:bg-gray-800 rounded-3xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="flex-1 min-w-0">
+                                            <h4 class="text-lg font-black text-gray-900 dark:text-gray-100 group-hover:text-yellow-600 transition-colors truncate">@reward.Title</h4>
+                                            <div class="flex items-center gap-2 mt-1">
+                                                <span class="flex items-center gap-1.5 text-yellow-600 font-black text-sm">
+                                                    <span>🪙</span> @reward.CostPoints.ToString("N0")
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 line-clamp-3 min-h-[3rem]">@reward.Description</p>
+
+                                    <button @onclick="() => RedeemReward(reward)" 
+                                            disabled="@(!reward.IsAvailable || !canAfford || _isProcessing)"
+                                            class="w-full h-12 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2
+                                                   @(reward.IsAvailable && canAfford 
+                                                     ? "bg-yellow-500 text-white hover:bg-yellow-600 shadow-lg shadow-yellow-500/20" 
+                                                     : "bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed")">
+                                        @_getRedeemButtonText(reward)
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    }
+                </section>
+            }
+        </div>
+    </div>
+
+    <!-- Approval Modal (Parent only) -->
+    @if (_showApprovalModal && _rewardToApprove != null)
+    {
+        <div class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
+            <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+                <div class="p-8 pb-4">
+                    <h3 class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight mb-2">Duyệt phần thưởng</h3>
+                    <p class="text-sm text-gray-500">Đặt giá điểm hợp lý cho đề xuất của <strong>@(_rewardToApprove.CreatorName ?? "Con")</strong>.</p>
+                    
+                    <div class="mt-8 bg-gray-50 dark:bg-gray-900 p-6 rounded-3xl border border-gray-100 dark:border-gray-700">
+                        <p class="text-[10px] font-black text-gray-400 uppercase mb-1">Tên phần quà</p>
+                        <p class="text-lg font-bold text-gray-900 dark:text-gray-100">@_rewardToApprove.Title</p>
+                        @if (!string.IsNullOrEmpty(_rewardToApprove.Description))
+                        {
+                            <p class="text-sm text-gray-500 mt-2 italic">"@_rewardToApprove.Description"</p>
+                        }
+                        <div class="mt-3 flex items-center gap-2">
+                             <span class="text-[10px] font-black text-blue-500 uppercase bg-blue-50 px-2 py-1 rounded-lg">Đề xuất: @_rewardToApprove.CostPoints.ToString("N0") pts</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <label class="block text-[10px] font-black text-gray-400 uppercase mb-2 px-1">Chốt giá (Điểm 🪙)</label>
+                        <input @bind="_approvalPoints" type="number" class="w-full bg-gray-50 dark:bg-gray-900 border-none rounded-2xl p-4 text-2xl font-black text-yellow-600 focus:ring-4 focus:ring-yellow-400/20 transition-all" />
+                    </div>
+                </div>
+
+                <div class="p-8 flex gap-4">
+                    <button @onclick="() => ApproveReward(true)" class="flex-1 h-14 bg-yellow-500 text-white rounded-2xl font-black hover:bg-yellow-600 transition-all shadow-lg shadow-yellow-500/20">CHẤP NHẬN</button>
+                    <button @onclick="() => OpenRejectionModal(_rewardToApprove)" class="px-6 h-14 bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-2xl font-bold transition-all">TỪ CHỐI...</button>
+                    <button @onclick="() => _showApprovalModal = false" class="px-4 h-14 text-gray-400 hover:text-gray-600 font-bold transition-all">Huỷ</button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Rejection Reason Modal -->
+    @if (_showRejectionModal && _rewardToReject != null)
+    {
+        <div class="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
+            <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+                <div class="p-8">
+                    <h3 class="text-xl font-black text-red-500 uppercase tracking-tight mb-2">Từ chối đề xuất</h3>
+                    <p class="text-sm text-gray-500 mb-6">Hãy cho con biết lý do để con hiểu và cố gắng hơn nhé.</p>
+                    
+                    <textarea @bind="_rejectionReason" rows="3" class="w-full bg-red-50 dark:bg-red-900/10 border-none rounded-2xl p-4 text-sm font-medium text-red-700 dark:text-red-400 focus:ring-4 focus:ring-red-200 transition-all placeholder-red-300" placeholder="Ví dụ: Món quà này hơi đắt đỏ, hãy chọn cái khác nhé..."></textarea>
+                    
+                    <div class="mt-6 flex gap-3">
+                         <button @onclick="SubmitRejection" disabled="@string.IsNullOrWhiteSpace(_rejectionReason)" class="flex-1 h-12 bg-red-500 text-white rounded-xl font-black hover:bg-red-600 transition-all shadow-lg shadow-red-500/20 disabled:opacity-50">GỬI LÝ DO</button>
+                         <button @onclick="() => _showRejectionModal = false" class="px-6 h-12 bg-gray-100 text-gray-500 rounded-xl font-bold hover:bg-gray-200 transition-all">Huỷ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Create/Suggest Reward Modal -->
+    <CreateRewardModal IsVisible="_showCreateModal" 
+                       OnClose="() => _showCreateModal = false" 
+                       OnSaved="OnRewardSaved"
+                       IsAdmin="IsAdmin" />
+</div>
+
+@code {
+    private List<RewardResponse> _rewards = new();
+    private List<RewardResponse> _activeRewards => _rewards.Where(r => r.Status == "Active").ToList();
+    private List<RewardResponse> _pendingRewards => _rewards.Where(r => r.Status == "PendingApproval").ToList();
+    // Show rejected rewards created by current user
+    private List<RewardResponse> _rejectedRewards => _rewards.Where(r => r.Status == "Rejected" && r.CreatorId == _currentGuidId).OrderByDescending(r => r.Id).Take(5).ToList();
+    
+    private int _userPoints = 0;
+    private string _currentUserId = string.Empty;
+    private Guid? _currentGuidId;
+    private bool IsAdmin = false;
+    private bool _isLoading = true;
+    private bool _isProcessing = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthService.GetCurrentUserAsync();
+        if (authState != null)
+        {
+            _currentUserId = authState.UserId;
+            if (Guid.TryParse(_currentUserId, out var guid)) _currentGuidId = guid;
+
+            // Fetch Family Details to get true Role
+            try 
+            {
+                var family = await FamilyService.GetFamilyAsync();
+                if (family != null)
+                {
+                    if (family.IsOwner)
+                    {
+                        IsAdmin = true;
+                    }
+                    else
+                    {
+                        // Check member role
+                        var me = family.Members.FirstOrDefault(m => m.UserId.ToString().Equals(_currentUserId, StringComparison.OrdinalIgnoreCase));
+                        if (me != null && (string.Equals(me.Role, "Admin", StringComparison.OrdinalIgnoreCase) || string.Equals(me.Role, "Parent", StringComparison.OrdinalIgnoreCase)))
+                        {
+                            IsAdmin = true;
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Error fetching family: {ex.Message}");
+                // Fallback to AuthState role if FamilyService fails (unlikely)
+                 IsAdmin = !string.IsNullOrEmpty(authState.Role) && 
+                     (authState.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase) || 
+                      authState.Role.Equals("Parent", StringComparison.OrdinalIgnoreCase));
+            }
+        }
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        _isLoading = true;
+        try
+        {
+            _userPoints = await RewardService.GetPointsAsync();
+            _rewards = await RewardService.GetRewardsAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task RedeemReward(RewardResponse reward)
+    {
+        if (_isProcessing) return;
+        
+        bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Bạn có chắc muốn đổi {reward.CostPoints.ToString("N0")} điểm lấy '{reward.Title}' không?");
+        if (!confirmed) return;
+
+        _isProcessing = true;
+        try
+        {
+            var success = await RewardService.RedeemRewardAsync(reward.Id);
+            if (success)
+            {
+                await JS.InvokeVoidAsync("alert", "Đổi quà thành công! Hãy báo với người thân để nhận quà nhé 🥳");
+                await LoadData();
+            }
+        }
+        finally
+        {
+            _isProcessing = false;
+        }
+    }
+
+    private bool _showCreateModal = false;
+    private void ShowCreateModal() => _showCreateModal = true;
+    private async Task OnRewardSaved()
+    {
+        await LoadData();
+    }
+
+    // Approval Logic
+    private bool _showApprovalModal = false;
+    private RewardResponse? _rewardToApprove;
+    private int _approvalPoints = 100;
+
+    private void OpenApprovalModal(RewardResponse reward)
+    {
+        _rewardToApprove = reward;
+        _approvalPoints = reward.CostPoints > 0 ? reward.CostPoints : 100; // Use proposed points if available
+        _showApprovalModal = true;
+    }
+
+    private async Task ApproveReward(bool approved)
+    {
+        if (_rewardToApprove == null) return;
+        
+        var success = await RewardService.ApproveRewardAsync(_rewardToApprove.Id, new ApproveRewardRequest { 
+            Approved = approved, 
+            CostPoints = _approvalPoints,
+            RejectionReason = null
+        });
+
+        if (success)
+        {
+            _showApprovalModal = false;
+            await LoadData();
+        }
+    }
+
+    // Rejection Logic
+    private bool _showRejectionModal = false;
+    private RewardResponse? _rewardToReject;
+    private string _rejectionReason = string.Empty;
+
+    private void OpenRejectionModal(RewardResponse reward)
+    {
+         // Close approval modal first
+        _showApprovalModal = false;
+        _rewardToReject = reward;
+        _rejectionReason = string.Empty;
+        _showRejectionModal = true;
+    }
+
+    private async Task SubmitRejection()
+    {
+        if (_rewardToReject == null) return;
+
+        var success = await RewardService.ApproveRewardAsync(_rewardToReject.Id, new ApproveRewardRequest { 
+            Approved = false,
+            RejectionReason = _rejectionReason
+        });
+
+        if (success)
+        {
+            _showRejectionModal = false;
+            _rewardToReject = null;
+            await LoadData();
+        }
+    }
+
+    // Direct reject without modal (kept for compatibility if needed, but UI now uses modal)
+    private async Task RejectReward(Guid rewardId)
+    {
+        // Now redirects to modal flow if called from list directly
+        var reward = _rewards.FirstOrDefault(r => r.Id == rewardId);
+        if(reward != null) OpenRejectionModal(reward);
+    }
+
+    private string _getRedeemButtonText(RewardResponse r)
+    {
+        if (_isProcessing) return "Đang xử lý...";
+        if (!r.IsAvailable) return "Hết hàng";
+        if (_userPoints < r.CostPoints) return "Thiếu điểm";
+        return "NHẬN QUÀ NGAY";
+    }
+
+}

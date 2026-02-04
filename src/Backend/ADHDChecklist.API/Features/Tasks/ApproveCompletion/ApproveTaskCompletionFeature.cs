@@ -65,16 +65,11 @@ public class ApproveTaskCompletionCommandHandler : IRequestHandler<ApproveTaskCo
         task.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync(cancellationToken);
-
-        // Calculate Points
-        int basePoints = 10;
-        int priorityBonus = ((task.Priority ?? 1) - 1) * 5;
-        int dopamineBonus = task.DopamineType == "Low" ? 10 : 0;
-        int totalPoints = basePoints + priorityBonus + dopamineBonus;
         
         // Award points to the ASSIGNEE (the child)
         var awardToUserId = task.AssignedUserId ?? task.UserId;
-
+        int totalPoints = task.CalculateGamificationPoints();
+ 
         await _mediator.Publish(new Shared.Events.TaskCompletedEvent(
             task.Id,
             awardToUserId, 

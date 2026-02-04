@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using ADHDChecklist.API.Entities.Common;
 namespace ADHDChecklist.API.Entities;
 
 public class FamilyReward
@@ -25,5 +25,16 @@ public class FamilyReward
 
     public bool IsAvailable { get; set; } = true;
 
+    // "PendingApproval", "Active", "Rejected"
+    [Required]
+    [MaxLength(20)]
+    public string Status { get; set; } = "Active";
+
+    public Guid? CreatorId { get; set; }
+    public virtual ApplicationUser? Creator { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    [MaxLength(500)]
+    public string? RejectionReason { get; set; }
 }

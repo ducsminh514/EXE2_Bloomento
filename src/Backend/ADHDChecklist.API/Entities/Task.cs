@@ -76,4 +76,16 @@ public partial class Task
     // Family Navigation
     public virtual Family? Family { get; set; }
     public virtual ApplicationUser? AssignedUser { get; set; }
+
+    public int CalculateGamificationPoints()
+    {
+        // Công thức ADHD-Friendly: Ưu tiên dopamine cho việc bắt đầu các task khó
+        int basePoints = DopamineType == "Low" ? 50 : 15;
+        int priorityBonus = (Priority ?? 1) switch {
+            3 => 20, // High Priority
+            2 => 10, // Medium Priority
+            _ => 0
+        };
+        return basePoints + priorityBonus;
+    }
 }

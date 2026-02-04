@@ -19,6 +19,24 @@
         <!-- Divider -->
         <div class="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
+        <!-- Rewards Tab (NEW) -->
+        @if (IsFamily)
+        {
+            <button @onclick="() => OnViewChanged.InvokeAsync(AppView.Rewards)"
+                    class="relative px-4 py-2 flex items-center gap-2 rounded-xl transition-all duration-300 group @(CurrentView == AppView.Rewards ? "bg-yellow-500 text-white shadow-lg shadow-yellow-500/30" : "text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white")">
+                <span class="text-lg">🎁</span>
+                <span class="text-xs font-black uppercase tracking-wider @(CurrentView == AppView.Rewards ? "" : "hidden group-hover:block")">Cửa hàng</span>
+                
+                @if (CurrentView == AppView.Rewards)
+                {
+                    <div class="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                }
+            </button>
+
+            <!-- Divider -->
+            <div class="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-1"></div>
+        }
+
         <!-- Analytics Tab -->
         <button @onclick="() => OnViewChanged.InvokeAsync(AppView.Analytics)"
                 class="relative px-4 py-2 flex items-center gap-2 rounded-xl transition-all duration-300 group @(CurrentView == AppView.Analytics ? "bg-primary-600 text-white shadow-lg shadow-primary-500/30" : "text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white")">
@@ -44,4 +62,5 @@
     [Parameter] public AppView CurrentView { get; set; }
     [Parameter] public EventCallback<AppView> OnViewChanged { get; set; }
     [Parameter] public bool IsPremium { get; set; }
+    [Parameter] public bool IsFamily { get; set; }
 }

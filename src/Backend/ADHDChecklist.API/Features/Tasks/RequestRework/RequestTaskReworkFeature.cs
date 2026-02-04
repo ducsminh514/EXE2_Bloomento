@@ -12,13 +12,16 @@ public class RequestTaskReworkCommandHandler : IRequestHandler<RequestTaskRework
 {
     private readonly AppDbContext _context;
     private readonly ILogger<RequestTaskReworkCommandHandler> _logger;
+    private readonly IMediator _mediator;
 
     public RequestTaskReworkCommandHandler(
         AppDbContext context,
-        ILogger<RequestTaskReworkCommandHandler> logger)
+        ILogger<RequestTaskReworkCommandHandler> logger,
+        IMediator mediator)
     {
         _context = context;
         _logger = logger;
+        _mediator = mediator;
     }
 
     public async Task<bool> Handle(RequestTaskReworkCommand request, CancellationToken cancellationToken)
@@ -50,11 +53,24 @@ public class RequestTaskReworkCommandHandler : IRequestHandler<RequestTaskRework
         }
 
         // Rework Logic
+        bool wasApproved = task.CompletionApprovalStatus == "Approved";
+
         task.IsCompleted = false;
         task.CompletedAt = null;
         task.CompletionApprovalStatus = "ReworkRequested";
         task.ApproverUserId = request.UserId;
         task.UpdatedAt = DateTime.UtcNow;
+
+        if (wasApproved)
+        {
+            // Deduct points
+            await _mediator.Publish(new Shared.Events.TaskCompletedEvent(
+                task.Id,
+                task.AssignedUserId ?? task.UserId,
+                task.FamilyId,
+                -task.CalculateGamificationPoints()
+            ), cancellationToken);
+        }
 
         await _context.SaveChangesAsync(cancellationToken);
 

@@ -37,8 +37,8 @@ public class CreatePaymentCommandHandler : IRequestHandler<CreatePaymentCommand,
 
             int amount = request.Tier switch
             {
-                SubscriptionTier.Premium => 49000,
-                SubscriptionTier.Family => 99000,
+                SubscriptionTier.Premium => _configuration.GetValue<int>("Pricing:Premium", 49000),
+                SubscriptionTier.Family => _configuration.GetValue<int>("Pricing:Family", 99000),
                 _ => 0
             };
 

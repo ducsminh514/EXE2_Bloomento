@@ -8,6 +8,7 @@ public interface IRewardService
     Task<List<RewardResponse>> GetRewardsAsync();
     Task<RewardResponse?> CreateRewardAsync(CreateRewardRequest request);
     Task<bool> RedeemRewardAsync(Guid rewardId);
+    Task<bool> ApproveRewardAsync(Guid rewardId, ApproveRewardRequest request);
 }
 
 public class RewardResponse
@@ -17,6 +18,18 @@ public class RewardResponse
     public string? Description { get; set; }
     public int CostPoints { get; set; }
     public bool IsAvailable { get; set; }
+    public string Status { get; set; } = "Active";
+    public Guid? CreatorId { get; set; }
+    public string? CreatorName { get; set; }
+    public string? RejectionReason { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
+
+public class ApproveRewardRequest
+{
+    public int CostPoints { get; set; }
+    public bool Approved { get; set; }
+    public string? RejectionReason { get; set; }
 }
 
 public class CreateRewardRequest

@@ -50,6 +50,14 @@ namespace ADHDChecklist.API.Features.Habits.ToggleHabit
                 // Uncheck
                 _context.HabitCompletions.Remove(existingCompletion);
                 isNowCompleted = false;
+
+                // Deduct points
+                await _mediator.Publish(new Shared.Events.HabitCompletedEvent(
+                    habit.Id,
+                    habit.UserId,
+                    habit.FamilyId,
+                    -10 // Subtract points
+                ), cancellationToken);
             }
             else
             {
@@ -142,7 +150,7 @@ namespace ADHDChecklist.API.Features.Habits.ToggleHabit
                     habit.Id,
                     habit.UserId,
                     habit.FamilyId,
-                    20 // Standard points for habit completion
+                    10 // Standard points for habit completion (Reduced from 20)
                 ), cancellationToken);
             }
 

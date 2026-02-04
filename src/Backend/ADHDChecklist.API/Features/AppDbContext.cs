@@ -147,11 +147,18 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
             // Usually Cascade is fine for notifications as they are personal.
 
         // GAMIFICATION
-        modelBuilder.Entity<FamilyReward>()
-            .HasOne(r => r.Family)
-            .WithMany()
-            .HasForeignKey(r => r.FamilyId)
-            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<FamilyReward>(entity =>
+        {
+            entity.HasOne(r => r.Family)
+                .WithMany()
+                .HasForeignKey(r => r.FamilyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(r => r.Creator)
+                .WithMany()
+                .HasForeignKey(r => r.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
 
         modelBuilder.Entity<FamilyPointHistory>()
             .HasOne(ph => ph.Family)

@@ -6,7 +6,9 @@
     <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
         <div class="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                <h3 class="text-xl font-black text-gray-900 uppercase tracking-tight">🎁 Tạo phần thưởng</h3>
+                <h3 class="text-xl font-black text-gray-900 uppercase tracking-tight">
+                    @(IsAdmin ? "🎁 Tạo phần thưởng" : "💡 Đề xuất phần quà")
+                </h3>
                 <button @onclick="Close" class="text-gray-400 hover:text-gray-600 transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
@@ -14,27 +16,35 @@
 
             <div class="p-6 space-y-4">
                 <div>
-                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 px-1">Tên phần thưởng</label>
-                    <input @bind="_reward.Title" type="text" class="w-full bg-gray-50 border-none rounded-2xl p-3.5 text-sm font-bold focus:ring-2 focus:ring-yellow-400 transition-all" placeholder="Ví dụ: 1 tiếng chơi game" />
+                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 px-1">Tên phần quà</label>
+                    <input @bind="_reward.Title" type="text" class="w-full bg-gray-50 dark:bg-gray-900 border-none rounded-2xl p-4 text-sm font-bold focus:ring-4 focus:ring-yellow-400/20 transition-all" placeholder="Ví dụ: 1 tiếng chơi game" />
                 </div>
 
                 <div>
                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 px-1">Mô tả (tùy chọn)</label>
-                    <textarea @bind="_reward.Description" class="w-full bg-gray-50 border-none rounded-2xl p-3.5 text-sm font-bold focus:ring-2 focus:ring-yellow-400 transition-all" rows="3" placeholder="Chi tiết phần thưởng..."></textarea>
+                    <textarea @bind="_reward.Description" class="w-full bg-gray-50 dark:bg-gray-900 border-none rounded-2xl p-4 text-sm font-bold focus:ring-4 focus:ring-yellow-400/20 transition-all" rows="3" placeholder="Ví dụ: Được chơi game vào buổi tối sau khi học bài..."></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 px-1">Giá trị (Điểm 🪙)</label>
-                    <input @bind="_reward.CostPoints" type="number" class="w-full bg-gray-50 border-none rounded-2xl p-3.5 text-sm font-black text-yellow-600 focus:ring-2 focus:ring-yellow-400 transition-all" />
+                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 px-1">@(IsAdmin ? "Giá trị (Điểm 🪙)" : "Điểm mong muốn (Mặc cả 🤝)")</label>
+                    <input @bind="_reward.CostPoints" type="number" class="w-full bg-gray-50 dark:bg-gray-900 border-none rounded-2xl p-4 text-lg font-black text-yellow-600 focus:ring-4 focus:ring-yellow-400/20 transition-all" placeholder="Nhập số điểm..." />
                 </div>
+
+                @if (!IsAdmin)
+                {
+                    <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-2xl border border-blue-100 dark:border-blue-800/30 flex gap-3">
+                        <span class="text-xl">ℹ️</span>
+                        <p class="text-xs text-blue-700 dark:text-blue-300 font-medium">Đề xuất và mức điểm mong muốn của bạn sẽ được gửi đến cha mẹ để phê duyệt.</p>
+                    </div>
+                }
             </div>
 
-            <div class="p-6 bg-gray-50 flex gap-3">
-                <button @onclick="Close" class="flex-1 px-6 py-3 rounded-2xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all">Hủy</button>
+            <div class="p-6 bg-gray-50 dark:bg-gray-900/50 flex gap-4">
+                <button @onclick="Close" class="flex-1 h-14 rounded-2xl text-sm font-bold text-gray-500 hover:bg-gray-200 transition-all">Huỷ</button>
                 <button @onclick="Save" 
                         disabled="@(string.IsNullOrWhiteSpace(_reward.Title) || _reward.CostPoints <= 0 || _isSaving)"
-                        class="flex-1 px-6 py-3 rounded-2xl text-sm font-bold bg-yellow-500 text-white hover:bg-yellow-600 shadow-lg shadow-yellow-200 disabled:opacity-50 transition-all">
-                    @(_isSaving ? "Đang lưu..." : "Lưu lại")
+                        class="flex-1 h-14 rounded-2xl text-sm font-black bg-yellow-500 text-white hover:bg-yellow-600 shadow-lg shadow-yellow-500/20 disabled:opacity-50 transition-all">
+                    @(_isSaving ? "ĐANG LƯU..." : (IsAdmin ? "TẠO QUÀ" : "GỬI ĐỀ XUẤT"))
                 </button>
             </div>
         </div>
@@ -43,6 +53,18 @@
 
 @code {
     [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public bool IsAdmin { get; set; }
+    
+    protected override void OnParametersSet()
+    {
+        // Auto-fill points for Admin to indicate they can set price directly
+        // For children, let them start at 0 or a suggestion? Let's keep 0 to force them to think.
+        if (IsVisible && IsAdmin && _reward.CostPoints <= 0)
+        {
+            _reward.CostPoints = 100;
+        }
+    }
+
     [Parameter] public EventCallback OnClose { get; set; }
     [Parameter] public EventCallback OnSaved { get; set; }
 
@@ -69,7 +91,10 @@
 
     private async Task Close()
     {
-        _reward = new ADHDChecklist.Client.Features.Family.Services.CreateRewardRequest();
+        _reward = new ADHDChecklist.Client.Features.Family.Services.CreateRewardRequest
+        {
+            CostPoints = IsAdmin ? 100 : 0 // Default points for Admin to verify UI logic
+        };
         await OnClose.InvokeAsync();
     }
 }
