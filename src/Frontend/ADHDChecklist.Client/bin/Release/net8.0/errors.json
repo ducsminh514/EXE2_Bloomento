@@ -1,0 +1,568 @@
+{
+  "$schema": "http://json.schemastore.org/sarif-1.0.0",
+  "version": "1.0.0",
+  "runs": [
+    {
+      "tool": {
+        "name": "Microsoft (R) Visual C# Compiler",
+        "version": "4.14.0.0",
+        "fileVersion": "4.14.0-3.25465.8 (b0a9adbf)",
+        "semanticVersion": "4.14.0",
+        "language": "en-US"
+      },
+      "results": [
+        {
+          "ruleId": "RZ10012",
+          "level": "warning",
+          "message": "Found markup element with unexpected name 'RedirectToLogin'. If this is intended to be a component, add a @using directive for its namespace.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/App.razor",
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 25,
+                  "endLine": 12,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "RZ1034",
+          "level": "error",
+          "message": "Found a malformed 'EditForm' tag helper. Tag helpers must have a start and end tag or be self closing.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Dashboard/Components/CreateTaskModal.razor",
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 10,
+                  "endLine": 10,
+                  "endColumn": 18
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "RZ9981",
+          "level": "error",
+          "message": "Unexpected closing tag 'EditForm' with no matching start tag.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Dashboard/Components/CreateTaskModal.razor",
+                "region": {
+                  "startLine": 119,
+                  "startColumn": 9,
+                  "endLine": 119,
+                  "endColumn": 20
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "RZ1034",
+          "level": "error",
+          "message": "Found a malformed 'EditForm' tag helper. Tag helpers must have a start and end tag or be self closing.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Dashboard/Components/CreateTaskModal.razor",
+                "region": {
+                  "startLine": 119,
+                  "startColumn": 11,
+                  "endLine": 119,
+                  "endColumn": 19
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "RZ9981",
+          "ruleKey": "RZ9981-001",
+          "level": "error",
+          "message": "Unexpected closing tag 'div' with no matching start tag.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Dashboard/Components/CreateTaskModal.razor",
+                "region": {
+                  "startLine": 121,
+                  "startColumn": 1,
+                  "endLine": 121,
+                  "endColumn": 7
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "RZ1025",
+          "level": "error",
+          "message": "The \"EditForm\" element was not closed.  All elements must be either self-closing or have a matching end tag.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Dashboard/Components/EditTaskModal.razor",
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 14,
+                  "endLine": 19,
+                  "endColumn": 22
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "RZ1034",
+          "level": "error",
+          "message": "Found a malformed 'EditForm' tag helper. Tag helpers must have a start and end tag or be self closing.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Dashboard/Components/EditTaskModal.razor",
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 14,
+                  "endLine": 19,
+                  "endColumn": 22
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "RZ9981",
+          "ruleKey": "RZ9981-001",
+          "level": "error",
+          "message": "Unexpected closing tag 'div' with no matching start tag.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Dashboard/Components/EditTaskModal.razor",
+                "region": {
+                  "startLine": 118,
+                  "startColumn": 17,
+                  "endLine": 118,
+                  "endColumn": 23
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "RZ9981",
+          "level": "error",
+          "message": "Unexpected closing tag 'EditForm' with no matching start tag.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Dashboard/Components/EditTaskModal.razor",
+                "region": {
+                  "startLine": 128,
+                  "startColumn": 13,
+                  "endLine": 128,
+                  "endColumn": 24
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "RZ1026",
+          "level": "error",
+          "message": "Encountered end tag \"EditForm\" with no matching start tag.  Are your start/end tags properly balanced?",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Dashboard/Components/EditTaskModal.razor",
+                "region": {
+                  "startLine": 128,
+                  "startColumn": 15,
+                  "endLine": 128,
+                  "endColumn": 23
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "RZ1034",
+          "level": "error",
+          "message": "Found a malformed 'EditForm' tag helper. Tag helpers must have a start and end tag or be self closing.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Dashboard/Components/EditTaskModal.razor",
+                "region": {
+                  "startLine": 128,
+                  "startColumn": 15,
+                  "endLine": 128,
+                  "endColumn": 23
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CS0105",
+          "level": "warning",
+          "message": "The using directive for 'ADHDChecklist.Client.Features.Dashboard.Components' appeared previously in this namespace",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/_Imports.razor",
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 8,
+                  "endLine": 19,
+                  "endColumn": 58
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 3
+          }
+        },
+        {
+          "ruleId": "CS1998",
+          "level": "warning",
+          "message": "This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Auth/Pages/Login.razor",
+                "region": {
+                  "startLine": 187,
+                  "startColumn": 24,
+                  "endLine": 187,
+                  "endColumn": 41
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CS8629",
+          "level": "warning",
+          "message": "Nullable value type may be null.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Dashboard/Components/TimeBlocksGrid.razor",
+                "region": {
+                  "startLine": 113,
+                  "startColumn": 33,
+                  "endLine": 113,
+                  "endColumn": 52
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CS8618",
+          "level": "warning",
+          "message": "Non-nullable property '_dragState' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Dashboard/Components/TimeBlocksGrid.razor",
+                "region": {
+                  "startLine": 186,
+                  "startColumn": 35,
+                  "endLine": 186,
+                  "endColumn": 45
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Dashboard/Components/TimeBlocksGrid.razor",
+                "region": {
+                  "startLine": 186,
+                  "startColumn": 35,
+                  "endLine": 186,
+                  "endColumn": 45
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CS1061",
+          "level": "error",
+          "message": "'TaskResponse' does not contain a definition for 'DopamineType' and no accessible extension method 'DopamineType' accepting a first argument of type 'TaskResponse' could be found (are you missing a using directive or an assembly reference?)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Dashboard/Components/EditTaskModal.razor",
+                "region": {
+                  "startLine": 188,
+                  "startColumn": 44,
+                  "endLine": 188,
+                  "endColumn": 56
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CS8618",
+          "level": "warning",
+          "message": "Non-nullable field '_createHabitModal' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the field as nullable.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Habits/Components/HabitTracker.razor",
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 30,
+                  "endLine": 164,
+                  "endColumn": 47
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Features/Habits/Components/HabitTracker.razor",
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 30,
+                  "endLine": 164,
+                  "endColumn": 47
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1822",
+          "level": "note",
+          "message": "Member 'ParseBase64WithoutPadding' does not access instance data and can be marked as static",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Infrastructure/Services/CustomAuthStateProvider.cs",
+                "region": {
+                  "startLine": 95,
+                  "startColumn": 20,
+                  "endLine": 95,
+                  "endColumn": 45
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1859",
+          "level": "note",
+          "message": "Change return type of method 'ParseClaimsFromJwt' from 'System.Collections.Generic.IEnumerable<System.Security.Claims.Claim>' to 'System.Collections.Generic.List<System.Security.Claims.Claim>' for improved performance",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/Administrator/source/repos/EXE2_Bloomento/src/Frontend/ADHDChecklist.Client/Infrastructure/Services/CustomAuthStateProvider.cs",
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 32,
+                  "endLine": 59,
+                  "endColumn": 50
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        }
+      ],
+      "rules": {
+        "CA1822": {
+          "id": "CA1822",
+          "shortDescription": "Mark members as static",
+          "fullDescription": "Members that do not access instance data or call instance methods can be marked as static. After you mark the methods as static, the compiler will emit nonvirtual call sites to these members. This can give you a measurable performance gain for performance-sensitive code.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1822",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1859": {
+          "id": "CA1859",
+          "shortDescription": "Use concrete types when possible for improved performance",
+          "fullDescription": "Using concrete types avoids virtual or interface call overhead and enables inlining.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1859",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CS0105": {
+          "id": "CS0105",
+          "shortDescription": "Using directive appeared previously in this namespace",
+          "defaultLevel": "warning",
+          "helpUri": "https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0105)",
+          "properties": {
+            "category": "Compiler",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Compiler",
+              "Telemetry"
+            ]
+          }
+        },
+        "CS1061": {
+          "id": "CS1061",
+          "defaultLevel": "error",
+          "helpUri": "https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS1061)",
+          "properties": {
+            "category": "Compiler",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Compiler",
+              "Telemetry",
+              "NotConfigurable"
+            ]
+          }
+        },
+        "CS1998": {
+          "id": "CS1998",
+          "shortDescription": "Async method lacks 'await' operators and will run synchronously",
+          "defaultLevel": "warning",
+          "helpUri": "https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS1998)",
+          "properties": {
+            "category": "Compiler",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Compiler",
+              "Telemetry"
+            ]
+          }
+        },
+        "CS8618": {
+          "id": "CS8618",
+          "shortDescription": "Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.",
+          "defaultLevel": "warning",
+          "helpUri": "https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS8618)",
+          "properties": {
+            "category": "Compiler",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Compiler",
+              "Telemetry"
+            ]
+          }
+        },
+        "CS8629": {
+          "id": "CS8629",
+          "shortDescription": "Nullable value type may be null.",
+          "defaultLevel": "warning",
+          "helpUri": "https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS8629)",
+          "properties": {
+            "category": "Compiler",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Compiler",
+              "Telemetry"
+            ]
+          }
+        },
+        "RZ10012": {
+          "id": "RZ10012",
+          "shortDescription": "Found markup element with unexpected name 'RedirectToLogin'. If this is intended to be a component, add a @using directive for its namespace.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Razor",
+            "isEnabledByDefault": true
+          }
+        },
+        "RZ1025": {
+          "id": "RZ1025",
+          "shortDescription": "The \"EditForm\" element was not closed.  All elements must be either self-closing or have a matching end tag.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Razor",
+            "isEnabledByDefault": true
+          }
+        },
+        "RZ1026": {
+          "id": "RZ1026",
+          "shortDescription": "Encountered end tag \"EditForm\" with no matching start tag.  Are your start/end tags properly balanced?",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Razor",
+            "isEnabledByDefault": true
+          }
+        },
+        "RZ1034": {
+          "id": "RZ1034",
+          "shortDescription": "Found a malformed 'EditForm' tag helper. Tag helpers must have a start and end tag or be self closing.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Razor",
+            "isEnabledByDefault": true
+          }
+        },
+        "RZ9981": {
+          "id": "RZ9981",
+          "shortDescription": "Unexpected closing tag 'EditForm' with no matching start tag.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Razor",
+            "isEnabledByDefault": true
+          }
+        },
+        "RZ9981-001": {
+          "id": "RZ9981",
+          "shortDescription": "Unexpected closing tag 'div' with no matching start tag.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Razor",
+            "isEnabledByDefault": true
+          }
+        }
+      }
+    }
+  ]
+}
