@@ -11,36 +11,21 @@
             <span class="text-primary-500">🌱</span>
             <span>Thói quen (Tuần này)</span>
         </h3>
-        @if (IsPremium)
+        @if (IsPremium || _habits.Count < 1)
         {
              <button @onclick="OpenCreateHabitModal" class="p-1.5 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-primary-600 transition-colors" title="Thêm thói quen">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             </button>
         }
+        else
+        {
+             <button @onclick="OnUpgradeClicked" class="p-1.5 hover:bg-gray-100 rounded-lg text-amber-500 hover:text-amber-600 transition-colors" title="Nâng cấp để thêm thói quen">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </button>
+        }
     </div>
 
-    @if (!IsPremium)
-    {
-        <!-- FREE TIER LOCK OVERLAY -->
-        <div class="absolute inset-x-0 bottom-0 top-12 bg-white/60 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center text-center p-4">
-            <span class="text-3xl mb-2">🔒</span>
-            <p class="text-sm font-bold text-gray-800">Tính năng Premium</p>
-            <p class="text-xs text-gray-500 mb-3 max-w-[200px]">Xây dựng thói quen tốt mỗi ngày với Habit Tracker.</p>
-            <button @onclick="OnUpgradeClicked" class="px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-xs font-bold rounded-lg shadow-lg hover:shadow-primary-500/30 transition-all hover:-translate-y-0.5">
-                Mở khóa ngay
-            </button>
-        </div>
-
-        <!-- MOCK DATA FOR DEMO -->
-        <div class="opacity-40 pointer-events-none">
-             @RenderHabitRow("Uống 2L nước", "daily", 5)
-             @RenderHabitRow("Đọc sách 30p", "daily", 2)
-             @RenderHabitRow("Thiền 10p", "daily", 0)
-        </div>
-    }
-    else
-    {
-        @if (_isLoading)
+    @if (_isLoading)
         {
             <div class="flex justify-center py-4">
                 <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
@@ -114,7 +99,6 @@
                 }
             </div>
         }
-    }
 </div>
 
 <CreateHabitModal @ref="_createHabitModal" OnHabitCreated="LoadHabits" />
@@ -129,7 +113,8 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        if (IsPremium && (_habits.Count == 0 || _habits == null))
+        // Load for everyone (Free tier allowed 1 habit)
+        if (_habits.Count == 0 || _habits == null)
         {
             await LoadHabits();
         }

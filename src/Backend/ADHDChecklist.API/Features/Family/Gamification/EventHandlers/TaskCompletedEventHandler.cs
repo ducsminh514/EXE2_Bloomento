@@ -30,26 +30,42 @@ public class TaskCompletedEventHandler : INotificationHandler<TaskCompletedEvent
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
-        if (!familyId.HasValue)
+        // 1. Always Award Personal XP
+        var user = await _context.Users.FindAsync(new object[] { notification.UserId }, cancellationToken);
+        if (user != null)
         {
-            return;
+            user.TotalXp += notification.Points;
+            // _context.Users.Update(user); // Entity tracked by default
         }
 
-        var pointHistory = new FamilyPointHistory
+        // 2. Family Points Logic (Only if User is in Family)
+        if (!familyId.HasValue)
         {
-            Id = Guid.NewGuid(),
-            FamilyId = familyId.Value,
-            UserId = notification.UserId,
-            Amount = notification.Points,
-            Source = "Task",
-            ReferenceId = notification.TaskId,
-            CreatedAt = DateTime.UtcNow
-        };
+            familyId = await _context.FamilyMembers
+                .Where(fm => fm.UserId == notification.UserId)
+                .Select(fm => (Guid?)fm.FamilyId)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
 
-        _context.FamilyPointHistory.Add(pointHistory);
+        if (familyId.HasValue)
+        {
+            var pointHistory = new FamilyPointHistory
+            {
+                Id = Guid.NewGuid(),
+                FamilyId = familyId.Value,
+                UserId = notification.UserId,
+                Amount = notification.Points,
+                Source = "Task",
+                ReferenceId = notification.TaskId,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.FamilyPointHistory.Add(pointHistory);
+            
+             _logger.LogInformation("User {UserId} earned {Points} points in family {FamilyId}",
+                notification.UserId, notification.Points, familyId);
+        }
+
         await _context.SaveChangesAsync(cancellationToken);
-
-        _logger.LogInformation("User {UserId} earned {Points} points in family {FamilyId} for completing task {TaskId}",
-            notification.UserId, notification.Points, notification.FamilyId, notification.TaskId);
     }
 }

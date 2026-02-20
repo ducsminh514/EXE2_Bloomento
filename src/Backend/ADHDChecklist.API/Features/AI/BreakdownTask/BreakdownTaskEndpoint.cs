@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using ADHDChecklist.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace ADHDChecklist.API.Features.AI.BreakdownTask
             app.MapPost("/api/ai/breakdown", async (
                 [FromBody] BreakdownTaskRequest request,
                 IGeminiService geminiService,
+                ADHDChecklist.API.Data.AppDbContext dbContext,
                 System.Security.Claims.ClaimsPrincipal user) =>
             {
                 if (string.IsNullOrWhiteSpace(request.TaskTitle))
@@ -18,19 +20,36 @@ namespace ADHDChecklist.API.Features.AI.BreakdownTask
                 }
 
                 // Check functionality restriction
-                var tierClaim = user.FindFirst("SubscriptionTier")?.Value;
-                // Tier is stored as int in JWT (0 = Free, 1 = Premium, 2 = Family) or string "Free" if legacy
-                if (string.IsNullOrEmpty(tierClaim) || tierClaim == "Free" || tierClaim == "0")
+                var userId = Guid.Parse(user.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier)!);
+                var validUser = await dbContext.Users.FindAsync(new object[] { userId });
+
+                if (validUser == null) return Results.Unauthorized();
+
+                var tier = validUser.SubscriptionTier;
+                var isFree = tier == ADHDChecklist.API.Entities.Common.SubscriptionTier.Free;
+
+                if (isFree)
                 {
-                     return Results.Problem(
-                        detail: "This feature is available for Premium and Family plans only.",
-                        statusCode: 403,
-                        title: "Premium Feature");
+                    if (validUser.LifetimeAiUsageCount >= 3)
+                    {
+                         return Results.Problem(
+                            detail: "Gói miễn phí chỉ được dùng AI 3 lần. Vui lòng nâng cấp để sử dụng không giới hạn!",
+                            statusCode: 403,
+                            title: "Hết lượt dùng thử miễn phí");
+                    }
                 }
 
                 try
                 {
                     var steps = await geminiService.BreakDownTaskAsync(request.TaskTitle);
+                    
+                    // Increment usage for Free tier
+                    if (isFree)
+                    {
+                        validUser.LifetimeAiUsageCount++;
+                        await dbContext.SaveChangesAsync();
+                    }
+
                     return Results.Ok(new BreakdownTaskResponse(steps));
                 }
                 catch (Exception ex)

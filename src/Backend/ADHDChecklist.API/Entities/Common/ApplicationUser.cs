@@ -27,6 +27,12 @@ public class ApplicationUser : IdentityUser<Guid>
     // Google OAuth
     public string? GoogleId { get; set; }
     public string? GoogleProfilePicture { get; set; }
+    
+    // AI Usage
+    public int LifetimeAiUsageCount { get; set; } = 0;
+    
+    // Gamification
+    public int TotalXp { get; set; } = 0;
 
     // Refresh Token
     public string? RefreshToken { get; set; }

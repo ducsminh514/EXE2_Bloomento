@@ -24,7 +24,22 @@ namespace ADHDChecklist.API.Features.Tasks.GetOverdueCount
         public async Task<int> Handle(GetOverdueCountQuery request, CancellationToken cancellationToken)
         {
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
-            return await _context.Tasks
+            
+            // Check Tier
+            var isFreeTier = await _context.Users
+                .Where(u => u.Id == request.UserId)
+                .Select(u => u.SubscriptionTier == Entities.Common.SubscriptionTier.Free)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            var query = _context.Tasks.AsQueryable();
+
+            if (isFreeTier)
+            {
+                 var cutoffDate = DateTime.UtcNow.AddDays(-30);
+                 query = query.Where(t => t.CreatedAt >= cutoffDate);
+            }
+
+            return await query
                 .CountAsync(t => (t.UserId == request.UserId || t.AssignedUserId == request.UserId) 
                                  && !t.IsCompleted 
                                  && t.ScheduledDate < today, cancellationToken);

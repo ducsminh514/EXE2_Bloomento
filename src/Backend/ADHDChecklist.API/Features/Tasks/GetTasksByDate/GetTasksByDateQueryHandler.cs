@@ -30,6 +30,14 @@ public class GetTasksByDateQueryHandler : IRequestHandler<GetTasksByDateQuery, T
             .Select(fm => fm.FamilyId)
             .FirstOrDefaultAsync(cancellationToken);
 
+        // 1.1 Check Subscription Tier for Retention Policy
+        var userTier = await _context.Users
+            .Where(u => u.Id == request.UserId)
+            .Select(u => u.SubscriptionTier)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        var isFreeTier = userTier == Entities.Common.SubscriptionTier.Free;
+
         // 2. Build Query
         var query = _context.Tasks.AsQueryable();
 
@@ -52,6 +60,13 @@ public class GetTasksByDateQueryHandler : IRequestHandler<GetTasksByDateQuery, T
         {
             // Show only my tasks (Scheduled today OR Unscheduled)
             query = query.Where(t => t.UserId == request.UserId && (t.ScheduledDate == request.Date || (t.ScheduledDate == null && !t.IsCompleted)));
+        }
+
+        // 3. Apply Retention Policy (Hide old tasks for Free Tier)
+        if (isFreeTier)
+        {
+            var cutoffDate = DateTime.UtcNow.AddDays(-30);
+            query = query.Where(t => t.CreatedAt >= cutoffDate);
         }
 
         var tasks = await query

@@ -1,5 +1,6 @@
 using ADHDChecklist.API.Data;
 using ADHDChecklist.API.Entities;
+using ADHDChecklist.API.Entities.Common;
 using ADHDChecklist.API.Shared.DTOs;
 using MediatR;
 using System;
@@ -38,6 +39,21 @@ namespace ADHDChecklist.API.Features.Habits.CreateHabit
                 .Where(fm => fm.UserId == request.UserId)
                 .Select(fm => (Guid?)fm.FamilyId)
                 .FirstOrDefaultAsync(cancellationToken);
+
+            // 1. Check User Tier & Limit
+            var userTier = await _context.Users
+                .Where(u => u.Id == request.UserId)
+                .Select(u => u.SubscriptionTier)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (userTier == SubscriptionTier.Free)
+            {
+                var currentHabitCount = await _context.Habits.CountAsync(h => h.UserId == request.UserId, cancellationToken);
+                if (currentHabitCount >= 1)
+                {
+                     throw new InvalidOperationException("Gói miễn phí chỉ được tạo tối đa 1 Thói quen. Vui lòng nâng cấp để mở khóa không giới hạn!");
+                }
+            }
 
             var habit = new Habit
             {

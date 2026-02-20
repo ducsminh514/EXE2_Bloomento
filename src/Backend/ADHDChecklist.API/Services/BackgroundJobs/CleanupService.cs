@@ -17,15 +17,18 @@ public class CleanupService
 
     public async Task DeleteOldFreeTierTasks()
     {
+        // POLICY CHANGE: Free Tier tasks are no longer deleted. They are hidden/archived instead.
+        // This job is kept but disabled for deletion logic, potentially for future true archiving.
+        _logger.LogInformation("CleanupService: Skipping execution. Hard delete policy disabled.");
+        await Task.CompletedTask;
+        
+        /* 
+        Legacy Deletion Logic (Disabled):
         using var scope = _serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         var cutoffDate = DateTime.UtcNow.AddDays(-30);
 
-        // Find users who are in Free Tier
-        // Note: In a real large-scale app, we would batch this or use a stored procedure.
-        // For MVP, EF Core query is acceptable.
-        
         var oldTasks = await context.Tasks
             .Include(t => t.User)
             .Where(t => t.User.SubscriptionTier == SubscriptionTier.Free 
@@ -41,5 +44,6 @@ public class CleanupService
             
             _logger.LogInformation("Successfully deleted {Count} old tasks.", oldTasks.Count);
         }
+        */
     }
 }

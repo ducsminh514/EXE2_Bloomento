@@ -18,9 +18,10 @@ public class GetPointsHandler : IRequestHandler<GetPointsQuery, int>
 
     public async Task<int> Handle(GetPointsQuery request, CancellationToken cancellationToken)
     {
-        return await _context.FamilyPointHistory
-            .Where(ph => ph.UserId == request.UserId)
-            .SumAsync(ph => ph.Amount, cancellationToken);
+        return await _context.Users
+            .Where(u => u.Id == request.UserId)
+            .Select(u => u.TotalXp)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 }
 
