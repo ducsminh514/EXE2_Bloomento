@@ -85,46 +85,32 @@ builder.Services.Configure<FormOptions>(options =>
 {
     options.MultipartBodyLengthLimit = 52428800; // 50MB
 });
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
+string connectionString;
+
+if (!string.IsNullOrEmpty(databaseUrl))
+{
+    var uri = new Uri(databaseUrl);
+    var userInfo = uri.UserInfo.Split(':');
+
+    connectionString =
+        $"Host={uri.Host};" +
+        $"Port={uri.Port};" +
+        $"Database={uri.AbsolutePath.Trim('/')};" +
+        $"Username={userInfo[0]};" +
+        $"Password={userInfo[1]};" +
+        $"SSL Mode=Require;Trust Server Certificate=true";
+}
+else
+{
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+}
 // ============================================
 // 1. DATABASE
 // ============================================
 builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-
-    string connectionString;
-
-    if (!string.IsNullOrEmpty(databaseUrl))
-    {
-        var uri = new Uri(databaseUrl);
-        var userInfo = uri.UserInfo.Split(':');
-
-        connectionString =
-            $"Host={uri.Host};" +
-            $"Port={uri.Port};" +
-            $"Database={uri.AbsolutePath.Trim('/')};" +
-            $"Username={userInfo[0]};" +
-            $"Password={userInfo[1]};" +
-            $"SSL Mode=Require;Trust Server Certificate=true";
-    }
-    else
-    {
-        connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    }    options.UseNpgsql(connectionString, pgOptions =>
-    {
-        pgOptions.EnableRetryOnFailure(
-            maxRetryCount: 5,
-            maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorCodesToAdd: null);
-    });
-
-    if (builder.Environment.IsDevelopment())
-    {
-        options.EnableSensitiveDataLogging();
-        options.EnableDetailedErrors();
-    }
-});
+    options.UseNpgsql(connectionString));
 
 // ============================================
 // 2. IDENTITY
@@ -263,7 +249,8 @@ builder.Services.AddHangfire(configuration => configuration
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
     .UseSimpleAssemblyNameTypeSerializer()
     .UseRecommendedSerializerSettings()
-    .UsePostgreSqlStorage(c => c.UseNpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"))));
+    .UsePostgreSqlStorage(options =>
+        options.UseNpgsqlConnection(connectionString)));
 
 builder.Services.AddHangfireServer();
 
