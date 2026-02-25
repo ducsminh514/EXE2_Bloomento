@@ -471,8 +471,8 @@ using (var scope = app.Services.CreateScope())
 {
     try 
     {
-        // var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        // dbContext.Database.Migrate(); // Optional: Auto-migrate
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        dbContext.Database.Migrate(); // Optional: Auto-migrate
         
         var knowledgeSeeder = scope.ServiceProvider.GetRequiredService<KnowledgeSeeder>();
         await knowledgeSeeder.SeedAsync();
