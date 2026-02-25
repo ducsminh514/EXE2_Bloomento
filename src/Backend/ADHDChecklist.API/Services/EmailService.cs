@@ -170,7 +170,7 @@ public class EmailService : IEmailService
             await smtp.ConnectAsync(
                 _configuration["EmailSettings:SmtpServer"],
                 int.Parse(_configuration["EmailSettings:SmtpPort"]!),
-                SecureSocketOptions.Auto
+                SecureSocketOptions.SslOnConnect
             );
 
             await smtp.AuthenticateAsync(

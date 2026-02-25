@@ -67,7 +67,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ADHDChecklist.API.Features.AI.BreakdownTask;
 using ADHDChecklist.API.Features.Focus;
-
+using Hangfire.Dashboard;
 using Microsoft.AspNetCore.RateLimiting;
 using PayOS;
 
@@ -447,10 +447,14 @@ app.MapFocusSessionEndpoints();
 
 
 
+
 // ============================================
 // 10. BACKGROUND JOBS
 // ============================================
-app.UseHangfireDashboard();
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[] { new AllowAllDashboardAuthorizationFilter() }
+});
 
 // Schedule Cleanup Job (Daily at 2 AM)
 RecurringJob.AddOrUpdate<ADHDChecklist.API.Services.BackgroundJobs.CleanupService>(
@@ -488,3 +492,11 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+public class AllowAllDashboardAuthorizationFilter : IDashboardAuthorizationFilter
+{
+    public bool Authorize(DashboardContext context)
+    {
+        return true; // DANGER: For debugging only!
+    }
+}
