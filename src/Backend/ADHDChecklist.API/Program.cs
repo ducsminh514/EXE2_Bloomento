@@ -175,14 +175,15 @@ builder.Services.AddAuthorization(options =>
 // ============================================
 // 4. CORS
 // ============================================
-var allowedOrigins = builder.Configuration.GetSection("CorsSettings:AllowedOrigins").Get<string[]>() 
-    ?? new[] { "http://localhost:7002", "https://localhost:7002" };
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorClient", policy =>
     {
-        policy.WithOrigins(allowedOrigins)
+        policy.SetIsOriginAllowed(origin => 
+                origin.StartsWith("http://localhost:") || 
+                origin.StartsWith("https://localhost:") || 
+                origin.EndsWith(".vercel.app"))
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
