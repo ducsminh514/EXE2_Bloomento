@@ -1,5 +1,6 @@
 ﻿using ADHDChecklist.API.Entities.Common;
 using ADHDChecklist.API.Services;
+using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -13,15 +14,18 @@ namespace ADHDChecklist.API.Features.Auth.VerifyEmail
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailService _emailService;
         private readonly ILogger<VerifyEmailCommandHandler> _logger;
+        private readonly IBackgroundJobClient _backgroundJobClient;
 
         public VerifyEmailCommandHandler(
             UserManager<ApplicationUser> userManager,
             IEmailService emailService,
-            ILogger<VerifyEmailCommandHandler> logger)
+            ILogger<VerifyEmailCommandHandler> logger,
+            IBackgroundJobClient backgroundJobClient)
         {
             _userManager = userManager;
             _emailService = emailService;
             _logger = logger;
+            _backgroundJobClient = backgroundJobClient;
         }
 
         public async Task<VerifyEmailResponse> Handle(VerifyEmailCommand request, CancellationToken cancellationToken)
@@ -92,9 +96,11 @@ namespace ADHDChecklist.API.Features.Auth.VerifyEmail
             // Send welcome email
             try
             {
-                await _emailService.SendWelcomeEmailAsync(
-                    user.Email!,
-                    user.FullName ?? user.Email!
+                _backgroundJobClient.Enqueue(() =>
+                    _emailService.SendWelcomeEmailAsync(
+                        user.Email!,
+                        user.FullName ?? user.Email!
+                    )
                 );
             }
             catch (Exception ex)

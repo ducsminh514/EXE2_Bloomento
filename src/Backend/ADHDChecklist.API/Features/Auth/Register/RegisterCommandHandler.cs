@@ -1,5 +1,6 @@
 ﻿using ADHDChecklist.API.Entities.Common;
 using ADHDChecklist.API.Services;
+using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -14,17 +15,20 @@ namespace ADHDChecklist.API.Features.Auth.Register
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<RegisterCommandHandler> _logger;
+        private readonly IBackgroundJobClient _backgroundJobClient;
 
         public RegisterCommandHandler(
             UserManager<ApplicationUser> userManager,
             IEmailService emailService,
             IConfiguration configuration,
-            ILogger<RegisterCommandHandler> logger)
+            ILogger<RegisterCommandHandler> logger,
+            IBackgroundJobClient backgroundJobClient)
         {
             _userManager = userManager;
             _emailService = emailService;
             _configuration = configuration;
             _logger = logger;
+            _backgroundJobClient = backgroundJobClient;
         }
 
         public async Task<RegisterResponse> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -75,10 +79,12 @@ namespace ADHDChecklist.API.Features.Auth.Register
                 var frontendUrl = _configuration["FrontendUrl"];
                 var verificationLink = $"{frontendUrl}/verify-email?token={user.EmailVerificationToken}&userId={user.Id}";
 
-                await _emailService.SendEmailVerificationAsync(
-                    user.Email!,
-                    user.FullName ?? user.Email!,
-                    verificationLink
+                _backgroundJobClient.Enqueue(() =>
+                    _emailService.SendEmailVerificationAsync(
+                        user.Email!,
+                        user.FullName ?? user.Email!,
+                        verificationLink
+                    )
                 );
 
                 _logger.LogInformation("User {UserId} registered successfully", user.Id);
