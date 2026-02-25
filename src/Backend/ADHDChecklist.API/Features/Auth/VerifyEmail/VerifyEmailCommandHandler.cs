@@ -96,10 +96,13 @@ namespace ADHDChecklist.API.Features.Auth.VerifyEmail
             // Send welcome email
             try
             {
-                _backgroundJobClient.Enqueue(() =>
-                    _emailService.SendWelcomeEmailAsync(
-                        user.Email!,
-                        user.FullName ?? user.Email!
+                var email = user.Email!;
+                var fullName = user.FullName ?? user.Email!;
+
+                _backgroundJobClient.Enqueue<IEmailService>(x =>
+                    x.SendWelcomeEmailAsync(
+                        email,
+                        fullName
                     )
                 );
             }

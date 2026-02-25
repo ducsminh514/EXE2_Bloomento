@@ -79,10 +79,13 @@ namespace ADHDChecklist.API.Features.Auth.Register
                 var frontendUrl = _configuration["FrontendUrl"];
                 var verificationLink = $"{frontendUrl}/verify-email?token={user.EmailVerificationToken}&userId={user.Id}";
 
-                _backgroundJobClient.Enqueue(() =>
-                    _emailService.SendEmailVerificationAsync(
-                        user.Email!,
-                        user.FullName ?? user.Email!,
+                var email = user.Email!;
+                var fullName = user.FullName ?? user.Email!;
+
+                _backgroundJobClient.Enqueue<IEmailService>(x =>
+                    x.SendEmailVerificationAsync(
+                        email,
+                        fullName,
                         verificationLink
                     )
                 );
