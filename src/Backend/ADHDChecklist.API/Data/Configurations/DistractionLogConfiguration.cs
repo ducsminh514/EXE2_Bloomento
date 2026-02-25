@@ -36,6 +36,6 @@ public class DistractionLogConfiguration : IEntityTypeConfiguration<DistractionL
 
         builder.HasIndex(dl => dl.DistractionType)
             .HasDatabaseName("IX_DistractionLogs_DistractionType")
-            .HasFilter("[DistractionType] IS NOT NULL");
+            .HasFilter("\"DistractionType\" IS NOT NULL");
     }
 }

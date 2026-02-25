@@ -34,11 +34,9 @@ public class AnalyticsSnapshotConfiguration : IEntityTypeConfiguration<Analytics
             .HasDefaultValue(0);
 
         // JSON columns for detailed data
-        builder.Property(a => a.HourlyBreakdown)
-            .HasColumnType("NVARCHAR(MAX)");
+        builder.Property(a => a.HourlyBreakdown);
 
-        builder.Property(a => a.CategoryBreakdown)
-            .HasColumnType("NVARCHAR(MAX)");
+        builder.Property(a => a.CategoryBreakdown);
 
         builder.Property(a => a.CreatedAt)
             .IsRequired()

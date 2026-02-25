@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ADHDChecklist.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260225062944_InitialPostgresCreate")]
+    [Migration("20260225075746_InitialPostgresCreate")]
     partial class InitialPostgresCreate
     {
         /// <inheritdoc />
@@ -32,7 +32,7 @@ namespace ADHDChecklist.API.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("CategoryBreakdown")
-                        .HasColumnType("NVARCHAR(MAX)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -45,7 +45,7 @@ namespace ADHDChecklist.API.Migrations
                         .HasDefaultValue(0);
 
                     b.Property<string>("HourlyBreakdown")
-                        .HasColumnType("NVARCHAR(MAX)");
+                        .HasColumnType("text");
 
                     b.Property<DateOnly>("SnapshotDate")
                         .HasColumnType("date");
@@ -445,7 +445,7 @@ namespace ADHDChecklist.API.Migrations
 
                     b.HasIndex("GoogleId")
                         .HasDatabaseName("IX_Users_GoogleId")
-                        .HasFilter("[GoogleId] IS NOT NULL");
+                        .HasFilter("\"GoogleId\" IS NOT NULL");
 
                     b.HasIndex("IsActive")
                         .HasDatabaseName("IX_Users_IsActive");
@@ -459,7 +459,7 @@ namespace ADHDChecklist.API.Migrations
 
                     b.HasIndex("RefreshToken")
                         .HasDatabaseName("IX_Users_RefreshToken")
-                        .HasFilter("[RefreshToken] IS NOT NULL");
+                        .HasFilter("\"RefreshToken\" IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
                 });
@@ -490,7 +490,7 @@ namespace ADHDChecklist.API.Migrations
 
                     b.HasIndex("DistractionType")
                         .HasDatabaseName("IX_DistractionLogs_DistractionType")
-                        .HasFilter("[DistractionType] IS NOT NULL");
+                        .HasFilter("\"DistractionType\" IS NOT NULL");
 
                     b.HasIndex("FocusSessionId")
                         .HasDatabaseName("IX_DistractionLogs_FocusSessionId");
@@ -1007,7 +1007,7 @@ namespace ADHDChecklist.API.Migrations
 
                     b.HasIndex("IsSent", "RemindAt")
                         .HasDatabaseName("IX_Reminders_IsSent_RemindAt")
-                        .HasFilter("[IsSent] = 0");
+                        .HasFilter("\"IsSent\" = false");
 
                     b.ToTable("Reminders", (string)null);
                 });
@@ -1125,11 +1125,11 @@ namespace ADHDChecklist.API.Migrations
 
                     b.HasIndex("CategoryId")
                         .HasDatabaseName("IX_Tasks_CategoryId")
-                        .HasFilter("[CategoryId] IS NOT NULL");
+                        .HasFilter("\"CategoryId\" IS NOT NULL");
 
                     b.HasIndex("DeletedAt")
                         .HasDatabaseName("IX_Tasks_DeletedAt")
-                        .HasFilter("[DeletedAt] IS NULL");
+                        .HasFilter("\"DeletedAt\" IS NULL");
 
                     b.HasIndex("FamilyId");
 
@@ -1140,7 +1140,7 @@ namespace ADHDChecklist.API.Migrations
 
                     b.HasIndex("UserId", "CompletedAt")
                         .HasDatabaseName("IX_Tasks_UserId_CompletedAt")
-                        .HasFilter("[CompletedAt] IS NOT NULL");
+                        .HasFilter("\"CompletedAt\" IS NOT NULL");
 
                     b.HasIndex("UserId", "ScheduledDate")
                         .HasDatabaseName("IX_Tasks_UserId_ScheduledDate");

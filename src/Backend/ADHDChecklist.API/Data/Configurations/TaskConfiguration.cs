@@ -96,15 +96,15 @@ public class TaskConfiguration : IEntityTypeConfiguration<Entities.Task>
 
         builder.HasIndex(t => t.DeletedAt)
             .HasDatabaseName("IX_Tasks_DeletedAt")
-            .HasFilter("[DeletedAt] IS NULL");
+            .HasFilter("\"DeletedAt\" IS NULL");
 
         builder.HasIndex(t => t.CategoryId)
             .HasDatabaseName("IX_Tasks_CategoryId")
-            .HasFilter("[CategoryId] IS NOT NULL");
+            .HasFilter("\"CategoryId\" IS NOT NULL");
 
         builder.HasIndex(t => new { t.UserId, t.CompletedAt })
             .HasDatabaseName("IX_Tasks_UserId_CompletedAt")
-            .HasFilter("[CompletedAt] IS NOT NULL");
+            .HasFilter("\"CompletedAt\" IS NOT NULL");
 
         // Query filter - Always exclude soft deleted
         builder.HasQueryFilter(t => t.DeletedAt == null);

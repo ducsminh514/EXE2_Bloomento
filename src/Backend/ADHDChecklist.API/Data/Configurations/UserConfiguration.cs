@@ -69,11 +69,11 @@ public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
 
         builder.HasIndex(u => u.GoogleId)
             .HasDatabaseName("IX_Users_GoogleId")
-            .HasFilter("[GoogleId] IS NOT NULL");
+            .HasFilter("\"GoogleId\" IS NOT NULL");
 
         builder.HasIndex(u => u.RefreshToken)
             .HasDatabaseName("IX_Users_RefreshToken")
-            .HasFilter("[RefreshToken] IS NOT NULL");
+            .HasFilter("\"RefreshToken\" IS NOT NULL");
 
         builder.HasIndex(u => u.IsActive)
             .HasDatabaseName("IX_Users_IsActive");

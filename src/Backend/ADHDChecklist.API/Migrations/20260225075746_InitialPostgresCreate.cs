@@ -125,8 +125,8 @@ namespace ADHDChecklist.API.Migrations
                     TasksCreated = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
                     TotalFocusMinutes = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
                     HabitsCompleted = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
-                    HourlyBreakdown = table.Column<string>(type: "NVARCHAR(MAX)", nullable: true),
-                    CategoryBreakdown = table.Column<string>(type: "NVARCHAR(MAX)", nullable: true),
+                    HourlyBreakdown = table.Column<string>(type: "text", nullable: true),
+                    CategoryBreakdown = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'")
                 },
                 constraints: table =>
@@ -920,7 +920,7 @@ namespace ADHDChecklist.API.Migrations
                 name: "IX_DistractionLogs_DistractionType",
                 table: "DistractionLogs",
                 column: "DistractionType",
-                filter: "[DistractionType] IS NOT NULL");
+                filter: "\"DistractionType\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DistractionLogs_FocusSessionId",
@@ -1042,7 +1042,7 @@ namespace ADHDChecklist.API.Migrations
                 name: "IX_Reminders_IsSent_RemindAt",
                 table: "Reminders",
                 columns: new[] { "IsSent", "RemindAt" },
-                filter: "[IsSent] = 0");
+                filter: "\"IsSent\" = false");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reminders_TaskId",
@@ -1069,13 +1069,13 @@ namespace ADHDChecklist.API.Migrations
                 name: "IX_Tasks_CategoryId",
                 table: "Tasks",
                 column: "CategoryId",
-                filter: "[CategoryId] IS NOT NULL");
+                filter: "\"CategoryId\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tasks_DeletedAt",
                 table: "Tasks",
                 column: "DeletedAt",
-                filter: "[DeletedAt] IS NULL");
+                filter: "\"DeletedAt\" IS NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tasks_FamilyId",
@@ -1096,7 +1096,7 @@ namespace ADHDChecklist.API.Migrations
                 name: "IX_Tasks_UserId_CompletedAt",
                 table: "Tasks",
                 columns: new[] { "UserId", "CompletedAt" },
-                filter: "[CompletedAt] IS NOT NULL");
+                filter: "\"CompletedAt\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tasks_UserId_ScheduledDate",
@@ -1138,7 +1138,7 @@ namespace ADHDChecklist.API.Migrations
                 name: "IX_Users_GoogleId",
                 table: "Users",
                 column: "GoogleId",
-                filter: "[GoogleId] IS NOT NULL");
+                filter: "\"GoogleId\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_IsActive",
@@ -1149,7 +1149,7 @@ namespace ADHDChecklist.API.Migrations
                 name: "IX_Users_RefreshToken",
                 table: "Users",
                 column: "RefreshToken",
-                filter: "[RefreshToken] IS NOT NULL");
+                filter: "\"RefreshToken\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",

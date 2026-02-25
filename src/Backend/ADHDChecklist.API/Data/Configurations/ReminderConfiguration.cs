@@ -43,7 +43,7 @@ public class ReminderConfiguration : IEntityTypeConfiguration<Reminder>
         // Indexes - Important for background job queries
         builder.HasIndex(r => new { r.IsSent, r.RemindAt })
             .HasDatabaseName("IX_Reminders_IsSent_RemindAt")
-            .HasFilter("[IsSent] = 0");
+            .HasFilter("\"IsSent\" = false");
 
         builder.HasIndex(r => r.TaskId)
             .HasDatabaseName("IX_Reminders_TaskId");
