@@ -246,7 +246,8 @@ public record PremiumAnalyticsResponse(
     List<TimeBlindnessData> TimeBlindness,
     List<EnergyData> EnergyHeatmap,
     List<ProcrastinationDebtData> ProcrastinationDebt,
-    DopamineBalanceData DopamineBalance
+    DopamineBalanceData DopamineBalance,
+    AnalyticsAdvice? Advice = null  // P1-4: Actionable advice
 );
 
 public record TimeBlindnessData(
@@ -271,6 +272,12 @@ public record DopamineBalanceData(
     int LowDopamineCount,
     int HighDopamineCount,
     double BalanceRatio
+);
+
+public record AnalyticsAdvice(
+    string? PeakHourAdvice,
+    string? TimeBlindnessAdvice,
+    string? DopamineAdvice
 );
 
 // ============================================

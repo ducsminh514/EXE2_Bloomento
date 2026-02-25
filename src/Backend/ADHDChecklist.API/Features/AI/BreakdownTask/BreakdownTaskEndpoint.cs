@@ -1,6 +1,10 @@
 using System.Security.Claims;
 using ADHDChecklist.API.Services;
+using ADHDChecklist.API.Data;
+using ADHDChecklist.API.Entities;
+using ADHDChecklist.API.Entities.Common;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ADHDChecklist.API.Features.AI.BreakdownTask
 {
@@ -11,28 +15,27 @@ namespace ADHDChecklist.API.Features.AI.BreakdownTask
             app.MapPost("/api/ai/breakdown", async (
                 [FromBody] BreakdownTaskRequest request,
                 IGeminiService geminiService,
-                ADHDChecklist.API.Data.AppDbContext dbContext,
-                System.Security.Claims.ClaimsPrincipal user) =>
+                AppDbContext dbContext,
+                ClaimsPrincipal user) =>
             {
                 if (string.IsNullOrWhiteSpace(request.TaskTitle))
                 {
                     return Results.BadRequest("Task title is required");
                 }
 
-                // Check functionality restriction
-                var userId = Guid.Parse(user.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier)!);
+                // Check user and tier
+                var userId = Guid.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier)!);
                 var validUser = await dbContext.Users.FindAsync(new object[] { userId });
 
                 if (validUser == null) return Results.Unauthorized();
 
-                var tier = validUser.SubscriptionTier;
-                var isFree = tier == ADHDChecklist.API.Entities.Common.SubscriptionTier.Free;
+                var isFree = validUser.SubscriptionTier == SubscriptionTier.Free;
 
                 if (isFree)
                 {
                     if (validUser.LifetimeAiUsageCount >= 3)
                     {
-                         return Results.Problem(
+                        return Results.Problem(
                             detail: "Gói miễn phí chỉ được dùng AI 3 lần. Vui lòng nâng cấp để sử dụng không giới hạn!",
                             statusCode: 403,
                             title: "Hết lượt dùng thử miễn phí");
@@ -42,7 +45,7 @@ namespace ADHDChecklist.API.Features.AI.BreakdownTask
                 try
                 {
                     var steps = await geminiService.BreakDownTaskAsync(request.TaskTitle);
-                    
+
                     // Increment usage for Free tier
                     if (isFree)
                     {
@@ -50,7 +53,47 @@ namespace ADHDChecklist.API.Features.AI.BreakdownTask
                         await dbContext.SaveChangesAsync();
                     }
 
-                    return Results.Ok(new BreakdownTaskResponse(steps));
+                    // P0-1 FIX: If a TaskId is provided, create real sub-tasks in DB
+                    if (request.TaskId.HasValue && steps.Length > 0)
+                    {
+                        // Verify parent task exists and belongs to user
+                        var parentTask = await dbContext.Tasks
+                            .FirstOrDefaultAsync(t => t.Id == request.TaskId.Value &&
+                                                      t.UserId == userId &&
+                                                      t.DeletedAt == null);
+
+                        if (parentTask != null)
+                        {
+                            var subTasks = steps.Select((step, index) => new Entities.Task
+                            {
+                                Id = Guid.NewGuid(),
+                                UserId = userId,
+                                ParentTaskId = parentTask.Id,
+                                Title = step,
+                                ScheduledDate = parentTask.ScheduledDate,
+                                Priority = parentTask.Priority,
+                                DopamineType = "Low", // Sub-tasks are typically hard work
+                                IsCompleted = false,
+                                OrderIndex = index,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                                AssignedUserId = parentTask.AssignedUserId,
+                                AssignmentStatus = parentTask.AssignmentStatus,
+                                FamilyId = parentTask.FamilyId,
+                            }).ToList();
+
+                            dbContext.Tasks.AddRange(subTasks);
+                            await dbContext.SaveChangesAsync();
+
+                            return Results.Ok(new BreakdownTaskResponse(
+                                steps,
+                                subTasks.Select(t => t.Id).ToArray()
+                            ));
+                        }
+                    }
+
+                    // Fallback: just return steps as strings (no TaskId provided)
+                    return Results.Ok(new BreakdownTaskResponse(steps, Array.Empty<Guid>()));
                 }
                 catch (Exception ex)
                 {
@@ -63,6 +106,6 @@ namespace ADHDChecklist.API.Features.AI.BreakdownTask
         }
     }
 
-    public record BreakdownTaskRequest(string TaskTitle);
-    public record BreakdownTaskResponse(string[] Steps);
+    public record BreakdownTaskRequest(string TaskTitle, Guid? TaskId = null);
+    public record BreakdownTaskResponse(string[] Steps, Guid[] SubTaskIds);
 }

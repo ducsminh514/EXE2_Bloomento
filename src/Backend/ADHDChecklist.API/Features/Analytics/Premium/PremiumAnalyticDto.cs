@@ -7,7 +7,8 @@ namespace ADHDChecklist.API.Features.Analytics.Premium
         List<TimeBlindnessData> TimeBlindness,
         List<EnergyData> EnergyHeatmap,
         List<ProcrastinationDebtData> ProcrastinationDebt,
-        DopamineBalanceData DopamineBalance
+        DopamineBalanceData DopamineBalance,
+        AnalyticsAdvice Advice  // P1-4: Actionable advice
     );
 
     public record TimeBlindnessData(
@@ -17,6 +18,7 @@ namespace ADHDChecklist.API.Features.Analytics.Premium
         double DeviationPercentage
     );
 
+    // P1-3: Hour là giờ local (UTC+7), không phải UTC nữa
     public record EnergyData(
         int Hour,
         int CompletedCount
@@ -32,5 +34,12 @@ namespace ADHDChecklist.API.Features.Analytics.Premium
         int LowDopamineCount,
         int HighDopamineCount,
         double BalanceRatio
+    );
+
+    // P1-4: Actionable advice cho từng biểu đồ
+    public record AnalyticsAdvice(
+        string? PeakHourAdvice,    // "Bạn hiệu quả nhất lúc X giờ → Hãy đặt task khó vào khung này!"
+        string? TimeBlindnessAdvice,  // Tóm tắt xu hướng ước tính thời gian
+        string? DopamineAdvice     // Gợi ý cân bằng dopamine
     );
 }

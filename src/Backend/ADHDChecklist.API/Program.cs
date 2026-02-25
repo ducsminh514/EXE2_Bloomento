@@ -64,6 +64,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ADHDChecklist.API.Features.AI.BreakdownTask;
+using ADHDChecklist.API.Features.Focus;
+
 using Microsoft.AspNetCore.RateLimiting;
 using PayOS;
 
@@ -432,6 +434,8 @@ app.MapCreatePayment();
 app.MapPayOSWebhook();
 
 app.MapBreakdownTask();
+app.MapFocusSessionEndpoints();
+
 
 
 // ============================================

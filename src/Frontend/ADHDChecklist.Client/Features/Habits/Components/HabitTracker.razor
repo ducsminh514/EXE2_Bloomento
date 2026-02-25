@@ -64,7 +64,18 @@
                     <div class="flex items-center justify-between group">
                         <div class="min-w-[100px] max-w-[120px]">
                             <p class="text-xs font-bold text-gray-700 truncate" title="@habit.Title">@habit.Title</p>
-                            <p class="text-[10px] text-gray-400">Streak: @habit.CurrentStreak🔥</p>
+                            @if (habit.CurrentStreak == 0 && habit.LongestStreak > 3)
+                            {
+                                <p class="text-[10px] text-amber-500 font-bold">💛 Kỷ lục @habit.LongestStreak ngày — bắt đầu lại thôi!</p>
+                            }
+                            else if (habit.CurrentStreak > 0)
+                            {
+                                <p class="text-[10px] text-gray-400">Streak: @habit.CurrentStreak🔥</p>
+                            }
+                            else
+                            {
+                                <p class="text-[10px] text-gray-400">Bắt đầu hôm nay nhé! 🌱</p>
+                            }
                         </div>
                         
                         <!-- Week Grid (Mon-Sun) -->

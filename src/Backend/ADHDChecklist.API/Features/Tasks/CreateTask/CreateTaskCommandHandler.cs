@@ -31,8 +31,8 @@ namespace ADHDChecklist.API.Features.Tasks.CreateTask
 
             if (!user.IsPremium())
             {
-                // 2. Count active tasks
-                var taskCount = await _context.Tasks.CountAsync(t => t.UserId == request.UserId && t.DeletedAt == null, cancellationToken);
+                // 2. Count ACTIVE (incomplete) tasks only — không phạt người dùng chăm chỉ đã xong nhiều task
+                var taskCount = await _context.Tasks.CountAsync(t => t.UserId == request.UserId && t.DeletedAt == null && !t.IsCompleted, cancellationToken);
                 
                 if (taskCount >= 50)
                 {

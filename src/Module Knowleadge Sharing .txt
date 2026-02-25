@@ -1,0 +1,29 @@
+Các tính năng ADHD-friendly chính:
+1. Hỗ trợ Đọc hiểu
+
+TL;DR (Too Long Didn't Read) - Tóm tắt nhanh cho người không kiên nhẫn đọc hết
+Audio Version - Phiên bản audio cho người thích nghe hơn đọc
+Reading Progress - Lưu vị trí đọc, giúp quay lại đúng chỗ
+Estimated Read Time - Biết trước thời gian đọc để lên kế hoạch
+Difficulty Level - Phân loại độ khó để chọn bài phù hợp
+
+2. Giữ Engagement
+
+Highlights & Notes - Đánh dấu và ghi chú ngay trong bài
+Visual Aids - Đánh dấu bài có hình ảnh/infographic
+Reading Sessions - Theo dõi thời gian tập trung đọc
+
+3. Tính năng Xã hội
+
+Comment với nested replies
+Like bài viết và comment
+Bookmark với collections và notes cá nhân
+Follow tác giả yêu thích
+Notification system
+
+4. Quản lý Nội dung
+
+Categories có hierarchy (danh mục cha-con)
+Tag system linh hoạt
+Report system cho nội dung vi phạm
+View/Like/Comment/Share counters

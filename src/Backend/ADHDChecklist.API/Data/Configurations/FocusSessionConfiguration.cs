@@ -54,12 +54,13 @@ public class FocusSessionConfiguration : IEntityTypeConfiguration<FocusSession>
             .HasForeignKey(fs => fs.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // ✅ FIX: Explicitly configure Task relationship
+        // ✅ FIX: Explicitly configure Task relationship with reverse nav to avoid shadow FK TaskId1
         builder.HasOne(fs => fs.Task)
-            .WithMany() // No reverse navigation needed
+            .WithMany(t => t.FocusSessions)
             .HasForeignKey(fs => fs.TaskId)
             .OnDelete(DeleteBehavior.SetNull)
             .IsRequired(false);
+
 
         // Indexes for analytics
         builder.HasIndex(fs => new { fs.UserId, fs.StartedAt })

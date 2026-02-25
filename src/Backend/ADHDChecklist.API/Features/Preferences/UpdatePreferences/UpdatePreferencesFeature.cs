@@ -26,6 +26,22 @@ public class UpdatePreferencesHandler : IRequestHandler<UpdatePreferencesCommand
 
     public async Task<bool> Handle(UpdatePreferencesCommand request, CancellationToken ct)
     {
+        // P0-4 Security Fix: Check Premium tier before allowing theme color change
+        if (request.ThemeColor != null && request.ThemeColor != "indigo")
+        {
+            var userTier = await _context.Users
+                .Where(u => u.Id == request.UserId)
+                .Select(u => u.SubscriptionTier)
+                .FirstOrDefaultAsync(ct);
+
+            if (userTier == Entities.Common.SubscriptionTier.Free)
+            {
+                throw new Entities.Exceptions.PremiumFeatureException(
+                    "Đổi màu chủ đề chỉ dành cho gói Premium và Family.",
+                    "Custom Theme");
+            }
+        }
+
         // Find existing preference or create new
         var preference = await _context.UserPreferences
             .FirstOrDefaultAsync(p => p.UserId == request.UserId, ct);

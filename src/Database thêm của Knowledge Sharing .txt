@@ -1,0 +1,371 @@
+-- =============================================
+-- KNOWLEDGE SHARING MODULE FOR ADHD USERS
+-- Designed with ADHD-friendly features in mind
+-- =============================================
+
+-- Bảng Chủ đề/Danh mục bài viết
+CREATE TABLE [dbo].[KnowledgeCategories](
+    [Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT NEWID(),
+    [Name] [nvarchar](100) NOT NULL,
+    [Slug] [nvarchar](100) NOT NULL UNIQUE,
+    [Description] [nvarchar](500) NULL,
+    [ColorHex] [nvarchar](7) NOT NULL DEFAULT '#3B82F6',
+    [Icon] [nvarchar](50) NULL,
+    [ParentCategoryId] [uniqueidentifier] NULL,
+    [OrderIndex] [int] NOT NULL DEFAULT 0,
+    [IsActive] [bit] NOT NULL DEFAULT 1,
+    [CreatedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    CONSTRAINT [FK_KnowledgeCategories_Parent] FOREIGN KEY([ParentCategoryId]) 
+        REFERENCES [dbo].[KnowledgeCategories] ([Id])
+);
+
+-- Bảng Bài viết
+CREATE TABLE [dbo].[Articles](
+    [Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT NEWID(),
+    [AuthorId] [uniqueidentifier] NOT NULL,
+    [CategoryId] [uniqueidentifier] NULL,
+    [Title] [nvarchar](200) NOT NULL,
+    [Slug] [nvarchar](250) NOT NULL UNIQUE,
+    [Summary] [nvarchar](500) NULL, -- Tóm tắt ngắn gọn cho ADHD
+    [Content] [nvarchar](max) NOT NULL,
+    [FeaturedImage] [nvarchar](500) NULL,
+    [EstimatedReadTime] [int] NULL, -- Thời gian đọc ước tính (phút)
+    
+    -- ADHD-friendly features
+    [HasAudioVersion] [bit] NOT NULL DEFAULT 0, -- Có phiên bản audio không
+    [AudioUrl] [nvarchar](500) NULL,
+    [HasTLDR] [bit] NOT NULL DEFAULT 0, -- Có phần TL;DR (Too Long Didn't Read)
+    [TLDRContent] [nvarchar](1000) NULL,
+    [HasVisualAids] [bit] NOT NULL DEFAULT 0, -- Có hình ảnh/infographic
+    [DifficultyLevel] [int] NOT NULL DEFAULT 1, -- 1=Dễ, 2=Trung bình, 3=Khó
+    
+    -- SEO & Metadata
+    [MetaDescription] [nvarchar](300) NULL,
+    [MetaKeywords] [nvarchar](500) NULL,
+    
+    -- Publishing
+    [Status] [nvarchar](20) NOT NULL DEFAULT 'draft', -- draft, published, archived
+    [PublishedAt] [datetime2](7) NULL,
+    [ViewCount] [int] NOT NULL DEFAULT 0,
+    [LikeCount] [int] NOT NULL DEFAULT 0,
+    [CommentCount] [int] NOT NULL DEFAULT 0,
+    [ShareCount] [int] NOT NULL DEFAULT 0,
+    [BookmarkCount] [int] NOT NULL DEFAULT 0,
+    
+    -- Timestamps
+    [CreatedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    [UpdatedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    [DeletedAt] [datetime2](7) NULL,
+    
+    CONSTRAINT [FK_Articles_Users] FOREIGN KEY([AuthorId]) 
+        REFERENCES [dbo].[Users] ([Id]),
+    CONSTRAINT [FK_Articles_Categories] FOREIGN KEY([CategoryId]) 
+        REFERENCES [dbo].[KnowledgeCategories] ([Id]) ON DELETE SET NULL
+);
+
+-- Bảng Tags cho bài viết
+CREATE TABLE [dbo].[ArticleTags](
+    [Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT NEWID(),
+    [Name] [nvarchar](50) NOT NULL UNIQUE,
+    [Slug] [nvarchar](50) NOT NULL UNIQUE,
+    [UsageCount] [int] NOT NULL DEFAULT 0,
+    [CreatedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE()
+);
+
+-- Bảng quan hệ Article - Tags
+CREATE TABLE [dbo].[ArticleTagMappings](
+    [ArticleId] [uniqueidentifier] NOT NULL,
+    [TagId] [uniqueidentifier] NOT NULL,
+    [CreatedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    PRIMARY KEY ([ArticleId], [TagId]),
+    CONSTRAINT [FK_ArticleTagMappings_Articles] FOREIGN KEY([ArticleId]) 
+        REFERENCES [dbo].[Articles] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_ArticleTagMappings_Tags] FOREIGN KEY([TagId]) 
+        REFERENCES [dbo].[ArticleTags] ([Id]) ON DELETE CASCADE
+);
+
+-- Bảng Comment
+CREATE TABLE [dbo].[ArticleComments](
+    [Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT NEWID(),
+    [ArticleId] [uniqueidentifier] NOT NULL,
+    [UserId] [uniqueidentifier] NOT NULL,
+    [ParentCommentId] [uniqueidentifier] NULL, -- Cho nested comments
+    [Content] [nvarchar](2000) NOT NULL,
+    [LikeCount] [int] NOT NULL DEFAULT 0,
+    [IsEdited] [bit] NOT NULL DEFAULT 0,
+    [IsPinned] [bit] NOT NULL DEFAULT 0, -- Ghim comment
+    [IsHidden] [bit] NOT NULL DEFAULT 0, -- Ẩn comment
+    [CreatedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    [UpdatedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    [DeletedAt] [datetime2](7) NULL,
+    
+    CONSTRAINT [FK_ArticleComments_Articles] FOREIGN KEY([ArticleId]) 
+        REFERENCES [dbo].[Articles] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_ArticleComments_Users] FOREIGN KEY([UserId]) 
+        REFERENCES [dbo].[Users] ([Id]),
+    CONSTRAINT [FK_ArticleComments_Parent] FOREIGN KEY([ParentCommentId]) 
+        REFERENCES [dbo].[ArticleComments] ([Id])
+);
+
+-- Bảng Like cho comment
+CREATE TABLE [dbo].[CommentLikes](
+    [Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT NEWID(),
+    [CommentId] [uniqueidentifier] NOT NULL,
+    [UserId] [uniqueidentifier] NOT NULL,
+    [CreatedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    UNIQUE([CommentId], [UserId]),
+    CONSTRAINT [FK_CommentLikes_Comments] FOREIGN KEY([CommentId]) 
+        REFERENCES [dbo].[ArticleComments] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_CommentLikes_Users] FOREIGN KEY([UserId]) 
+        REFERENCES [dbo].[Users] ([Id]) ON DELETE CASCADE
+);
+
+-- Bảng Like cho bài viết
+CREATE TABLE [dbo].[ArticleLikes](
+    [Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT NEWID(),
+    [ArticleId] [uniqueidentifier] NOT NULL,
+    [UserId] [uniqueidentifier] NOT NULL,
+    [CreatedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    UNIQUE([ArticleId], [UserId]),
+    CONSTRAINT [FK_ArticleLikes_Articles] FOREIGN KEY([ArticleId]) 
+        REFERENCES [dbo].[Articles] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_ArticleLikes_Users] FOREIGN KEY([UserId]) 
+        REFERENCES [dbo].[Users] ([Id]) ON DELETE CASCADE
+);
+
+-- Bảng Bookmark/Save bài viết
+CREATE TABLE [dbo].[ArticleBookmarks](
+    [Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT NEWID(),
+    [ArticleId] [uniqueidentifier] NOT NULL,
+    [UserId] [uniqueidentifier] NOT NULL,
+    [CollectionName] [nvarchar](100) NULL, -- Người dùng có thể tạo collection
+    [Notes] [nvarchar](500) NULL, -- Ghi chú cá nhân
+    [CreatedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    UNIQUE([ArticleId], [UserId]),
+    CONSTRAINT [FK_ArticleBookmarks_Articles] FOREIGN KEY([ArticleId]) 
+        REFERENCES [dbo].[Articles] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_ArticleBookmarks_Users] FOREIGN KEY([UserId]) 
+        REFERENCES [dbo].[Users] ([Id]) ON DELETE CASCADE
+);
+
+-- Bảng Reading Progress (ADHD-friendly feature)
+-- Giúp người dùng theo dõi tiến độ đọc và quay lại đúng vị trí
+CREATE TABLE [dbo].[ReadingProgress](
+    [Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT NEWID(),
+    [ArticleId] [uniqueidentifier] NOT NULL,
+    [UserId] [uniqueidentifier] NOT NULL,
+    [ProgressPercentage] [int] NOT NULL DEFAULT 0, -- 0-100
+    [LastReadPosition] [int] NULL, -- Vị trí scroll/đoạn văn cuối đọc
+    [TimeSpentSeconds] [int] NOT NULL DEFAULT 0, -- Tổng thời gian đọc
+    [IsCompleted] [bit] NOT NULL DEFAULT 0,
+    [CompletedAt] [datetime2](7) NULL,
+    [LastReadAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    [CreatedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    UNIQUE([ArticleId], [UserId]),
+    CONSTRAINT [FK_ReadingProgress_Articles] FOREIGN KEY([ArticleId]) 
+        REFERENCES [dbo].[Articles] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_ReadingProgress_Users] FOREIGN KEY([UserId]) 
+        REFERENCES [dbo].[Users] ([Id]) ON DELETE CASCADE
+);
+
+-- Bảng Reading Sessions (Chi tiết từng phiên đọc)
+CREATE TABLE [dbo].[ReadingSessions](
+    [Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT NEWID(),
+    [ArticleId] [uniqueidentifier] NOT NULL,
+    [UserId] [uniqueidentifier] NOT NULL,
+    [StartedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    [EndedAt] [datetime2](7) NULL,
+    [DurationSeconds] [int] NULL,
+    [DeviceType] [nvarchar](50) NULL, -- mobile, desktop, tablet
+    
+    CONSTRAINT [FK_ReadingSessions_Articles] FOREIGN KEY([ArticleId]) 
+        REFERENCES [dbo].[Articles] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_ReadingSessions_Users] FOREIGN KEY([UserId]) 
+        REFERENCES [dbo].[Users] ([Id]) ON DELETE CASCADE
+);
+
+-- Bảng Article Highlights/Notes
+-- Cho phép người dùng highlight và ghi chú trong bài viết
+CREATE TABLE [dbo].[ArticleHighlights](
+    [Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT NEWID(),
+    [ArticleId] [uniqueidentifier] NOT NULL,
+    [UserId] [uniqueidentifier] NOT NULL,
+    [HighlightedText] [nvarchar](1000) NOT NULL,
+    [Note] [nvarchar](500) NULL,
+    [ColorHex] [nvarchar](7) NOT NULL DEFAULT '#FFEB3B',
+    [StartPosition] [int] NOT NULL, -- Vị trí bắt đầu trong content
+    [EndPosition] [int] NOT NULL, -- Vị trí kết thúc
+    [CreatedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    [UpdatedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    
+    CONSTRAINT [FK_ArticleHighlights_Articles] FOREIGN KEY([ArticleId]) 
+        REFERENCES [dbo].[Articles] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_ArticleHighlights_Users] FOREIGN KEY([UserId]) 
+        REFERENCES [dbo].[Users] ([Id]) ON DELETE CASCADE
+);
+
+-- Bảng Article Reports (Báo cáo vi phạm)
+CREATE TABLE [dbo].[ArticleReports](
+    [Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT NEWID(),
+    [ArticleId] [uniqueidentifier] NULL,
+    [CommentId] [uniqueidentifier] NULL,
+    [ReporterId] [uniqueidentifier] NOT NULL,
+    [ReasonType] [nvarchar](50) NOT NULL, -- spam, inappropriate, misleading, etc.
+    [Description] [nvarchar](1000) NULL,
+    [Status] [nvarchar](20) NOT NULL DEFAULT 'pending', -- pending, reviewed, resolved
+    [ReviewedBy] [uniqueidentifier] NULL,
+    [ReviewedAt] [datetime2](7) NULL,
+    [ReviewNotes] [nvarchar](500) NULL,
+    [CreatedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    
+    CONSTRAINT [FK_ArticleReports_Articles] FOREIGN KEY([ArticleId]) 
+        REFERENCES [dbo].[Articles] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_ArticleReports_Comments] FOREIGN KEY([CommentId]) 
+        REFERENCES [dbo].[ArticleComments] ([Id]),
+    CONSTRAINT [FK_ArticleReports_Reporter] FOREIGN KEY([ReporterId]) 
+        REFERENCES [dbo].[Users] ([Id]),
+    CONSTRAINT [FK_ArticleReports_Reviewer] FOREIGN KEY([ReviewedBy]) 
+        REFERENCES [dbo].[Users] ([Id])
+);
+
+-- Bảng User Follow (Theo dõi tác giả)
+CREATE TABLE [dbo].[UserFollows](
+    [Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT NEWID(),
+    [FollowerId] [uniqueidentifier] NOT NULL,
+    [FollowingId] [uniqueidentifier] NOT NULL,
+    [CreatedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    UNIQUE([FollowerId], [FollowingId]),
+    CONSTRAINT [FK_UserFollows_Follower] FOREIGN KEY([FollowerId]) 
+        REFERENCES [dbo].[Users] ([Id]),
+    CONSTRAINT [FK_UserFollows_Following] FOREIGN KEY([FollowingId]) 
+        REFERENCES [dbo].[Users] ([Id]),
+    CONSTRAINT [CK_UserFollows_NotSelf] CHECK ([FollowerId] != [FollowingId])
+);
+
+-- Bảng Notifications cho module Knowledge
+CREATE TABLE [dbo].[KnowledgeNotifications](
+    [Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT NEWID(),
+    [UserId] [uniqueidentifier] NOT NULL,
+    [Type] [nvarchar](50) NOT NULL, -- new_article, comment, like, follow, mention
+    [RelatedArticleId] [uniqueidentifier] NULL,
+    [RelatedCommentId] [uniqueidentifier] NULL,
+    [RelatedUserId] [uniqueidentifier] NULL, -- Người thực hiện action
+    [Message] [nvarchar](500) NOT NULL,
+    [IsRead] [bit] NOT NULL DEFAULT 0,
+    [ReadAt] [datetime2](7) NULL,
+    [CreatedAt] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+    
+    CONSTRAINT [FK_KnowledgeNotifications_Users] FOREIGN KEY([UserId]) 
+        REFERENCES [dbo].[Users] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_KnowledgeNotifications_Articles] FOREIGN KEY([RelatedArticleId]) 
+        REFERENCES [dbo].[Articles] ([Id]),
+    CONSTRAINT [FK_KnowledgeNotifications_Comments] FOREIGN KEY([RelatedCommentId]) 
+        REFERENCES [dbo].[ArticleComments] ([Id]),
+    CONSTRAINT [FK_KnowledgeNotifications_RelatedUsers] FOREIGN KEY([RelatedUserId]) 
+        REFERENCES [dbo].[Users] ([Id])
+);
+
+-- =============================================
+-- INDEXES FOR PERFORMANCE
+-- =============================================
+
+-- Articles indexes
+CREATE NONCLUSTERED INDEX [IX_Articles_AuthorId] ON [dbo].[Articles]([AuthorId]);
+CREATE NONCLUSTERED INDEX [IX_Articles_CategoryId] ON [dbo].[Articles]([CategoryId]);
+CREATE NONCLUSTERED INDEX [IX_Articles_Status] ON [dbo].[Articles]([Status]) WHERE [DeletedAt] IS NULL;
+CREATE NONCLUSTERED INDEX [IX_Articles_PublishedAt] ON [dbo].[Articles]([PublishedAt] DESC) WHERE [Status] = 'published';
+CREATE NONCLUSTERED INDEX [IX_Articles_Slug] ON [dbo].[Articles]([Slug]);
+CREATE NONCLUSTERED INDEX [IX_Articles_ViewCount] ON [dbo].[Articles]([ViewCount] DESC);
+
+-- Comments indexes
+CREATE NONCLUSTERED INDEX [IX_ArticleComments_ArticleId] ON [dbo].[ArticleComments]([ArticleId]);
+CREATE NONCLUSTERED INDEX [IX_ArticleComments_UserId] ON [dbo].[ArticleComments]([UserId]);
+CREATE NONCLUSTERED INDEX [IX_ArticleComments_ParentId] ON [dbo].[ArticleComments]([ParentCommentId]);
+CREATE NONCLUSTERED INDEX [IX_ArticleComments_CreatedAt] ON [dbo].[ArticleComments]([CreatedAt] DESC);
+
+-- Reading Progress indexes
+CREATE NONCLUSTERED INDEX [IX_ReadingProgress_UserId] ON [dbo].[ReadingProgress]([UserId]);
+CREATE NONCLUSTERED INDEX [IX_ReadingProgress_LastReadAt] ON [dbo].[ReadingProgress]([LastReadAt] DESC);
+
+-- Notifications indexes
+CREATE NONCLUSTERED INDEX [IX_KnowledgeNotifications_UserId_IsRead] 
+    ON [dbo].[KnowledgeNotifications]([UserId], [IsRead]);
+CREATE NONCLUSTERED INDEX [IX_KnowledgeNotifications_CreatedAt] 
+    ON [dbo].[KnowledgeNotifications]([CreatedAt] DESC);
+
+-- User Follows indexes
+CREATE NONCLUSTERED INDEX [IX_UserFollows_FollowerId] ON [dbo].[UserFollows]([FollowerId]);
+CREATE NONCLUSTERED INDEX [IX_UserFollows_FollowingId] ON [dbo].[UserFollows]([FollowingId]);
+
+-- =============================================
+-- TRIGGERS FOR AUTO-UPDATE COUNTS
+-- =============================================
+
+-- Trigger để tự động update CommentCount trong Articles
+GO
+CREATE TRIGGER [trg_Articles_UpdateCommentCount]
+ON [dbo].[ArticleComments]
+AFTER INSERT, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Update cho INSERT
+    UPDATE a
+    SET CommentCount = (
+        SELECT COUNT(*) 
+        FROM ArticleComments 
+        WHERE ArticleId = a.Id AND DeletedAt IS NULL
+    )
+    FROM Articles a
+    INNER JOIN inserted i ON a.Id = i.ArticleId;
+    
+    -- Update cho DELETE
+    UPDATE a
+    SET CommentCount = (
+        SELECT COUNT(*) 
+        FROM ArticleComments 
+        WHERE ArticleId = a.Id AND DeletedAt IS NULL
+    )
+    FROM Articles a
+    INNER JOIN deleted d ON a.Id = d.ArticleId;
+END;
+GO
+
+-- Trigger để tự động update LikeCount trong Articles
+GO
+CREATE TRIGGER [trg_Articles_UpdateLikeCount]
+ON [dbo].[ArticleLikes]
+AFTER INSERT, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    UPDATE a
+    SET LikeCount = (SELECT COUNT(*) FROM ArticleLikes WHERE ArticleId = a.Id)
+    FROM Articles a
+    INNER JOIN (
+        SELECT COALESCE(i.ArticleId, d.ArticleId) AS ArticleId
+        FROM inserted i FULL OUTER JOIN deleted d ON 1=1
+    ) changes ON a.Id = changes.ArticleId;
+END;
+GO
+
+-- Trigger để tự động update BookmarkCount trong Articles
+GO
+CREATE TRIGGER [trg_Articles_UpdateBookmarkCount]
+ON [dbo].[ArticleBookmarks]
+AFTER INSERT, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    UPDATE a
+    SET BookmarkCount = (SELECT COUNT(*) FROM ArticleBookmarks WHERE ArticleId = a.Id)
+    FROM Articles a
+    INNER JOIN (
+        SELECT COALESCE(i.ArticleId, d.ArticleId) AS ArticleId
+        FROM inserted i FULL OUTER JOIN deleted d ON 1=1
+    ) changes ON a.Id = changes.ArticleId;
+END;
+GO

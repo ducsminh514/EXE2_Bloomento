@@ -1,4 +1,5 @@
 @using System.Timers
+@inject HttpClient Http
 
 <div class="flex flex-col items-center">
     <!-- Timer Display -->
@@ -19,6 +20,15 @@
              }
         </div>
     </div>
+
+    <!-- Focused Task Display -->
+    @if (!string.IsNullOrEmpty(FocusedTaskTitle))
+    {
+        <div class="mb-4 px-4 py-2 bg-white/10 rounded-xl backdrop-blur text-white/80 text-sm text-center max-w-xs">
+            <span class="text-white/50 text-xs block mb-0.5">Đang tập trung vào</span>
+            <span class="font-semibold">@FocusedTaskTitle</span>
+        </div>
+    }
 
     <!-- Controls -->
     <div class="flex gap-4 mb-8">
@@ -46,15 +56,24 @@
         </button>
     </div>
 
+    <!-- Pomodoro Round Counter -->
+    <div class="flex gap-2 mb-4">
+        @for (int i = 0; i < 4; i++)
+        {
+            var idx = i;
+            <div class="w-3 h-3 rounded-full @(idx < _completedRounds ? "bg-white" : "bg-white/20")"></div>
+        }
+    </div>
+
     <!-- Presets -->
     <div class="flex gap-2 bg-black/20 p-1 rounded-xl backdrop-blur-sm">
-        <button @onclick="() => SetTime(25)" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors @(_initialMinutes == 25 ? "bg-white text-primary-900 shadow" : "text-white/60 hover:text-white hover:bg-white/5")">
+        <button @onclick="() => SetTime(25, false)" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors @(_initialMinutes == 25 && !_isBreak ? "bg-white text-primary-900 shadow" : "text-white/60 hover:text-white hover:bg-white/5")">
             Pomodoro (25m)
         </button>
-        <button @onclick="() => SetTime(5)" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors @(_initialMinutes == 5 ? "bg-white text-primary-900 shadow" : "text-white/60 hover:text-white hover:bg-white/5")">
+        <button @onclick="() => SetTime(5, true)" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors @(_initialMinutes == 5 && _isBreak ? "bg-white text-primary-900 shadow" : "text-white/60 hover:text-white hover:bg-white/5")">
             Short Break (5m)
         </button>
-         <button @onclick="() => SetTime(15)" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors @(_initialMinutes == 15 ? "bg-white text-primary-900 shadow" : "text-white/60 hover:text-white hover:bg-white/5")">
+         <button @onclick="() => SetTime(15, true)" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors @(_initialMinutes == 15 && _isBreak ? "bg-white text-primary-900 shadow" : "text-white/60 hover:text-white hover:bg-white/5")">
             Long Break (15m)
         </button>
     </div>
@@ -62,11 +81,20 @@
 
 @code {
     [Parameter] public EventCallback OnTimerComplete { get; set; }
+    [Parameter] public Guid? FocusedTaskId { get; set; }
+    [Parameter] public string? FocusedTaskTitle { get; set; }
+    [Parameter] public string? ActiveWhiteNoise { get; set; }
 
     private Timer? _timer;
     private TimeSpan _timeLeft;
     private int _initialMinutes = 25;
     private bool _isRunning = false;
+    private bool _isBreak = false;
+    private int _completedRounds = 0;
+
+    // P0-2: Track session start time for FocusSession logging
+    private DateTime _sessionStartedAt;
+    private int _actualSecondsElapsed = 0;
 
     protected override void OnInitialized()
     {
@@ -76,13 +104,15 @@
         _timer.AutoReset = true;
     }
 
-    private void SetTime(int minutes)
+    private void SetTime(int minutes, bool isBreak)
     {
         _timer?.Stop();
-        _isRunning = false; // Add explicit running set to false
+        _isRunning = false;
+        _isBreak = isBreak;
         _initialMinutes = minutes;
         _timeLeft = TimeSpan.FromMinutes(minutes);
-        StateHasChanged(); // Force update
+        _actualSecondsElapsed = 0;
+        StateHasChanged();
     }
 
     private void ToggleTimer()
@@ -93,6 +123,11 @@
 
     private void StartTimer()
     {
+        if (_actualSecondsElapsed == 0)
+        {
+            // New session starting
+            _sessionStartedAt = DateTime.UtcNow;
+        }
         _isRunning = true;
         _timer?.Start();
     }
@@ -106,6 +141,7 @@
     private void ResetTimer()
     {
         PauseTimer();
+        _actualSecondsElapsed = 0;
         _timeLeft = TimeSpan.FromMinutes(_initialMinutes);
     }
 
@@ -114,13 +150,58 @@
         if (_timeLeft.TotalSeconds > 0)
         {
             _timeLeft = _timeLeft.Add(TimeSpan.FromSeconds(-1));
+            if (!_isBreak) _actualSecondsElapsed++; // Only count focus time, not break
             StateHasChanged();
         }
         else
         {
             PauseTimer();
-            // Play notification sound
+
+            // P0-2 FIX: Save FocusSession to DB when a WORK round completes
+            if (!_isBreak)
+            {
+                _completedRounds = (_completedRounds + 1) % 5;
+                await SaveFocusSessionAsync(wasCompleted: true);
+            }
+
+            // Auto-cycle: after work → short break (or long break every 4 rounds)
+            if (!_isBreak)
+            {
+                var breakMinutes = _completedRounds == 0 ? 15 : 5; // Long break after 4 rounds
+                SetTime(breakMinutes, true);
+                StartTimer(); // Auto-start break
+            }
+            else
+            {
+                // Break ended → back to work
+                SetTime(25, false);
+            }
+
             await OnTimerComplete.InvokeAsync();
+        }
+    }
+
+    // P0-2: Save session data to backend for Analytics
+    private async Task SaveFocusSessionAsync(bool wasCompleted)
+    {
+        try
+        {
+            var payload = new
+            {
+                TaskId = FocusedTaskId,
+                StartedAt = _sessionStartedAt,
+                PlannedDuration = _initialMinutes,
+                ActualDuration = _actualSecondsElapsed,
+                WasCompleted = wasCompleted,
+                WhiteNoiseUsed = ActiveWhiteNoise
+            };
+
+            await Http.PostAsJsonAsync("/api/focus-sessions", payload);
+            _actualSecondsElapsed = 0; // Reset for next session
+        }
+        catch
+        {
+            // Fail silently — don't disrupt the user's focus flow
         }
     }
 

@@ -140,6 +140,34 @@
                     </div>
                 </div>
 
+                <!-- Row 5: Recurring Task (P2-1) -->
+                <div class="flex items-center gap-3 px-1">
+                    <label class="flex items-center gap-2 cursor-pointer group flex-1">
+                        <div class="relative">
+                            <InputCheckbox @bind-Value="_model.IsRecurring"
+                                          class="sr-only peer" id="recurringCheck" />
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-500"></div>
+                        </div>
+                        <span class="text-xs font-bold text-gray-600 dark:text-gray-300 group-hover:text-primary-600 transition-colors">
+                            🔁 Lặp lại
+                        </span>
+                    </label>
+
+                    @if (_model.IsRecurring)
+                    {
+                        <div class="flex gap-1.5 animate-fade-in">
+                            @foreach (var pattern in new[] { ("daily", "Hàng ngày"), ("weekdays", "Ngày thường"), ("weekly", "Hàng tuần") })
+                            {
+                                var p = pattern;
+                                <button type="button" @onclick="() => _model.RecurrencePattern = p.Item1"
+                                        class="text-[10px] font-bold px-2.5 py-1 rounded-full transition-all @(_model.RecurrencePattern == p.Item1 ? "bg-primary-500 text-white shadow-sm" : "bg-gray-100 text-gray-500 hover:bg-gray-200")">
+                                    @p.Item2
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+
                 @if (!string.IsNullOrEmpty(_errorMessage))
                 {
                     <div class="text-xs font-medium bg-red-50 p-3 rounded-lg border border-red-100 flex items-start gap-2 animate-fade-in">
@@ -258,6 +286,9 @@
         public string DopamineType { get; set; } = "Low";
         public string? AssignedUserId { get; set; }
         public bool IsMandatory { get; set; }
+        // P2-1: Recurring task fields
+        public bool IsRecurring { get; set; } = false;
+        public string RecurrencePattern { get; set; } = "daily";
     }
 
     [Parameter] public List<FamilyMemberResponse> FamilyMembers { get; set; } = new();
@@ -293,8 +324,8 @@
                 timeEnd,
                 duration,
                 _model.Priority,
-                false,
-                null,
+                _model.IsRecurring, // P2-1: Recurring task
+                _model.IsRecurring ? _model.RecurrencePattern : null, // Pattern chỉ gửi khi IsRecurring
                 _model.DopamineType,
                 FamilyId,
                 string.IsNullOrEmpty(_model.AssignedUserId) ? null : Guid.Parse(_model.AssignedUserId),
