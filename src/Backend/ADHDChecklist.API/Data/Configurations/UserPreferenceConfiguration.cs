@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ADHDChecklist.API.Entities;
 
@@ -61,7 +61,7 @@ public class UserPreferencesConfiguration : IEntityTypeConfiguration<UserPrefere
 
         builder.Property(up => up.UpdatedAt)
             .IsRequired()
-            .HasDefaultValueSql("GETUTCDATE()");
+            .HasDefaultValueSql("now() at time zone 'utc'");
 
         builder.HasOne(up => up.User)
             .WithMany(u => u.Preferences)

@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using ADHDChecklist.API.Features.Tasks.AutoAdjust;
 using Hangfire;
+using Hangfire.PostgreSql; // Npgsql Hangfire storage
+using Microsoft.EntityFrameworkCore;
 using ADHDChecklist.API.Data;
 using ADHDChecklist.API.Entities;
 using ADHDChecklist.API.Entities.Common;
@@ -90,12 +92,12 @@ builder.Services.Configure<FormOptions>(options =>
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    options.UseSqlServer(connectionString, sqlOptions =>
+    options.UseNpgsql(connectionString, pgOptions =>
     {
-        sqlOptions.EnableRetryOnFailure(
+        pgOptions.EnableRetryOnFailure(
             maxRetryCount: 5,
             maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorNumbersToAdd: null);
+            errorCodesToAdd: null);
     });
 
     if (builder.Environment.IsDevelopment())
@@ -242,7 +244,7 @@ builder.Services.AddHangfire(configuration => configuration
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
     .UseSimpleAssemblyNameTypeSerializer()
     .UseRecommendedSerializerSettings()
-    .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+    .UsePostgreSqlStorage(c => c.UseNpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"))));
 
 builder.Services.AddHangfireServer();
 

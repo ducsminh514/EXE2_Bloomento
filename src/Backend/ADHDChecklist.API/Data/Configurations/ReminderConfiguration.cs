@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ADHDChecklist.API.Entities;
 
@@ -31,14 +31,14 @@ public class ReminderConfiguration : IEntityTypeConfiguration<Reminder>
 
         builder.Property(r => r.CreatedAt)
             .IsRequired()
-            .HasDefaultValueSql("GETUTCDATE()");
+            .HasDefaultValueSql("now() at time zone 'utc'");
 
         // Relationships
         builder.HasOne(r => r.Task)
             .WithMany(t => t.Reminders)
             .HasForeignKey(r => r.TaskId)
             .OnDelete(DeleteBehavior.Cascade)
-            .IsRequired(false); // ✅ FIX: Make navigation optional
+            .IsRequired(false); // ? FIX: Make navigation optional
 
         // Indexes - Important for background job queries
         builder.HasIndex(r => new { r.IsSent, r.RemindAt })
@@ -48,7 +48,7 @@ public class ReminderConfiguration : IEntityTypeConfiguration<Reminder>
         builder.HasIndex(r => r.TaskId)
             .HasDatabaseName("IX_Reminders_TaskId");
 
-        // ✅ ADD: Query filter matching Task's soft delete
+        // ? ADD: Query filter matching Task's soft delete
         builder.HasQueryFilter(r => r.Task!.DeletedAt == null);
     }
 }

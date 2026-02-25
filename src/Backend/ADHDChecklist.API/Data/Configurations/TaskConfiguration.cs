@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ADHDChecklist.API.Data.Configurations;
@@ -63,11 +63,11 @@ public class TaskConfiguration : IEntityTypeConfiguration<Entities.Task>
 
         builder.Property(t => t.CreatedAt)
             .IsRequired()
-            .HasDefaultValueSql("GETUTCDATE()");
+            .HasDefaultValueSql("now() at time zone 'utc'");
 
         builder.Property(t => t.UpdatedAt)
             .IsRequired()
-            .HasDefaultValueSql("GETUTCDATE()");
+            .HasDefaultValueSql("now() at time zone 'utc'");
 
         builder.Property(t => t.DeletedAt)
             .IsRequired(false);

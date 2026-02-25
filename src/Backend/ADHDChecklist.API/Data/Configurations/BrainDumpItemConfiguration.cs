@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ADHDChecklist.API.Entities;
 
@@ -30,7 +30,7 @@ public class BrainDumpItemConfiguration : IEntityTypeConfiguration<BrainDumpItem
 
         builder.Property(bd => bd.CreatedAt)
             .IsRequired()
-            .HasDefaultValueSql("GETUTCDATE()");
+            .HasDefaultValueSql("now() at time zone 'utc'");
 
         // Relationships
         builder.HasOne(bd => bd.User)

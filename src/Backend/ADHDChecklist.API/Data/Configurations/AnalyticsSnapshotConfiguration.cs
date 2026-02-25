@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ADHDChecklist.API.Entities;
 
@@ -42,10 +42,10 @@ public class AnalyticsSnapshotConfiguration : IEntityTypeConfiguration<Analytics
 
         builder.Property(a => a.CreatedAt)
             .IsRequired()
-            .HasDefaultValueSql("GETUTCDATE()");
+            .HasDefaultValueSql("now() at time zone 'utc'");
 
         // Relationships
-        // ✅ FIX: Explicitly configure User relationship
+        // ? FIX: Explicitly configure User relationship
         builder.HasOne(a => a.User)
             .WithMany() // No reverse navigation needed
             .HasForeignKey(a => a.UserId)

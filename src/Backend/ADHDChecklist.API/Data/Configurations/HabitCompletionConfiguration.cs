@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ADHDChecklist.API.Entities;
 
@@ -19,7 +19,7 @@ public class HabitCompletionConfiguration : IEntityTypeConfiguration<HabitComple
 
         builder.Property(hc => hc.CompletedAt)
             .IsRequired()
-            .HasDefaultValueSql("GETUTCDATE()");
+            .HasDefaultValueSql("now() at time zone 'utc'");
 
         builder.Property(hc => hc.Notes)
             .HasMaxLength(500);

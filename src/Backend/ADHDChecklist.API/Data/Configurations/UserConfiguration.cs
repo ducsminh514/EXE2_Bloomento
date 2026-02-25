@@ -1,4 +1,4 @@
-Ôªøusing ADHDChecklist.API.Entities;
+using ADHDChecklist.API.Entities;
 using ADHDChecklist.API.Entities.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -9,7 +9,7 @@ public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
 {
     public void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
-        // Table name - ƒê√£ set trong OnModelCreating
+        // Table name - –„ set trong OnModelCreating
         // builder.ToTable("Users");
 
         // Properties
@@ -36,7 +36,7 @@ public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
 
         builder.Property(u => u.CreatedAt)
             .IsRequired()
-            .HasDefaultValueSql("GETUTCDATE()");
+            .HasDefaultValueSql("now() at time zone 'utc'");
 
         builder.Property(u => u.LastLoginAt)
             .IsRequired(false);

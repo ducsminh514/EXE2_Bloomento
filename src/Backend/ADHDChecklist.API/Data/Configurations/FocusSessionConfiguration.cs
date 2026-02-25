@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ADHDChecklist.API.Entities;
 
@@ -46,7 +46,7 @@ public class FocusSessionConfiguration : IEntityTypeConfiguration<FocusSession>
 
         builder.Property(fs => fs.CreatedAt)
             .IsRequired()
-            .HasDefaultValueSql("GETUTCDATE()");
+            .HasDefaultValueSql("now() at time zone 'utc'");
 
         // Relationships
         builder.HasOne(fs => fs.User)
@@ -54,7 +54,7 @@ public class FocusSessionConfiguration : IEntityTypeConfiguration<FocusSession>
             .HasForeignKey(fs => fs.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // ✅ FIX: Explicitly configure Task relationship with reverse nav to avoid shadow FK TaskId1
+        // ? FIX: Explicitly configure Task relationship with reverse nav to avoid shadow FK TaskId1
         builder.HasOne(fs => fs.Task)
             .WithMany(t => t.FocusSessions)
             .HasForeignKey(fs => fs.TaskId)

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ADHDChecklist.API.Entities;
 
@@ -16,7 +16,7 @@ public class DistractionLogConfiguration : IEntityTypeConfiguration<DistractionL
         // Properties
         builder.Property(dl => dl.LoggedAt)
             .IsRequired()
-            .HasDefaultValueSql("GETUTCDATE()");
+            .HasDefaultValueSql("now() at time zone 'utc'");
 
         builder.Property(dl => dl.DistractionType)
             .HasMaxLength(100);
