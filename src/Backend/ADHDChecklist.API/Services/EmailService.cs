@@ -1,6 +1,4 @@
-﻿using MailKit.Net.Smtp;
-using MailKit.Security;
-using MimeKit;
+﻿using System.Net.Http.Json;
 
 namespace ADHDChecklist.API.Services;
 
@@ -36,7 +34,7 @@ public class EmailService : IEmailService
                 <p>
                     <a href='{verificationLink}' 
                        style='background-color: #4F46E5; color: white; padding: 12px 24px; 
-                              text-decoration: none; border-radius: 6px; display: inline-block;'>
+                               text-decoration: none; border-radius: 6px; display: inline-block;'>
                         Xác nhận Email
                     </a>
                 </p>
@@ -64,7 +62,7 @@ public class EmailService : IEmailService
                 <p>
                     <a href='{resetLink}' 
                        style='background-color: #EF4444; color: white; padding: 12px 24px; 
-                              text-decoration: none; border-radius: 6px; display: inline-block;'>
+                               text-decoration: none; border-radius: 6px; display: inline-block;'>
                         Đặt lại mật khẩu
                     </a>
                 </p>
@@ -103,7 +101,7 @@ public class EmailService : IEmailService
                 <p style='margin-top: 30px;'>
                     <a href='https://localhost:7002' 
                        style='background-color: #10B981; color: white; padding: 12px 24px; 
-                              text-decoration: none; border-radius: 6px; display: inline-block;'>
+                               text-decoration: none; border-radius: 6px; display: inline-block;'>
                         Bắt đầu ngay
                     </a>
                 </p>
@@ -155,37 +153,37 @@ public class EmailService : IEmailService
     {
         try
         {
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(
-                _configuration["EmailSettings:SenderName"],
-                _configuration["EmailSettings:SenderEmail"]
-            ));
-            message.To.Add(MailboxAddress.Parse(toEmail));
-            message.Subject = subject;
+            var senderName = _configuration["EmailSettings:SenderName"];
+            var senderEmail = _configuration["EmailSettings:SenderEmail"];
+            var apiKey = _configuration["EmailSettings:Password"];
 
-            var bodyBuilder = new BodyBuilder { HtmlBody = htmlBody };
-            message.Body = bodyBuilder.ToMessageBody();
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("api-key", apiKey);
 
-            using var smtp = new SmtpClient();
-            await smtp.ConnectAsync(
-                _configuration["EmailSettings:SmtpServer"],
-                int.Parse(_configuration["EmailSettings:SmtpPort"]!),
-                SecureSocketOptions.SslOnConnect
-            );
+            var requestBody = new
+            {
+                sender = new { name = senderName, email = senderEmail },
+                to = new[] { new { email = toEmail } },
+                subject = subject,
+                htmlContent = htmlBody
+            };
 
-            await smtp.AuthenticateAsync(
-                _configuration["EmailSettings:Username"],
-                _configuration["EmailSettings:Password"]
-            );
+            var response = await client.PostAsJsonAsync("https://api.brevo.com/v3/smtp/email", requestBody);
 
-            await smtp.SendAsync(message);
-            await smtp.DisconnectAsync(true);
-
-            _logger.LogInformation("Email sent successfully to {Email}", toEmail);
+            if (response.IsSuccessStatusCode)
+            {
+                _logger.LogInformation("Email sent successfully to {Email} via Brevo API", toEmail);
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogError("Brevo API Error for {Email}: {StatusCode} - {Content}", toEmail, response.StatusCode, errorContent);
+                throw new Exception($"Failed to send email via Brevo: {errorContent}");
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to send email to {Email}", toEmail);
+            _logger.LogError(ex, "Exception occurred while sending email to {Email}", toEmail);
             throw;
         }
     }
