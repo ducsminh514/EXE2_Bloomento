@@ -79,6 +79,7 @@ public class EmailService : IEmailService
 
     public async Task SendWelcomeEmailAsync(string toEmail, string userName)
     {
+        var frontendUrl = _configuration["FrontendUrl"] ?? "https://exe-2-bloomento.vercel.app";
         var subject = "Chào mừng đến với ADHD Checklist! 🎉";
         var body = $@"
             <html>
@@ -99,7 +100,7 @@ public class EmailService : IEmailService
                     <li>🎨 Custom themes</li>
                 </ul>
                 <p style='margin-top: 30px;'>
-                    <a href='https://localhost:7002' 
+                    <a href='{frontendUrl}' 
                        style='background-color: #10B981; color: white; padding: 12px 24px; 
                                text-decoration: none; border-radius: 6px; display: inline-block;'>
                         Bắt đầu ngay
