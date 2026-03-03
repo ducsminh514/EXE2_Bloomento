@@ -14,6 +14,14 @@ public static class PayOSWebhookFeature
     
     public static void MapPayOSWebhook(this IEndpointRouteBuilder app)
     {
+        // Accept CORS preflight request from PayOS Dashboard
+        app.MapMethods("/api/payments/webhook", new[] { "OPTIONS" }, () => Results.Ok())
+           .ExcludeFromDescription();
+
+        // Accept a dummy GET request in case PayOS pings it to verify URL existence
+        app.MapGet("/api/payments/webhook", () => Results.Ok(new { success = true, message = "Webhook endpoint is active." }))
+           .ExcludeFromDescription();
+
         app.MapPost("/api/payments/webhook", async (
             [Microsoft.AspNetCore.Mvc.FromBody] PayOS.Models.Webhooks.Webhook webhookBody,
             HttpContext context,
