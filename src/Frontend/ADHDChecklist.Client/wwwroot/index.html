@@ -33,13 +33,16 @@
             }
         }
     </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JWJ68QKLTR"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
 
-        // Hàm này để chúng ta gọi từ C# sau này
+        // Khởi tạo để Google Tag Assistant nhận diện được thẻ ngay lập tức
+        gtag('config', 'G-JWJ68QKLTR', { 'send_page_view': false });
+
+        // Hàm này để chúng ta gọi từ C# sau này khi chuyển trang (SPA)
         window.trackPageLevel = (measurementId) => {
             gtag('config', measurementId, { 'page_path': location.pathname });
         };
