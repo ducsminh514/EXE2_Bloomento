@@ -1,6 +1,9 @@
 ﻿@inherits LayoutComponentBase
 @using ADHDChecklist.Client.Features.Preferences.Services
+@implements IDisposable
 @inject IPreferencesService PreferencesService
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
 
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
     @Body
@@ -8,10 +11,40 @@
 
 @code {
     private bool _drawerOpen = false;
+    private const string MeasurementId = "G-JWJ68QKLTR"; // Bạn hãy thay bằng ID thật của bạn
 
     protected override async Task OnInitializedAsync()
     {
         await PreferencesService.GetPreferencesAsync();
+        
+        // Theo dõi lần load trang đầu tiên
+        await TrackPageView();
+        
+        // Đăng ký sự kiện chuyển trang
+        Navigation.LocationChanged += HandleLocationChanged;
+    }
+
+    private async void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        await TrackPageView();
+    }
+
+    private async Task TrackPageView()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("trackPageLevel", MeasurementId);
+        }
+        catch
+        {
+            // Tránh làm sập app nếu JS thất bại
+        }
+    }
+
+    public void Dispose()
+    {
+        // Hủy đăng ký để tránh rò rỉ bộ nhớ
+        Navigation.LocationChanged -= HandleLocationChanged;
     }
 
     void ToggleDrawer()
