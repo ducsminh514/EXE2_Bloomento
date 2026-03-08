@@ -4,21 +4,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bloomento</title>
+    <title>Bloomento [V2.0]</title>
+    <script>console.log("--- 🕵️ HỆ THỐNG KIỂM TRA: Bắt đầu tải thẻ Head của bản V2 ---");</script>
     <link rel="icon" type="image/png" href="logo.png" />
     <base href="/" />
     <link rel="stylesheet" href="css/app.css" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JWJ68QKLTR"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        // Hàm này để chúng ta gọi từ C# sau này
-        window.trackPageLevel = (measurementId) => {
-            gtag('config', measurementId, { 'page_path': location.pathname });
-        };
-    </script>
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
         tailwind.config = {
@@ -44,6 +34,23 @@
             }
         }
     </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JWJ68QKLTR"></script>
+    <script>
+        console.log("--- GA Script Block: Đã bắt đầu thực thi trong index.html ---");
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        // Khởi tạo để Google Tag Assistant nhận diện được thẻ ngay lập tức
+        gtag('config', 'G-JWJ68QKLTR', { 'send_page_view': false });
+        console.log("--- GA4: Đã gửi config ban đầu cho G-JWJ68QKLTR ---");
+
+        // Hàm này để chúng ta gọi từ C# sau này khi chuyển trang (SPA)
+        window.trackPageLevel = (measurementId, path) => {
+            console.log("--- 🔥 GA4 CALL FROM C#: ID=" + measurementId + " | Path=" + path + " ---");
+            gtag('config', measurementId, { 'page_path': path });
+        };
+    </script>
     <!-- If you add any scoped CSS files, uncomment the following to load them
     <link href="ADHDChecklist.Client.styles.css" rel="stylesheet" /> -->
     <!-- Custom DragDrop Logic used, no external CSS needed -->
@@ -51,9 +58,37 @@
     <link href="manifest.webmanifest" rel="manifest" />
     <link rel="apple-touch-icon" sizes="512x512" href="logo.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="logo.png" />
+    <script>
+        // --- NUCLEAR CACHE BREAK: Gỡ bỏ Service Worker cũ ngay lập tức ---
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                for (let registration of registrations) {
+                    registration.unregister();
+                    console.log("--- ☢️ NUCLEAR: Đã gỡ bỏ Service Worker cũ thành công ---");
+                }
+            });
+        }
+    </script>
 </head>
+<script>
+    (function () {
+        try {
+            const themeColor = localStorage.getItem('theme-color') || 'indigo';
+            const themeMode = localStorage.getItem('theme-mode') || 'light';
+            document.documentElement.classList.add('theme-' + themeColor);
+            if (themeMode === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+        } catch (e) { }
+    })();
+</script>
 
-<body>
+<body class="transition-colors duration-200">
+    <!-- Banner xác nhận phiên bản mới đã được tải -->
+    <div
+        style="background: #ef4444; color: white; text-align: center; font-size: 12px; padding: 2px; font-weight: bold; position: fixed; top: 0; left: 0; right: 0; z-index: 9999;">
+        DEPLOYMENT UPDATE 2.0 - CACHE BROKEN
+    </div>
     <div id="app">
         <svg class="loading-progress">
             <circle r="40%" cx="50%" cy="50%" />
@@ -67,9 +102,24 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script>
+        console.log("--- GA Script Block: Đang cấu hình Blazor.start với Integrity Bypass ---");
+        Blazor.start({
+            loadBootResource: function (type, name, defaultUri, integrity) {
+                // Ép trình duyệt bỏ qua Integrity Check bằng cách không trả về mã băm
+                console.log("--- 🛠️ LOADING RESOURCE WITHOUT INTEGRITY: " + name);
+                return defaultUri;
+            }
+        });
+    </script>
     <script src="js/editor.js"></script>
-    <script>navigator.serviceWorker.register('service-worker.js');</script>
+    <script>
+        // Đăng ký lại Service Worker bản mới sau khi đã "dọn dẹp"
+        navigator.serviceWorker.register('service-worker.js').then(reg => {
+            console.log("--- ✅ Service Worker bản mới đã được đăng ký ---");
+        });
+    </script>
 </body>
 
 </html>

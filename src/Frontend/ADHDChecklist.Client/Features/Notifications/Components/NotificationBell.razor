@@ -2,6 +2,7 @@
 @using ADHDChecklist.Client.Shared.Models
 @inject INotificationService NotificationService
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
 @implements IDisposable
 
 <div class="relative">
@@ -86,6 +87,12 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (!authState.User.Identity?.IsAuthenticated ?? false)
+        {
+            return;
+        }
+
         NotificationService.OnChange += StateHasChanged;
         await LoadNotifications();
         
