@@ -44,9 +44,11 @@
 
         // Hàm này để chúng ta gọi từ C# sau này khi chuyển trang (SPA)
         window.trackPageLevel = (measurementId) => {
+            console.log("--- GA4 đang cố gắng gửi dữ liệu cho ID: " + measurementId);
             gtag('config', measurementId, { 'page_path': location.pathname });
         };
     </script>
+    <script src="_framework/blazor.webassembly.js"></script>
     <!-- If you add any scoped CSS files, uncomment the following to load them
     <link href="ADHDChecklist.Client.styles.css" rel="stylesheet" /> -->
     <!-- Custom DragDrop Logic used, no external CSS needed -->

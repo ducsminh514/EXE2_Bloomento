@@ -15,11 +15,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await PreferencesService.GetPreferencesAsync();
         
         // Theo dõi lần load trang đầu tiên
         await TrackPageView();
-        
+        await PreferencesService.GetPreferencesAsync();
         // Đăng ký sự kiện chuyển trang
         Navigation.LocationChanged += HandleLocationChanged;
     }
@@ -33,7 +32,8 @@
     {
         try
         {
-            await JS.InvokeVoidAsync("trackPageLevel", MeasurementId);
+            var path = "/" + Navigation.ToBaseRelativePath(Navigation.Uri);
+            await JS.InvokeVoidAsync("trackPageLevel", MeasurementId, path);
         }
         catch
         {
