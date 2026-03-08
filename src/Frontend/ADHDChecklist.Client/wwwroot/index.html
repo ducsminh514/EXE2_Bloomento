@@ -43,9 +43,9 @@
         gtag('config', 'G-JWJ68QKLTR', { 'send_page_view': false });
 
         // Hàm này để chúng ta gọi từ C# sau này khi chuyển trang (SPA)
-        window.trackPageLevel = (measurementId) => {
-            console.log("--- GA4 đang cố gắng gửi dữ liệu cho ID: " + measurementId);
-            gtag('config', measurementId, { 'page_path': location.pathname });
+        window.trackPageLevel = (measurementId, path) => {
+            console.log("--- GA4 đang gửi dữ liệu cho ID: " + measurementId + " - Path: " + path);
+            gtag('config', measurementId, { 'page_path': path });
         };
     </script>
     <!-- If you add any scoped CSS files, uncomment the following to load them

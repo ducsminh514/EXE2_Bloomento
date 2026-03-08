@@ -100,7 +100,7 @@ if (!string.IsNullOrEmpty(databaseUrl))
         $"Database={uri.AbsolutePath.Trim('/')};" +
         $"Username={userInfo[0]};" +
         $"Password={userInfo[1]};" +
-        $"SSL Mode=Require;Trust Server Certificate=true";
+        $"SSL Mode=Prefer;Trust Server Certificate=true";
 }
 else
 {
@@ -178,12 +178,10 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddCors(options =>
 {
+    var allowedOrigins = builder.Configuration.GetSection("CorsSettings:AllowedOrigins").Get<string[]>() ?? new[] { "https://exe-2-bloomento.vercel.app" };
     options.AddPolicy("AllowBlazorClient", policy =>
     {
-        policy.SetIsOriginAllowed(origin => 
-                origin.StartsWith("http://localhost:") || 
-                origin.StartsWith("https://localhost:") || 
-                origin.EndsWith(".vercel.app"))
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
