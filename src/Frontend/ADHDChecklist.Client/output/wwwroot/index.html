@@ -8,6 +8,17 @@
     <link rel="icon" type="image/png" href="logo.png" />
     <base href="/" />
     <link rel="stylesheet" href="css/app.css" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        // Hàm này để chúng ta gọi từ C# sau này
+        window.trackPageLevel = (measurementId) => {
+            gtag('config', measurementId, { 'page_path': location.pathname });
+        };
+    </script>
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
         tailwind.config = {
