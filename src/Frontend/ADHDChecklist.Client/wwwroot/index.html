@@ -35,16 +35,18 @@
     </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-JWJ68QKLTR"></script>
     <script>
+        console.log("--- GA Script Block: Đã bắt đầu thực thi trong index.html ---");
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
 
         // Khởi tạo để Google Tag Assistant nhận diện được thẻ ngay lập tức
         gtag('config', 'G-JWJ68QKLTR', { 'send_page_view': false });
+        console.log("--- GA4: Đã gửi config ban đầu cho G-JWJ68QKLTR ---");
 
         // Hàm này để chúng ta gọi từ C# sau này khi chuyển trang (SPA)
         window.trackPageLevel = (measurementId, path) => {
-            console.log("--- GA4 đang gửi dữ liệu cho ID: " + measurementId + " - Path: " + path);
+            console.log("--- 🔥 GA4 CALL FROM C#: ID=" + measurementId + " | Path=" + path + " ---");
             gtag('config', measurementId, { 'page_path': path });
         };
     </script>
