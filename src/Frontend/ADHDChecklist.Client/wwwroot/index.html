@@ -57,6 +57,17 @@
     <link href="manifest.webmanifest" rel="manifest" />
     <link rel="apple-touch-icon" sizes="512x512" href="logo.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="logo.png" />
+    <script>
+        // --- NUCLEAR CACHE BREAK: Gỡ bỏ Service Worker cũ ngay lập tức ---
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                for (let registration of registrations) {
+                    registration.unregister();
+                    console.log("--- ☢️ NUCLEAR: Đã gỡ bỏ Service Worker cũ thành công ---");
+                }
+            });
+        }
+    </script>
 </head>
 <script>
     (function () {
@@ -72,6 +83,11 @@
 </script>
 
 <body class="transition-colors duration-200">
+    <!-- Banner xác nhận phiên bản mới đã được tải -->
+    <div
+        style="background: #ef4444; color: white; text-align: center; font-size: 12px; padding: 2px; font-weight: bold; position: fixed; top: 0; left: 0; right: 0; z-index: 9999;">
+        DEPLOYMENT UPDATE 2.0 - CACHE BROKEN
+    </div>
     <div id="app">
         <svg class="loading-progress">
             <circle r="40%" cx="50%" cy="50%" />
@@ -85,9 +101,24 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script>
+        console.log("--- GA Script Block: Đang cấu hình Blazor.start với Integrity Bypass ---");
+        Blazor.start({
+            loadBootResource: function (type, name, defaultUri, integrity) {
+                // Ép trình duyệt bỏ qua Integrity Check bằng cách không trả về mã băm
+                console.log("--- 🛠️ LOADING RESOURCE WITHOUT INTEGRITY: " + name);
+                return defaultUri;
+            }
+        });
+    </script>
     <script src="js/editor.js"></script>
-    <script>navigator.serviceWorker.register('service-worker.js');</script>
+    <script>
+        // Đăng ký lại Service Worker bản mới sau khi đã "dọn dẹp"
+        navigator.serviceWorker.register('service-worker.js').then(reg => {
+            console.log("--- ✅ Service Worker bản mới đã được đăng ký ---");
+        });
+    </script>
 </body>
 
 </html>
