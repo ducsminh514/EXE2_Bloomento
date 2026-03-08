@@ -30,13 +30,19 @@ public class PreferencesService : IPreferencesService
             {
                 CurrentThemeColor = response.ThemeColor ?? "indigo";
                 CurrentThemeMode = response.ThemeMode ?? "light";
+                
+                // Cache to LocalStorage for fast boot
+                await _js.InvokeVoidAsync("localStorage.setItem", "theme-color", CurrentThemeColor);
+                await _js.InvokeVoidAsync("localStorage.setItem", "theme-mode", CurrentThemeMode);
+                
                 NotifyStateChanged();
                 await ApplyThemeAsync();
             }
             return response;
         }
-        catch
+        catch (Exception ex)
         {
+            // Log but fallback to defaults or local storage if we can read it synchronously (not easy in WASM service without JSRuntime ready)
             return null;
         }
     }
@@ -48,8 +54,16 @@ public class PreferencesService : IPreferencesService
             var request = new UpdatePreferencesRequest(themeColor, themeMode);
             var response = await _apiClient.PutAsync<object>("/api/preferences", request);
             
-            if (themeColor != null) CurrentThemeColor = themeColor;
-            if (themeMode != null) CurrentThemeMode = themeMode;
+            if (themeColor != null) 
+            {
+                CurrentThemeColor = themeColor;
+                await _js.InvokeVoidAsync("localStorage.setItem", "theme-color", themeColor);
+            }
+            if (themeMode != null) 
+            {
+                CurrentThemeMode = themeMode;
+                await _js.InvokeVoidAsync("localStorage.setItem", "theme-mode", themeMode);
+            }
             
             NotifyStateChanged();
             await ApplyThemeAsync();
