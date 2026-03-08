@@ -178,10 +178,12 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddCors(options =>
 {
-    var allowedOrigins = builder.Configuration.GetSection("CorsSettings:AllowedOrigins").Get<string[]>() ?? new[] { "https://exe-2-bloomento.vercel.app" };
     options.AddPolicy("AllowBlazorClient", policy =>
     {
-        policy.WithOrigins(allowedOrigins)
+        policy.SetIsOriginAllowed(origin => 
+                origin.StartsWith("http://localhost:") || 
+                origin.StartsWith("https://localhost:") || 
+                origin.EndsWith(".vercel.app"))
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();

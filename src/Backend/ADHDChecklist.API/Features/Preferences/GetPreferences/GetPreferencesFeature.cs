@@ -49,13 +49,18 @@ public static class GetPreferencesEndpoint
             IMediator mediator,
             CancellationToken ct) =>
         {
-            var userId = Guid.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var userIdStr = user.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr))
+            {
+                return Results.Ok(new PreferencesResponse("indigo", "light"));
+            }
+
+            var userId = Guid.Parse(userIdStr);
             var result = await mediator.Send(new GetPreferencesQuery(userId), ct);
             
-            // Return default if not found
             return Results.Ok(result ?? new PreferencesResponse("indigo", "light"));
         })
-        .RequireAuthorization()
+        .AllowAnonymous()
         .WithTags("Preferences");
     }
 }
