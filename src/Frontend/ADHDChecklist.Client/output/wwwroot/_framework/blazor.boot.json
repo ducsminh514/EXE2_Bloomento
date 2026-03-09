@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "ADHDChecklist.Client",
   "resources": {
-    "hash": "sha256-81Czo7zhc0CZI/GLlX2WXQu7nDasqYaN410x8NioNpc=",
+    "hash": "sha256-gt9Kv3cbZMoV2rNEVYm9Dds3k1hF9VF9H36jCRSZrII=",
     "jsModuleNative": {
       "dotnet.native.js": "sha256-vtotCeXt2UD6oc459laJT32vBgigZ+eLoUmdeFkvYDk="
     },
@@ -78,8 +78,8 @@
       "System.Linq.Queryable.wasm": "sha256-wcCbRCvYi32lGjRratFp9u99gfVIJpNsj1PJgRmDkB8=",
       "System.Linq.wasm": "sha256-5QGfeuQ1r5H8wTnkJNpvSeMSqSErAmg5lZYVW9LJVa8=",
       "System.Memory.wasm": "sha256-erXEs50mOTsYxJ/8XHtAyhap3qnIzh/9UcxZIptXwMI=",
-      "System.Net.Http.Json.wasm": "sha256-UchulSG59SXJGbtvkxG5aM3z1GnjdJJpXlmgL67WxFo=",
-      "System.Net.Http.wasm": "sha256-B8KkMfuRnq343m8yddIjuyw83rGuuP+RiTs8Vz9OZAg=",
+      "System.Net.Http.Json.wasm": "sha256-cAPF8eBAfI0rvp6p8VTs51XfNMyippXd6ZbDZ9m/2F8=",
+      "System.Net.Http.wasm": "sha256-wu+AybrcE024bmqiPjcr7KMS6thP4bgpDrkdDFVEXNE=",
       "System.Net.Primitives.wasm": "sha256-RRnyM1vcKXdEcO2GmxH/fzwYZ8kiZvW8Jj57W/FOcQ8=",
       "System.Net.Requests.wasm": "sha256-qkv4Vcg/+yToZ54CKVqlzNLGJJSMGBUIthvBgUbB/vI=",
       "System.Net.Security.wasm": "sha256-55S0dnTXWcZisz38cDXJe2Q4LwxttnEhU9eqrBtonYE=",
@@ -92,7 +92,7 @@
       "System.Runtime.InteropServices.wasm": "sha256-tIqL6dCMcl/UC+J0C+H+P06IxLzx6Y2MpKSJ8rSsUec=",
       "System.Runtime.Serialization.Formatters.wasm": "sha256-uHuYL6QHHAT2j/hNyqzZM0ibpa5zhi1Mo/+F7qToW9w=",
       "System.Runtime.Serialization.Primitives.wasm": "sha256-/WlTBXcLNuJUbyiFDInopQHAGIz9nst6IZ0iVs5q4ZI=",
-      "System.Runtime.wasm": "sha256-XCHdXWM85zPUqZCbcWwwsQAg7MJj6MDCSP2Wit/5ulk=",
+      "System.Runtime.wasm": "sha256-M7PeRMvXmnQXi47TuSy1CtSuPbiKcXt5ojUX3PohmO0=",
       "System.Security.Claims.wasm": "sha256-3q1dO7Vlf2Z+sOYz1wScZtfcqWgJxOi71M82oXTXWDQ=",
       "System.Security.Cryptography.wasm": "sha256-DCZ5YWC2NMEUVGz88hvRpSzc82GO7SSpNRgILg16LqQ=",
       "System.Text.RegularExpressions.wasm": "sha256-lwWDWhW9hRP27MhzxplUB+dGlJ3P+6fDIBzhdfxXgkQ=",
@@ -101,13 +101,13 @@
       "System.wasm": "sha256-I4hhyMuUoHdrzDopL9tlnkL/Skg+0OO+gmkOXNT3dcg=",
       "netstandard.wasm": "sha256-KN3YEwdTZvpnqzoLyHgtrZtt5890/vdlEcdSOLJ68Rc=",
       "System.Private.CoreLib.wasm": "sha256-YYdvwLq6RwtSk3erX9yBzVJ629+4+MA8i+7vEsdVG9U=",
-      "ADHDChecklist.Client.wasm": "sha256-vkgTbnbikN0pI9+FRIX+Uae7hknxrXx5Rk6X4MqwPuc="
+      "ADHDChecklist.Client.wasm": "sha256-PK62MLBDAUYQLpdBLQOmC3acqWg0MAOvxmk741r7nlI="
     }
   },
-  "cacheBootResources": true,
   "debugLevel": 0,
   "linkerEnabled": true,
   "appsettings": [
+    "../appsettings.Development.json",
     "../appsettings.json"
   ],
   "globalizationMode": "sharded",

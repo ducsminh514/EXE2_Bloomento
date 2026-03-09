@@ -110,7 +110,7 @@
                 @foreach (var task in Tasks.Where(t => t.TimeBlockStart.HasValue))
                 {
                      // Calculate precise position
-                    var start = task.TimeBlockStart.Value;
+                    var start = task.TimeBlockStart!.Value;
                     if (start.Hour < startHour) continue; // Skip if before 6am (or handle gracefully)
 
                     var taskStartMinutes = (start.Hour - startHour) * 60 + start.Minute;
@@ -209,7 +209,7 @@
 </div>
 
 @code {
-    [Inject] public DragDropState _dragState { get; set; }
+    [Inject] public DragDropState _dragState { get; set; } = default!;
 
     [Parameter] public List<TaskResponse> Tasks { get; set; } = new();
     [Parameter] public DateOnly _selectedDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);

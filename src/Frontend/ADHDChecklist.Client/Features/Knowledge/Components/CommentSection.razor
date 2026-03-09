@@ -177,7 +177,7 @@
                     builder.AddAttribute(28, "rows", "2");
                     builder.AddAttribute(29, "placeholder", "Viết câu trả lời...");
                     builder.AddAttribute(30, "value", Microsoft.AspNetCore.Components.BindConverter.FormatValue(_replyContent));
-                    builder.AddAttribute(31, "onchange", Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, __value => _replyContent = __value, _replyContent));
+                    builder.AddAttribute(31, "onchange", Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, __value => _replyContent = __value ?? "", _replyContent));
                     builder.CloseElement();
                     
                     builder.OpenElement(32, "div");

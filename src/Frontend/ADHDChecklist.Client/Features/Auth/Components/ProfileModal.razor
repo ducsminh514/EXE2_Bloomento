@@ -121,7 +121,7 @@
     [Parameter] public EventCallback OnUpgradeClicked { get; set; }
     [Parameter] public CurrentUser InitialUser { get; set; } = new();
 
-    [Inject] public IFamilyService FamilyService { get; set; }
+    [Inject] public IFamilyService FamilyService { get; set; } = default!;
 
     private ProfileFormModel _model = new();
     private bool _isSubmitting;

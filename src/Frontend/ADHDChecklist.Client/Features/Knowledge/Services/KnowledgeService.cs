@@ -17,7 +17,7 @@ namespace ADHDChecklist.Client.Features.Knowledge.Services
         {
             try
             {
-                return await _apiClient.GetAsync<List<KnowledgeCategoryDto>>("/api/knowledge/categories");
+                return await _apiClient.GetAsync<List<KnowledgeCategoryDto>>("/api/knowledge/categories") ?? new List<KnowledgeCategoryDto>();
             }
             catch (Exception ex)
             {
@@ -30,7 +30,7 @@ namespace ADHDChecklist.Client.Features.Knowledge.Services
         {
             try
             {
-                return await _apiClient.GetAsync<List<ArticleSummaryDto>>($"/api/knowledge/category/{slug}/articles");
+                return await _apiClient.GetAsync<List<ArticleSummaryDto>>($"/api/knowledge/category/{slug}/articles") ?? new List<ArticleSummaryDto>();
             }
             catch (Exception ex)
             {
@@ -55,7 +55,7 @@ namespace ADHDChecklist.Client.Features.Knowledge.Services
         {
             try
             {
-                return await _apiClient.GetAsync<List<CommentDto>>($"/api/knowledge/articles/{articleId}/comments");
+                return await _apiClient.GetAsync<List<CommentDto>>($"/api/knowledge/articles/{articleId}/comments") ?? new List<CommentDto>();
             }
             catch (Exception ex)
             {
@@ -97,7 +97,7 @@ namespace ADHDChecklist.Client.Features.Knowledge.Services
         {
             try
             {
-                return await _apiClient.GetAsync<List<ArticleSummaryDto>>("/api/knowledge/bookmarks");
+                return await _apiClient.GetAsync<List<ArticleSummaryDto>>("/api/knowledge/bookmarks") ?? new List<ArticleSummaryDto>();
             }
             catch (Exception ex)
             {
@@ -123,7 +123,8 @@ namespace ADHDChecklist.Client.Features.Knowledge.Services
             try
             {
                 var response = await _apiClient.PostAsync<dynamic>("/api/admin/knowledge/articles", article);
-                return Guid.Parse(response.id.ToString());
+                string? idStr = response?.id?.ToString();
+                return idStr != null ? Guid.Parse(idStr) : null;
             }
             catch (Exception ex)
             {

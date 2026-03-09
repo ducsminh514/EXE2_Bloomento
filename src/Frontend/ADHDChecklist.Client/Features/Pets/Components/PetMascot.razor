@@ -194,10 +194,10 @@
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             _errorMessage = "Không thể kết nối với thế giới Linh vật. Vui lòng kiểm tra mạng.";
-            Console.WriteLine($"Pet API Error: {ex.Message}");
+            Console.WriteLine("Pet API Error");
         }
         finally 
         {
@@ -260,7 +260,7 @@
                 _errorMessage = null; // Tải thành công thì xóa lỗi cũ (nếu có)
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             _errorMessage = "Không thể khởi tạo môi trường 3D.";
         }
@@ -277,7 +277,7 @@
             await PetService.RecoverPetAsync();
             // Thành công thì RefreshAsync sẽ tự động được gọi qua Event
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             _errorMessage = "Sử dụng vật phẩm thất bại. Có thể do thiếu Coins hoặc lỗi máy chủ.";
         }

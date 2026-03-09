@@ -40,7 +40,7 @@ public class PreferencesService : IPreferencesService
             }
             return response;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // Log but fallback to defaults or local storage if we can read it synchronously (not easy in WASM service without JSRuntime ready)
             return null;

@@ -42,14 +42,4 @@
 </CascadingAuthenticationState>
 
 @code {
-    // Redirect to login component
-    private class RedirectToLogin : ComponentBase
-    {
-        [Inject] NavigationManager Navigation { get; set; } = default!;
-
-        protected override void OnInitialized()
-        {
-            Navigation.NavigateTo("/login");
-        }
-    }
 }

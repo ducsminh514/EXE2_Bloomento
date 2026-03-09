@@ -409,7 +409,7 @@
     }
 
     // Direct reject without modal (kept for compatibility if needed, but UI now uses modal)
-    private async Task RejectReward(Guid rewardId)
+    private void RejectReward(Guid rewardId)
     {
         // Now redirects to modal flow if called from list directly
         var reward = _rewards.FirstOrDefault(r => r.Id == rewardId);
