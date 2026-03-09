@@ -399,13 +399,6 @@ namespace ADHDChecklist.API.Migrations
                     b.Property<int?>("PreviousSubscriptionTier")
                         .HasColumnType("integer");
 
-                    b.Property<string>("RefreshToken")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<DateTime?>("RefreshTokenExpiry")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
@@ -454,11 +447,52 @@ namespace ADHDChecklist.API.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.HasIndex("RefreshToken")
-                        .HasDatabaseName("IX_Users_RefreshToken")
-                        .HasFilter("\"RefreshToken\" IS NOT NULL");
-
                     b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.Common.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedByIp")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("GracePeriodExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ReplacedByTokenHash")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("ADHDChecklist.API.Entities.DistractionLog", b =>
@@ -929,6 +963,72 @@ namespace ADHDChecklist.API.Migrations
                     b.ToTable("Notifications");
                 });
 
+            modelBuilder.Entity("ADHDChecklist.API.Entities.PetEvolutionStage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AssetUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("EvolutionName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("RequiredLevel")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TemplateId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TemplateId");
+
+                    b.ToTable("PetEvolutionStages", (string)null);
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.PetTemplate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("System");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Species")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PetTemplates", (string)null);
+                });
+
             modelBuilder.Entity("ADHDChecklist.API.Entities.ReadingProgress", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1185,6 +1285,102 @@ namespace ADHDChecklist.API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.UserInventory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Coins")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L);
+
+                    b.Property<int>("ResurrectionPotionCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserInventories", (string)null);
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.UserPet", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
+                    b.Property<int>("CurrentHealth")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(100);
+
+                    b.Property<int>("CurrentLevel")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
+
+                    b.Property<string>("CustomName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("LastActionAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("LastHpUpdateAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<Guid>("TemplateId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("TotalXp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TemplateId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserPets", (string)null);
                 });
 
             modelBuilder.Entity("ADHDChecklist.API.Entities.UserPreference", b =>
@@ -1491,6 +1687,17 @@ namespace ADHDChecklist.API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ADHDChecklist.API.Entities.Common.RefreshToken", b =>
+                {
+                    b.HasOne("ADHDChecklist.API.Entities.Common.ApplicationUser", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ADHDChecklist.API.Entities.DistractionLog", b =>
                 {
                     b.HasOne("ADHDChecklist.API.Entities.FocusSession", "FocusSession")
@@ -1647,6 +1854,17 @@ namespace ADHDChecklist.API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ADHDChecklist.API.Entities.PetEvolutionStage", b =>
+                {
+                    b.HasOne("ADHDChecklist.API.Entities.PetTemplate", "Template")
+                        .WithMany("EvolutionStages")
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Template");
+                });
+
             modelBuilder.Entity("ADHDChecklist.API.Entities.ReadingProgress", b =>
                 {
                     b.HasOne("ADHDChecklist.API.Entities.Article", "Article")
@@ -1721,6 +1939,36 @@ namespace ADHDChecklist.API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.UserInventory", b =>
+                {
+                    b.HasOne("ADHDChecklist.API.Entities.Common.ApplicationUser", "User")
+                        .WithOne("UserInventory")
+                        .HasForeignKey("ADHDChecklist.API.Entities.UserInventory", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.UserPet", b =>
+                {
+                    b.HasOne("ADHDChecklist.API.Entities.PetTemplate", "Template")
+                        .WithMany("UserPets")
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ADHDChecklist.API.Entities.Common.ApplicationUser", "User")
+                        .WithOne("UserPet")
+                        .HasForeignKey("ADHDChecklist.API.Entities.UserPet", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Template");
 
                     b.Navigation("User");
                 });
@@ -1818,7 +2066,13 @@ namespace ADHDChecklist.API.Migrations
 
                     b.Navigation("Preferences");
 
+                    b.Navigation("RefreshTokens");
+
                     b.Navigation("Tasks");
+
+                    b.Navigation("UserInventory");
+
+                    b.Navigation("UserPet");
                 });
 
             modelBuilder.Entity("ADHDChecklist.API.Entities.Family", b =>
@@ -1843,6 +2097,13 @@ namespace ADHDChecklist.API.Migrations
                     b.Navigation("Articles");
 
                     b.Navigation("SubCategories");
+                });
+
+            modelBuilder.Entity("ADHDChecklist.API.Entities.PetTemplate", b =>
+                {
+                    b.Navigation("EvolutionStages");
+
+                    b.Navigation("UserPets");
                 });
 
             modelBuilder.Entity("ADHDChecklist.API.Entities.Task", b =>

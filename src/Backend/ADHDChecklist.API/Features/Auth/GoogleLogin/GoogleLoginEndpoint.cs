@@ -7,9 +7,9 @@ namespace ADHDChecklist.API.Features.Auth.GoogleLogin
     // ============================================
     public static class GoogleLoginEndpoint
     {
-        public static void MapGoogleLogin(this IEndpointRouteBuilder app)
+        public static RouteHandlerBuilder MapGoogleLogin(this IEndpointRouteBuilder app)
         {
-            app.MapPost("/api/auth/google-login", async (
+            return app.MapPost("/api/auth/google-login", async (
                 GoogleLoginCommand command,
                 IMediator mediator,
                 CancellationToken ct) =>

@@ -1,4 +1,5 @@
-﻿using ADHDChecklist.API.Entities.Common;
+﻿using ADHDChecklist.API.Data;
+using ADHDChecklist.API.Entities.Common;
 using ADHDChecklist.API.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -13,17 +14,20 @@ namespace ADHDChecklist.API.Features.Auth.GoogleLogin
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IConfiguration _configuration;
+        private readonly AppDbContext _context;
         private readonly ILogger<GoogleLoginCommandHandler> _logger;
 
         public GoogleLoginCommandHandler(
             UserManager<ApplicationUser> userManager,
             IJwtTokenService jwtTokenService,
             IConfiguration configuration,
+            AppDbContext context,
             ILogger<GoogleLoginCommandHandler> logger)
         {
             _userManager = userManager;
             _jwtTokenService = jwtTokenService;
             _configuration = configuration;
+            _context = context;
             _logger = logger;
         }
 
@@ -47,50 +51,59 @@ namespace ADHDChecklist.API.Features.Auth.GoogleLogin
                     );
                 }
 
-                // Find or create user
-                var user = await _userManager.FindByEmailAsync(payload.Email);
+                // 1. Find user by Google Login (Standard Identity approach)
+                var user = await _userManager.FindByLoginAsync("Google", payload.Subject);
                 bool isNewUser = false;
 
                 if (user == null)
                 {
-                    // Create new user from Google account
-                    user = new ApplicationUser
-                    {
-                        UserName = payload.Email,
-                        Email = payload.Email,
-                        FullName = payload.Name,
-                        EmailConfirmed = true,
-                        IsEmailVerified = true, // Google verified
-                        GoogleId = payload.Subject,
-                        GoogleProfilePicture = payload.Picture,
-                        SubscriptionTier = SubscriptionTier.Free,
-                        CreatedAt = DateTime.UtcNow,
-                        TimeZone = "Asia/Ho_Chi_Minh"
-                    };
+                    // 2. Fallback: Search by Email
+                    user = await _userManager.FindByEmailAsync(payload.Email);
 
-                    var result = await _userManager.CreateAsync(user);
-
-                    if (!result.Succeeded)
+                    if (user != null)
                     {
-                        var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                        _logger.LogError("Failed to create user from Google login: {Errors}", errors);
-                        return new GoogleLoginResponse(
-                            Success: false,
-                            Message: "Không thể tạo tài khoản. Vui lòng thử lại."
-                        );
+                        // 3. SECURITY GUARD: Root-Cause #3
+                        // If account exists but email is not verified, do not auto-link!
+                        if (!user.IsEmailVerified)
+                        {
+                            _logger.LogWarning("Security conflict: User {Email} exists but is not verified. Blocked Google Link.", payload.Email);
+                            return new GoogleLoginResponse(
+                                Success: false,
+                                Message: "Tài khoản của bạn đã tồn tại nhưng chưa được xác nhận qua email. Vui lòng đăng nhập bằng mật khẩu để liên kết tài khoản Google này."
+                            );
+                        }
+
+                        // Link existing verified account to Google
+                        await _userManager.AddLoginAsync(user, new UserLoginInfo("Google", payload.Subject, "Google"));
+                        _logger.LogInformation("Linked existing verified account {Email} to Google", payload.Email);
                     }
-
-                    isNewUser = true;
-                    _logger.LogInformation("New user created from Google login: {UserId}", user.Id);
-                }
-                else
-                {
-                    // Update Google info if changed
-                    if (user.GoogleId != payload.Subject)
+                    else
                     {
-                        user.GoogleId = payload.Subject;
-                        user.GoogleProfilePicture = payload.Picture;
-                        await _userManager.UpdateAsync(user);
+                        // 4. Create new user
+                        user = new ApplicationUser
+                        {
+                            UserName = payload.Email,
+                            Email = payload.Email,
+                            FullName = payload.Name,
+                            EmailConfirmed = true,
+                            IsEmailVerified = true, // Trusted from Google
+                            GoogleId = payload.Subject,
+                            GoogleProfilePicture = payload.Picture,
+                            SubscriptionTier = SubscriptionTier.Free,
+                            CreatedAt = DateTime.UtcNow,
+                            TimeZone = "Asia/Ho_Chi_Minh"
+                        };
+
+                        var createResult = await _userManager.CreateAsync(user);
+                        if (!createResult.Succeeded)
+                        {
+                            var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
+                            _logger.LogError("Failed to create user from Google: {Errors}", errors);
+                            return new GoogleLoginResponse(false, "Không thể tạo tài khoản từ Google.");
+                        }
+
+                        await _userManager.AddLoginAsync(user, new UserLoginInfo("Google", payload.Subject, "Google"));
+                        isNewUser = true;
                     }
                 }
 
@@ -103,14 +116,38 @@ namespace ADHDChecklist.API.Features.Auth.GoogleLogin
                     );
                 }
 
-                // Generate tokens
-                var accessToken = _jwtTokenService.GenerateAccessToken(user);
-                var refreshToken = _jwtTokenService.GenerateRefreshToken();
+                // Root-Cause Fix #1: Ensure RefreshTokens collection is loaded for accurate capping
+                await _context.Entry(user).Collection(u => u.RefreshTokens).LoadAsync(cancellationToken);
 
-                // Save refresh token
-                user.RefreshToken = refreshToken;
-                user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(30);
+                // SESSION CAPPING: Root-Cause Fix #2
+                // Limit to 10 active sessions. Revoke oldest if exceeded.
+                var activeTokens = user.RefreshTokens.Where(rt => rt.RevokedAt == null && !rt.IsExpired).OrderBy(rt => rt.CreatedAt).ToList();
+                if (activeTokens.Count >= 10)
+                {
+                    var tokensToRevoke = activeTokens.Take(activeTokens.Count - 9);
+                    foreach (var t in tokensToRevoke)
+                    {
+                        t.RevokedAt = DateTime.UtcNow;
+                    }
+                }
+
+                // Generate tokens (Using the async service)
+                var accessToken = await _jwtTokenService.GenerateAccessToken(user);
+                var refreshToken = _jwtTokenService.GenerateRefreshToken();
+                var refreshTokenHash = _jwtTokenService.HashToken(refreshToken);
+
+                // Save refresh token (Multi-device support)
+                user.RefreshTokens.Add(new Entities.Common.RefreshToken
+                {
+                    TokenHash = refreshTokenHash,
+                    ExpiresAt = DateTime.UtcNow.AddDays(30),
+                    CreatedByIp = "N/A"
+                });
+                
                 user.LastLoginAt = DateTime.UtcNow;
+
+                // Update info if changed
+                user.GoogleProfilePicture = payload.Picture;
 
                 await _userManager.UpdateAsync(user);
 
@@ -121,7 +158,7 @@ namespace ADHDChecklist.API.Features.Auth.GoogleLogin
 
                 return new GoogleLoginResponse(
                     Success: true,
-                    Message: isNewUser ? "Đăng ký thành công qua Google!" : "Đăng nhập thành công!",
+                    Message: isNewUser ? "Chào mừng bạn đến với Bloomento!" : "Đăng nhập thành công!",
                     AccessToken: accessToken,
                     RefreshToken: refreshToken,
                     User: new UserInfoGg(
@@ -137,11 +174,8 @@ namespace ADHDChecklist.API.Features.Auth.GoogleLogin
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Google login failed");
-                return new GoogleLoginResponse(
-                    Success: false,
-                    Message: "Đăng nhập Google thất bại. Vui lòng thử lại."
-                );
+                _logger.LogError(ex, "Google login fatal error");
+                return new GoogleLoginResponse(false, "Có lỗi xảy ra trong quá trình xác thực Google.");
             }
         }
     }

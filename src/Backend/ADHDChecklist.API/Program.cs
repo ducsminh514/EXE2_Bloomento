@@ -14,6 +14,7 @@ using ADHDChecklist.API.Features.Auth.RefreshToken;
 using ADHDChecklist.API.Features.Auth.Register;
 using ADHDChecklist.API.Features.Auth.ResendVerification;
 using ADHDChecklist.API.Features.Auth.VerifyEmail;
+using ADHDChecklist.API.Features.Auth.Logout;
 using System.Text.Json.Serialization;
 using ADHDChecklist.API.Features.Knowledge.Categories;
 using ADHDChecklist.API.Features.Knowledge.Articles;
@@ -48,6 +49,7 @@ using ADHDChecklist.API.Features.Family.CreateFamily;
 using ADHDChecklist.API.Features.Family.GetFamily;
 using ADHDChecklist.API.Features.Family.InviteMember;
 using ADHDChecklist.API.Features.Family.JoinFamily;
+using ADHDChecklist.API.Features.Pets;
 using ADHDChecklist.API.Features.Family.RemoveMember;
 using ADHDChecklist.API.Features.Family.UpdateMemberRole;
 using ADHDChecklist.API.Features.Notifications.GetNotifications;
@@ -62,7 +64,6 @@ using ADHDChecklist.API.Shared.Behaviors;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ADHDChecklist.API.Features.AI.BreakdownTask;
@@ -160,11 +161,6 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
     };
-})
-.AddGoogle(options =>
-{
-    options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
-    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
 });
 
 builder.Services.AddAuthorization(options =>
@@ -217,6 +213,8 @@ builder.Services.AddScoped<ADHDChecklist.API.Services.BackgroundJobs.ReminderJob
 builder.Services.AddHttpClient<IGeminiService, GeminiService>();
 builder.Services.AddScoped<KnowledgeSeeder>();
 builder.Services.AddScoped<IdentitySeeder>();
+builder.Services.AddScoped<PetSeeder>();
+builder.Services.AddScoped<IPetService, PetService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 // PayOS Configuration
@@ -237,6 +235,15 @@ builder.Services.AddRateLimiter(options =>
     options.AddFixedWindowLimiter("GeminiPolicy", opt =>
     {
         opt.PermitLimit = 5;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 0;
+    });
+
+    // Strict policy for Auth (Login, Register, Resend)
+    options.AddFixedWindowLimiter("AuthPolicy", opt =>
+    {
+        opt.PermitLimit = 10; // Max 10 attempts per minute
         opt.Window = TimeSpan.FromMinutes(1);
         opt.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
         opt.QueueLimit = 0;
@@ -351,12 +358,13 @@ app.MapGet("/health", async (AppDbContext db) =>
 });
 
 // Auth endpoints
-app.MapRegister();
-app.MapLogin();
+app.MapRegister().RequireRateLimiting("AuthPolicy");
+app.MapLogin().RequireRateLimiting("AuthPolicy");
 app.MapVerifyEmail();
-app.MapResendVerification();
-app.MapGoogleLogin();
+app.MapResendVerification().RequireRateLimiting("AuthPolicy");
+app.MapGoogleLogin().RequireRateLimiting("AuthPolicy");
 app.MapRefreshToken();
+app.MapLogout();
 
 // Task endpoints
 app.MapGetTaskById();
@@ -444,6 +452,7 @@ app.MapPayOSWebhook();
 
 app.MapBreakdownTask();
 app.MapFocusSessionEndpoints();
+app.MapPetEndpoints();
 
 
 
@@ -484,6 +493,9 @@ using (var scope = app.Services.CreateScope())
 
         var identitySeeder = scope.ServiceProvider.GetRequiredService<IdentitySeeder>();
         await identitySeeder.SeedAsync();
+
+        var petSeeder = scope.ServiceProvider.GetRequiredService<PetSeeder>();
+        await petSeeder.SeedAsync();
     }
     catch (Exception ex)
     {

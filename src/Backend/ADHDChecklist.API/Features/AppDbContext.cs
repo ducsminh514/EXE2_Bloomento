@@ -24,6 +24,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     public DbSet<BrainDumpItem> BrainDumpItems { get; set; } = null!;
     public DbSet<UserPreference> UserPreferences { get; set; } = null!;
     public DbSet<AnalyticsSnapshot> AnalyticsSnapshots { get; set; } = null!;
+    public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
+
+    // Pet System
+    public DbSet<PetTemplate> PetTemplates { get; set; } = null!;
+    public DbSet<PetEvolutionStage> PetEvolutionStages { get; set; } = null!;
+    public DbSet<UserPet> UserPets { get; set; } = null!;
+    public DbSet<UserInventory> UserInventories { get; set; } = null!;
     
     // Knowledge Sharing Module
     public DbSet<KnowledgeCategory> KnowledgeCategories { get; set; } = null!;
@@ -177,6 +184,21 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
             .WithMany()
             .HasForeignKey(t => t.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasOne(rt => rt.User)
+                .WithMany(u => u.RefreshTokens)
+                .HasForeignKey(rt => rt.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Property(rt => rt.ConcurrencyStamp)
+                .IsConcurrencyToken();
+        });
+
+        modelBuilder.Entity<RefreshToken>()
+            .HasIndex(rt => rt.TokenHash)
+            .IsUnique();
     }
 
     // Auto-update timestamps

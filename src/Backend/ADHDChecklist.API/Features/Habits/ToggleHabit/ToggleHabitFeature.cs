@@ -64,6 +64,7 @@ namespace ADHDChecklist.API.Features.Habits.ToggleHabit
                 // Check
                 var completion = new HabitCompletion
                 {
+                    Id = Guid.NewGuid(),
                     HabitId = request.HabitId,
                     CompletionDate = request.Date,
                     CompletedAt = DateTime.UtcNow

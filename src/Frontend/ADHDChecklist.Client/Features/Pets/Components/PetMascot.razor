@@ -1,0 +1,294 @@
+@using ADHDChecklist.Client.Features.Pets.Models
+@using ADHDChecklist.Client.Features.Pets.Services
+@using ADHDChecklist.Client.Features.Preferences.Services
+@implements IDisposable
+@inject IJSRuntime JSRuntime
+@inject IPetClientService PetService
+@inject IPreferencesService PreferencesService
+
+<div class="relative w-full @(IsCompact ? "h-60" : "h-72") transition-all duration-700 rounded-[2.5rem] overflow-hidden border backdrop-blur-3xl shadow-2xl group
+     @(PreferencesService.CurrentThemeMode == "dark" 
+        ? "bg-gradient-to-br from-emerald-950/40 via-slate-900/90 to-emerald-900/40 border-emerald-500/20 shadow-emerald-500/5" 
+        : "bg-gradient-to-br from-white/90 via-emerald-50/40 to-white/90 border-white/60 shadow-slate-200")">
+    
+    <!-- Dynamic Background Elements - Optimized for Light/Dark -->
+    <div class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+        <div class="absolute -top-24 -left-24 w-64 h-64 rounded-full blur-[100px] animate-pulse
+             @(PreferencesService.CurrentThemeMode == "dark" ? "bg-emerald-500/10" : "bg-emerald-300/40")"></div>
+        <div class="absolute -bottom-24 -right-24 w-64 h-64 rounded-full blur-[100px] animate-pulse
+             @(PreferencesService.CurrentThemeMode == "dark" ? "bg-teal-500/10" : "bg-teal-300/30")" style="animation-delay: 1.5s"></div>
+    </div>
+    
+    @if (_isLoading)
+    {
+        <div class="absolute inset-0 flex flex-col items-center justify-center space-y-4 z-20 
+             @(PreferencesService.CurrentThemeMode == "dark" ? "bg-slate-950/60" : "bg-white/60") backdrop-blur-md">
+            <div class="relative">
+                <div class="w-12 h-12 border-4 @(PreferencesService.CurrentThemeMode == "dark" ? "border-emerald-500/20 border-t-emerald-400" : "border-emerald-200 border-t-emerald-500") rounded-full animate-spin"></div>
+            </div>
+            <span class="text-xs font-black uppercase tracking-widest animate-pulse
+                  @(PreferencesService.CurrentThemeMode == "dark" ? "text-emerald-400" : "text-emerald-600")">Đang triệu hồi...</span>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center space-y-3 z-30 bg-white/90 backdrop-blur-md">
+            <span class="text-3xl text-amber-500">⚠️</span>
+            <p class="text-slate-800 font-bold text-sm">@_errorMessage</p>
+            <button @onclick="HandleRetry" 
+                    class="px-5 py-2 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-700 transition-all active:scale-95 shadow-lg">
+                Thử lại ngay
+            </button>
+        </div>
+    }
+
+    <!-- 3D Canvas Container -->
+    <div id="pet-mascot-container" class="absolute inset-0 z-0"></div>
+
+    @if (_pet != null)
+    {
+        <!-- UI Overlay - Top Left -->
+        <div class="absolute top-6 left-7 z-10 flex flex-col space-y-1">
+            @if (!IsCompact)
+            {
+                <span class="text-[10px] font-black tracking-[0.2em] uppercase px-2.5 py-1 rounded-full w-fit mb-1
+                      @(PreferencesService.CurrentThemeMode == "dark" 
+                        ? "text-emerald-400 bg-emerald-400/10 border border-emerald-400/20" 
+                        : "text-emerald-600 bg-emerald-600/10 border border-emerald-600/20")">@_pet.EvolutionName • LV. @_pet.CurrentLevel</span>
+            }
+            <h3 class="@(IsCompact ? "text-lg" : "text-2xl") font-black tracking-tight drop-shadow-sm
+                  @(PreferencesService.CurrentThemeMode == "dark" ? "text-white" : "text-slate-900")">@(_pet.CustomName ?? "Linh vật chưa tên")</h3>
+        </div>
+
+        <!-- UI Overlay - Bottom -->
+        <div class="absolute bottom-6 left-7 right-7 z-10 @(IsCompact ? "space-y-2" : "space-y-4")">
+            <!-- HP Bar -->
+            <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest 
+                      @(PreferencesService.CurrentThemeMode == "dark" ? "text-emerald-400/70" : "text-emerald-600/80")">
+                    <span class="flex items-center gap-1.5">💖 @(IsCompact ? "HP" : "Sinh mệnh")</span>
+                    <span>@(_pet.CurrentHealth)%</span>
+                </div>
+                <div class="relative h-3 rounded-full overflow-hidden border @(PreferencesService.CurrentThemeMode == "dark" ? "bg-slate-800/50 border-white/5" : "bg-slate-200/50 border-white/40") shadow-inner">
+                    <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(16,185,129,0.3)]" 
+                         style="width: @(_pet.CurrentHealth)%">
+                        <div class="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.4)_50%,transparent_100%)] animate-[shimmer_2.5s_infinite]"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- XP Bar -->
+            <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest 
+                      @(PreferencesService.CurrentThemeMode == "dark" ? "text-amber-400/70" : "text-amber-600/80")">
+                    <span class="flex items-center gap-1.5">⭐ @(IsCompact ? "XP" : "Tiến hóa")</span>
+                    <span>@_xpPercentage%</span>
+                </div>
+                <div class="relative h-2 rounded-full overflow-hidden @(PreferencesService.CurrentThemeMode == "dark" ? "bg-slate-800/50" : "bg-slate-200/50") shadow-inner">
+                    <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-amber-400 to-orange-500 transition-all duration-1000 ease-out" 
+                         style="width: @_xpPercentage%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coin Badge -->
+        <div class="absolute top-6 right-7 z-10 flex items-center">
+            <div class="px-4 py-2 rounded-2xl shadow-xl border flex items-center space-x-2 transition-all hover:scale-105
+                  @(PreferencesService.CurrentThemeMode == "dark" 
+                    ? "bg-slate-800/90 border-slate-700 text-slate-100" 
+                    : "bg-white/95 border-white/80 text-slate-800")">
+                <span class="text-lg">🪙</span>
+                <span class="text-sm font-black tracking-tight">@_userCoins.ToString("N0")</span>
+            </div>
+        </div>
+
+        @if (_pet.State == 2) @* 2: Hibernate *@
+        {
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] flex flex-col items-center justify-center text-center p-6 space-y-4">
+                <p class="text-white font-medium text-sm">Linh vật đã hôn mê vì thiếu sự quan tâm...</p>
+                <button @onclick="HandleRecover" 
+                        class="px-6 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/20 hover:scale-105 transition-transform active:scale-95 text-sm uppercase tracking-wider">
+                    Dùng bình thuốc hồi sinh (100 🪙)
+                </button>
+            </div>
+        }
+    }
+    else if (!_isLoading)
+    {
+        <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center space-y-5">
+            <div class="relative w-28 h-28 rounded-full flex items-center justify-center text-6xl shadow-inner border
+                  @(PreferencesService.CurrentThemeMode == "dark" ? "bg-slate-800/50 border-white/5" : "bg-emerald-50 border-emerald-100/50")">
+                <div class="absolute inset-0 rounded-full bg-emerald-400/10 animate-ping"></div>
+                🥚
+            </div>
+            <div class="space-y-2">
+                <h4 class="font-black text-lg @(PreferencesService.CurrentThemeMode == "dark" ? "text-white" : "text-slate-900")">Vườn Ươm Bloomento</h4>
+                <p class="text-xs font-medium max-w-[200px] leading-relaxed @(PreferencesService.CurrentThemeMode == "dark" ? "text-slate-400" : "text-slate-500")">Hãy hoàn thành nhiệm vụ để đánh thức Linh vật của riêng bạn nhé! ✨</p>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+@@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+</style>
+
+@code {
+    [Parameter] public bool IsCompact { get; set; } = false;
+    private UserPetDto? _pet;
+    private long _userCoins;
+    private bool _isLoading = true;
+    private string? _errorMessage;
+    private int _xpPercentage => (_pet == null) ? 0 : _pet.TotalXp; // Backend đã gửi XP tương đối (0-99)
+
+    protected override void OnInitialized()
+    {
+        PetService.OnPetStatusUpdated += HandleStatusUpdated;
+    }
+
+    private async void HandleStatusUpdated()
+    {
+        await InvokeAsync(async () => {
+            await RefreshAsync(true);
+        });
+    }
+
+    public async Task RefreshAsync(bool triggerDopamine = false)
+    {
+        await LoadPetStatus(false);
+        if (triggerDopamine)
+        {
+            await JSRuntime.InvokeVoidAsync("petRenderer.triggerDopamine");
+        }
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        PreferencesService.OnChange += StateHasChanged;
+        await LoadPetStatus(true);
+    }
+
+    private async Task LoadPetStatus(bool showLoader)
+    {
+        if (showLoader) _isLoading = true;
+        _errorMessage = null;
+
+        try 
+        {
+            var status = await PetService.GetMyPetAsync();
+            if (status?.Pet != null)
+            {
+                var oldAsset = _pet?.AssetUrl;
+                _pet = status.Pet;
+                _userCoins = status.Coins;
+
+                // Nếu asset thay đổi thì mới load lại model
+                if (oldAsset != _pet.AssetUrl)
+                {
+                    await LoadModel(_pet.AssetUrl);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = "Không thể kết nối với thế giới Linh vật. Vui lòng kiểm tra mạng.";
+            Console.WriteLine($"Pet API Error: {ex.Message}");
+        }
+        finally 
+        {
+            if (showLoader) _isLoading = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Lần đầu render: Khởi tạo toàn bộ
+            await InitializeScene();
+        }
+        else
+        {
+            // Các lần render sau (do update state): Chỉ âm thầm gắn lại canvas nếu cần, KHÔNG gọi StateHasChanged ở đây
+            await JSRuntime.InvokeVoidAsync("petRenderer.init", "pet-mascot-container");
+        }
+    }
+
+    private async Task InitializeScene()
+    {
+        await JSRuntime.InvokeVoidAsync("petRenderer.init", "pet-mascot-container");
+        if (_pet != null && !string.IsNullOrEmpty(_pet.AssetUrl))
+        {
+            await LoadModel(_pet.AssetUrl);
+        }
+        _isLoading = false;
+        StateHasChanged();
+    }
+
+    private async Task HandleRetry()
+    {
+        _errorMessage = null;
+        _isLoading = true;
+        StateHasChanged();
+        
+        await LoadPetStatus(true);
+        await InitializeScene();
+    }
+
+    private async Task LoadModel(string url)
+    {
+        try 
+        {
+            var result = await JSRuntime.InvokeAsync<JSLoadResult>("petRenderer.loadModel", url, "pet-mascot-container");
+            if (!result.Success)
+            {
+                // The Root-Cause Fix: Nếu là yêu cầu cũ bị hủy, không hiển thị lỗi lên màn hình
+                if (result.Error?.Contains("Outdated request") == true)
+                {
+                    Console.WriteLine("Ignoring outdated 3D load result.");
+                    return;
+                }
+                _errorMessage = $"Lỗi hiển thị 3D: {result.Error}";
+            }
+            else 
+            {
+                _errorMessage = null; // Tải thành công thì xóa lỗi cũ (nếu có)
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = "Không thể khởi tạo môi trường 3D.";
+        }
+    }
+
+    public record JSLoadResult(bool Success, string? Error);
+
+    private async Task HandleRecover()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+        try 
+        {
+            await PetService.RecoverPetAsync();
+            // Thành công thì RefreshAsync sẽ tự động được gọi qua Event
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = "Sử dụng vật phẩm thất bại. Có thể do thiếu Coins hoặc lỗi máy chủ.";
+        }
+        finally 
+        {
+            _isLoading = false;
+        }
+    }
+
+    public void Dispose()
+    {
+        PetService.OnPetStatusUpdated -= HandleStatusUpdated;
+    }
+}

@@ -32,9 +32,12 @@ namespace ADHDChecklist.API.Features.Auth.VerifyEmail
         {
             if (!Guid.TryParse(request.UserId, out var userId))
             {
+                // Root-Cause Fix #3: Unify timing by performing a dummy DB hit
+                await _userManager.FindByIdAsync(Guid.Empty.ToString());
+                
                 return new VerifyEmailResponse(
                     Success: false,
-                    Message: "Link xác nhận không hợp lệ"
+                    Message: "Link xác nhận không hợp lệ hoặc đã hết hạn"
                 );
             }
 
@@ -43,7 +46,7 @@ namespace ADHDChecklist.API.Features.Auth.VerifyEmail
             {
                 return new VerifyEmailResponse(
                     Success: false,
-                    Message: "Không tìm thấy tài khoản"
+                    Message: "Link xác nhận không hợp lệ hoặc đã hết hạn"
                 );
             }
 
@@ -62,7 +65,7 @@ namespace ADHDChecklist.API.Features.Auth.VerifyEmail
                 _logger.LogWarning("Invalid verification token for user {UserId}", userId);
                 return new VerifyEmailResponse(
                     Success: false,
-                    Message: "Link xác nhận không hợp lệ"
+                    Message: "Link xác nhận không hợp lệ hoặc đã hết hạn"
                 );
             }
 
@@ -72,7 +75,7 @@ namespace ADHDChecklist.API.Features.Auth.VerifyEmail
                 _logger.LogWarning("Expired verification token for user {UserId}", userId);
                 return new VerifyEmailResponse(
                     Success: false,
-                    Message: "Link xác nhận đã hết hạn. Vui lòng yêu cầu gửi lại email xác nhận."
+                    Message: "Link xác nhận không hợp lệ hoặc đã hết hạn"
                 );
             }
 

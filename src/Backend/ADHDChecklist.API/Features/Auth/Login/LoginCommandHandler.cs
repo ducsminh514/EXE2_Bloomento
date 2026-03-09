@@ -1,4 +1,5 @@
-﻿using ADHDChecklist.API.Entities.Common;
+﻿using ADHDChecklist.API.Data;
+using ADHDChecklist.API.Entities.Common;
 using ADHDChecklist.API.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -13,17 +14,20 @@ namespace ADHDChecklist.API.Features.Auth.Login
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IJwtTokenService _jwtTokenService;
+        private readonly AppDbContext _context;
         private readonly ILogger<LoginCommandHandler> _logger;
 
         public LoginCommandHandler(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IJwtTokenService jwtTokenService,
+            AppDbContext context,
             ILogger<LoginCommandHandler> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _jwtTokenService = jwtTokenService;
+            _context = context;
             _logger = logger;
         }
 
@@ -81,13 +85,34 @@ namespace ADHDChecklist.API.Features.Auth.Login
                 );
             }
 
-            // Generate tokens
-            var accessToken = _jwtTokenService.GenerateAccessToken(user);
-            var refreshToken = _jwtTokenService.GenerateRefreshToken();
+            // 5. SESSION CAPPING: Root-Cause Fix #2
+            // Root-Cause Fix #1: Explicitly load tokens for accurate capping
+            await _context.Entry(user).Collection(u => u.RefreshTokens).LoadAsync(cancellationToken);
 
-            // Save refresh token
-            user.RefreshToken = refreshToken;
-            user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(request.RememberMe ? 30 : 7);
+            // Limit to 10 active sessions. Revoke oldest if exceeded.
+            var activeTokens = user.RefreshTokens.Where(rt => rt.RevokedAt == null && !rt.IsExpired).OrderBy(rt => rt.CreatedAt).ToList();
+            if (activeTokens.Count >= 10)
+            {
+                var tokensToRevoke = activeTokens.Take(activeTokens.Count - 9);
+                foreach (var t in tokensToRevoke)
+                {
+                    t.RevokedAt = DateTime.UtcNow;
+                }
+            }
+
+            // Generate tokens
+            var accessToken = await _jwtTokenService.GenerateAccessToken(user);
+            var refreshToken = _jwtTokenService.GenerateRefreshToken();
+            var refreshTokenHash = _jwtTokenService.HashToken(refreshToken);
+
+            // Save refresh token (Multi-device support)
+            user.RefreshTokens.Add(new Entities.Common.RefreshToken
+            {
+                TokenHash = refreshTokenHash,
+                ExpiresAt = DateTime.UtcNow.AddDays(request.RememberMe ? 30 : 7),
+                CreatedByIp = "N/A" // Optional: track IP if needed, but keeping it simple for now
+            });
+            
             user.LastLoginAt = DateTime.UtcNow;
 
             await _userManager.UpdateAsync(user);

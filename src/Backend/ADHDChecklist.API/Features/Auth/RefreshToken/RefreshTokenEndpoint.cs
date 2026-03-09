@@ -4,9 +4,9 @@ namespace ADHDChecklist.API.Features.Auth.RefreshToken
 {
     public static class RefreshTokenEndpoint
     {
-        public static void MapRefreshToken(this IEndpointRouteBuilder app)
+        public static RouteHandlerBuilder MapRefreshToken(this IEndpointRouteBuilder app)
         {
-            app.MapPost("/api/auth/refresh-token", async (
+            return app.MapPost("/api/auth/refresh-token", async (
                 RefreshTokenCommand command,
                 IMediator mediator,
                 CancellationToken ct) =>

@@ -12,6 +12,8 @@ public class HabitCompletionConfiguration : IEntityTypeConfiguration<HabitComple
 
         // Primary Key
         builder.HasKey(hc => hc.Id);
+        builder.Property(hc => hc.Id)
+            .ValueGeneratedOnAdd();
 
         // Properties
         builder.Property(hc => hc.CompletionDate)

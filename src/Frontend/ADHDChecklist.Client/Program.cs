@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using ADHDChecklist.Client.Features.Family.Services;
+using ADHDChecklist.Client.Features.Pets.Services;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
@@ -52,6 +53,7 @@ builder.Services.AddScoped<IPreferencesService, PreferencesService>();
 builder.Services.AddScoped<ADHDChecklist.Client.Features.Admin.Services.IAdminService, ADHDChecklist.Client.Features.Admin.Services.AdminService>();
 builder.Services.AddScoped<ADHDChecklist.Client.Features.Family.Services.IFamilyService, ADHDChecklist.Client.Features.Family.Services.FamilyService>();
 builder.Services.AddScoped<ADHDChecklist.Client.Features.Notifications.Services.INotificationService, ADHDChecklist.Client.Features.Notifications.Services.NotificationService>();
+builder.Services.AddScoped<IPetClientService, PetClientService>();
 
 builder.Services.AddAuthorizationCore();
 

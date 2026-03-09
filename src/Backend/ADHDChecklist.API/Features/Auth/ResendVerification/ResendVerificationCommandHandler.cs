@@ -34,6 +34,9 @@ namespace ADHDChecklist.API.Features.Auth.ResendVerification
 
             if (user == null)
             {
+                // Root-Cause Fix #3: Unify timing by performing a dummy DB hit
+                await _userManager.FindByIdAsync(Guid.Empty.ToString());
+
                 // Don't reveal that user doesn't exist
                 return new ResendVerificationResponse(
                     Success: true,
@@ -77,7 +80,7 @@ namespace ADHDChecklist.API.Features.Auth.ResendVerification
 
                 return new ResendVerificationResponse(
                     Success: true,
-                    Message: "Email xác nhận mới đã được gửi. Vui lòng kiểm tra hộp thư."
+                    Message: "Nếu email tồn tại trong hệ thống, một email xác nhận mới đã được gửi."
                 );
             }
             catch (Exception ex)

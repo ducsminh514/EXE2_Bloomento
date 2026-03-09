@@ -8,6 +8,9 @@
 @using ADHDChecklist.Client.Shared.Components
 @using ADHDChecklist.Client.Features.Habits.Components
 @using ADHDChecklist.Client.Features.Family.Services
+@using ADHDChecklist.Client.Features.Family.Components
+@using ADHDChecklist.Client.Features.Pets.Components
+@using ADHDChecklist.Client.Features.Pets.Services
 @using ADHDChecklist.Client.Features.Notifications.Components
 @using ADHDChecklist.Client.Features.Family.Components
 @inject ITaskService TaskService
@@ -15,6 +18,7 @@
 @inject IFamilyService FamilyService
 @inject IRewardService RewardService
 @inject IAuthService AuthService
+@inject IPetClientService PetService
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
@@ -262,11 +266,13 @@
                                 </button>
                             </div>
 
+                            @* Pet Mascot moved to Right Sidebar (Compact mode) *@
+
                             <!-- Habit Tracker -->
                             <div class="flex-shrink-0">
                                 <HabitTracker IsPremium="@(_currentUser?.IsPremium == true)" 
                                               OnUpgradeClicked="ShowUpgradeModal"
-                                              OnHabitToggled="LoadPoints" />
+                                              OnHabitToggled="HandleHabitToggled" />
                             </div>
 
                             <!-- Workspace Grid (Inbox & Analytics/Categories) -->
@@ -404,46 +410,9 @@
                                 <!-- RIGHT: ANALYTICS & CATEGORIES (Fixed 25%) -->
                                 <div class="w-[30%] min-w-[250px] flex flex-col gap-4 min-h-0">
                                     
-                                    <!-- Top: Free Tier Analytics -->
-                                    <div class="flex-none bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col transition-colors">
-                                        <div class="p-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50 transition-colors">
-                                            <h4 class="font-black text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest flex items-center gap-2">
-                                                <span class="text-base">📊</span> Thống kê
-                                            </h4>
-                                            <span class="text-[9px] bg-primary-50 dark:bg-primary-900/30 text-primary-600 px-2 py-0.5 rounded font-bold uppercase transition-colors">@(_currentUser?.IsPremium == true ? "PREMIUM" : "FREE")</span>
-                                        </div>
-                                        <div class="p-4 flex flex-col gap-4">
-                                            <!-- Keep stats content same... -->
-                                            <div class="grid grid-cols-2 gap-3">
-                                                <div class="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3 text-center border border-gray-100 dark:border-gray-700">
-                                                    <span class="block text-xl font-black text-gray-800 dark:text-gray-100">@_allTasks.Count</span>
-                                                    <span class="text-[9px] text-gray-500 font-bold uppercase">Tổng</span>
-                                                 </div>
-                                                 <div class="bg-green-50 dark:bg-green-900/10 rounded-lg p-3 text-center border border-green-100 dark:border-green-800/30">
-                                                    <span class="block text-xl font-black text-green-600">@_completedCount</span>
-                                                    <span class="text-[9px] text-green-600/70 font-bold uppercase">Xong</span>
-                                                </div>
-                                            </div>
-
-                                            <!-- Category Breakdown (Mini Chart) -->
-                                            <div class="flex-1 min-h-0">
-                                                <div class="space-y-2">
-                                                    @foreach(var cat in _categories.Take(3)) 
-                                                    {
-                                                        var count = _allTasks.Count(t => t.CategoryId == cat.Id);
-                                                        var percent = _allTasks.Count > 0 ? (double)count / _allTasks.Count * 100 : 0;
-                                                        if (count > 0) {
-                                                            <div class="flex items-center gap-2 text-xs">
-                                                                <span class="flex-1 truncate font-medium text-gray-600 dark:text-gray-400">@cat.Name</span>
-                                                                <div class="w-16 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                                                                    <div class="h-full rounded-full" style="width: @percent%; background-color: @cat.ColorHex"></div>
-                                                                </div>
-                                                            </div>
-                                                        }
-                                                    }
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <!-- Bloomento Pet Mascot (Compact Sidebar Mode) -->
+                                    <div class="flex-none transition-all duration-500">
+                                        <PetMascot IsCompact="true" />
                                     </div>
 
                                     <!-- Advanced Stats (Replacer for Categories) -->
@@ -1068,6 +1037,9 @@
             await TaskService.ToggleTaskCompletionAsync(taskId);
             await LoadData();
             await LoadPoints();
+            
+            // Dopamine Loop: Refresh Pet via Mediator Service
+            await PetService.RefreshStatusAsync();
         }
         catch (Exception ex)
         {
@@ -1480,6 +1452,12 @@
     private async Task HandlePointsChanged()
     {
         await LoadPoints();
+    }
+
+    private async Task HandleHabitToggled()
+    {
+        await LoadPoints();
+        await PetService.RefreshStatusAsync();
     }
 
     private async Task LoadPoints()

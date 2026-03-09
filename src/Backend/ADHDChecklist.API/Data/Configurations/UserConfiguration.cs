@@ -9,7 +9,7 @@ public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
 {
     public void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
-        // Table name - ау set trong OnModelCreating
+        // Table name - ?? set trong OnModelCreating
         // builder.ToTable("Users");
 
         // Properties
@@ -56,11 +56,6 @@ public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
         builder.Property(u => u.GoogleProfilePicture)
             .HasMaxLength(500);
 
-        builder.Property(u => u.RefreshToken)
-            .HasMaxLength(500);
-
-        builder.Property(u => u.RefreshTokenExpiry)
-            .IsRequired(false);
 
         // Indexes
         builder.HasIndex(u => u.Email)
@@ -71,9 +66,6 @@ public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
             .HasDatabaseName("IX_Users_GoogleId")
             .HasFilter("\"GoogleId\" IS NOT NULL");
 
-        builder.HasIndex(u => u.RefreshToken)
-            .HasDatabaseName("IX_Users_RefreshToken")
-            .HasFilter("\"RefreshToken\" IS NOT NULL");
 
         builder.HasIndex(u => u.IsActive)
             .HasDatabaseName("IX_Users_IsActive");

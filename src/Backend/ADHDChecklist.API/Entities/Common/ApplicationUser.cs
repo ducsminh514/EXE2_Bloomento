@@ -34,9 +34,8 @@ public class ApplicationUser : IdentityUser<Guid>
     // Gamification
     public int TotalXp { get; set; } = 0;
 
-    // Refresh Token
-    public string? RefreshToken { get; set; }
-    public DateTime? RefreshTokenExpiry { get; set; }
+    // Refresh Tokens
+    public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
     // Navigation properties
     public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
@@ -48,6 +47,10 @@ public class ApplicationUser : IdentityUser<Guid>
     
     // Family
     public virtual ICollection<FamilyMember> FamilyMembers { get; set; } = new List<FamilyMember>();
+
+    // Pet System
+    public virtual UserPet? UserPet { get; set; }
+    public virtual UserInventory? UserInventory { get; set; }
 
     // Helper methods
     public bool IsPremium()
@@ -65,9 +68,7 @@ public class ApplicationUser : IdentityUser<Guid>
 
     public bool IsRefreshTokenValid()
     {
-        return !string.IsNullOrEmpty(RefreshToken)
-            && RefreshTokenExpiry.HasValue
-            && RefreshTokenExpiry.Value > DateTime.UtcNow;
+        return RefreshTokens.Any(rt => rt.IsActive);
     }
 }
 

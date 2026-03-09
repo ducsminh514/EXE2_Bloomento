@@ -7,9 +7,9 @@ namespace ADHDChecklist.API.Features.Auth.Login
     // ============================================
     public static class LoginEndpoint
     {
-        public static void MapLogin(this IEndpointRouteBuilder app)
+        public static RouteHandlerBuilder MapLogin(this IEndpointRouteBuilder app)
         {
-            app.MapPost("/api/auth/login", async (
+            return app.MapPost("/api/auth/login", async (
                 LoginCommand command,
                 IMediator mediator,
                 CancellationToken ct) =>

@@ -7,9 +7,9 @@ namespace ADHDChecklist.API.Features.Auth.VerifyEmail
     // ============================================
     public static class VerifyEmailEndpoint
     {
-        public static void MapVerifyEmail(this IEndpointRouteBuilder app)
+        public static RouteHandlerBuilder MapVerifyEmail(this IEndpointRouteBuilder app)
         {
-            app.MapPost("/api/auth/verify-email", async (
+            return app.MapPost("/api/auth/verify-email", async (
                 VerifyEmailCommand command,
                 IMediator mediator,
                 CancellationToken ct) =>

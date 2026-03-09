@@ -12,8 +12,9 @@ namespace ADHDChecklist.API.Services;
 
 public interface IJwtTokenService
 {
-    string GenerateAccessToken(ApplicationUser user);
+    Task<string> GenerateAccessToken(ApplicationUser user);
     string GenerateRefreshToken();
+    string HashToken(string token);
     ClaimsPrincipal? ValidateToken(string token);
 }
 
@@ -28,7 +29,7 @@ public class JwtTokenService : IJwtTokenService
         _userManager = userManager;
     }
 
-    public string GenerateAccessToken(ApplicationUser user)
+    public async Task<string> GenerateAccessToken(ApplicationUser user)
     {
         var claims = new List<Claim>
         {
@@ -41,7 +42,7 @@ public class JwtTokenService : IJwtTokenService
         };
 
         // Add Roles
-        var roles = _userManager.GetRolesAsync(user).Result; // Synchronous for simplicity in this method context, or change to async
+        var roles = await _userManager.GetRolesAsync(user);
         foreach (var role in roles)
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
@@ -72,6 +73,13 @@ public class JwtTokenService : IJwtTokenService
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(randomBytes);
         return Convert.ToBase64String(randomBytes);
+    }
+
+    public string HashToken(string token)
+    {
+        using var sha256 = SHA256.Create();
+        var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(token));
+        return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
     }
 
     public ClaimsPrincipal? ValidateToken(string token)

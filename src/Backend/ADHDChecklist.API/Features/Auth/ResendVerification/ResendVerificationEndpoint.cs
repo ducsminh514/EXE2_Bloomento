@@ -4,9 +4,9 @@ namespace ADHDChecklist.API.Features.Auth.ResendVerification
 {
     public static class ResendVerificationEndpoint
     {
-        public static void MapResendVerification(this IEndpointRouteBuilder app)
+        public static RouteHandlerBuilder MapResendVerification(this IEndpointRouteBuilder app)
         {
-            app.MapPost("/api/auth/resend-verification", async (
+            return app.MapPost("/api/auth/resend-verification", async (
                 ResendVerificationCommand command,
                 IMediator mediator,
                 CancellationToken ct) =>
