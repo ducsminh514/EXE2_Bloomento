@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>Bloomento</title>
 
     <link rel="icon" type="image/png" href="logo.png" />
@@ -53,6 +54,7 @@
     <link href="manifest.webmanifest" rel="manifest" />
     <link rel="apple-touch-icon" sizes="512x512" href="logo.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="logo.png" />
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function (registrations) {
@@ -78,24 +80,36 @@
 
 <body class="transition-colors duration-200">
 
-    <div id="app">
-        <svg class="loading-progress">
-            <circle r="40%" cx="50%" cy="50%" />
-            <circle r="40%" cx="50%" cy="50%" />
-        </svg>
-        <div class="loading-progress-text"></div>
-    </div>
+<div id="app">
+    <svg class="loading-progress">
+        <circle r="40%" cx="50%" cy="50%" />
+        <circle r="40%" cx="50%" cy="50%" />
+    </svg>
+    <div class="loading-progress-text"></div>
+</div>
 
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div>
-    <script src="_framework/blazor.webassembly.js"></script>
-    <script src="js/editor.js"></script>
-    <script>
-        navigator.serviceWorker.register('service-worker.js');
-    </script>
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+<!-- Three.js & 3D Rendering -->
+<script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+</script>
+<script src="js/pets/petRenderer.js" type="module"></script>
+
+<script src="_framework/blazor.webassembly.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/auth.js"></script>
+<script>
+    navigator.serviceWorker.register('service-worker.js');
+</script>
 </body>
 
 </html>
