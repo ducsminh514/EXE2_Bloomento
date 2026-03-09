@@ -1,26 +1,37 @@
 window.initGoogleSignIn = (dotNetHelper, clientId) => {
-    try {
-        if (!window.google) {
-            console.error("Google SDK not loaded yet.");
-            return;
-        }
+    console.log("initGoogleSignIn called with clientId:", clientId);
 
-        google.accounts.id.initialize({
-            client_id: clientId,
-            callback: (response) => {
-                // Pass the credential (JWT) back to Blazor
-                dotNetHelper.invokeMethodAsync('HandleGoogleCredential', response.credential);
-            },
-            auto_select: false,
-            cancel_on_tap_outside: true
-        });
-
-        // Trigger the prompt or link to a button
-        // For now, we manually trigger the popup when the user clicks our custom button
-        google.accounts.id.prompt();
-    } catch (e) {
-        console.error("Error initializing Google Sign-In:", e);
+    if (!clientId) {
+        console.error("clientId is null or empty!");
+        return;
     }
+
+    const init = () => {
+        try {
+            if (!window.google || !window.google.accounts || !window.google.accounts.id) {
+                console.log("Google SDK not ready, retrying in 100ms...");
+                setTimeout(init, 100);
+                return;
+            }
+
+            console.log("Google SDK ready, initializing...");
+            google.accounts.id.initialize({
+                client_id: clientId,
+                callback: (response) => {
+                    dotNetHelper.invokeMethodAsync('HandleGoogleCredential', response.credential);
+                },
+                auto_select: false,
+                cancel_on_tap_outside: true
+            });
+
+            google.accounts.id.prompt();
+            console.log("Google prompt triggered.");
+        } catch (e) {
+            console.error("Error initializing Google Sign-In:", e);
+        }
+    };
+
+    init();
 };
 
 window.triggerGoogleSignIn = () => {
