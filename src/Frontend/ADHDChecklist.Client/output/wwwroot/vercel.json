@@ -1,12 +1,10 @@
 {
-    "buildCommand": "dotnet publish -c Release -o out",
-    "outputDirectory": "out/wwwroot",
     "routes": [
         {
             "handle": "filesystem"
         },
         {
-            "src": "/(.*)",
+            "src": "/.*",
             "dest": "/index.html"
         }
     ]
