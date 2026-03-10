@@ -54,34 +54,27 @@ export function initPetScene(canvasId) {
     camera = new THREE.PerspectiveCamera(45, rect.width / rect.height, 0.1, 1000);
     camera.position.set(0, 1, 3);
 
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+    renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance",
+        premultipliedAlpha: false,
+        preserveDrawingBuffer: false
+    });
     renderer.setSize(rect.width, rect.height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Giới hạn pixelRatio để tối ưu hiệu năng
-    renderer.setClearColor(0x000000, 0); // Đảm bảo nền trong suốt tuyệt đối
-    renderer.toneMapping = THREE.ACESFilmicToneMapping; // Chuyển sang ToneMapping chuẩn HDR hơn
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 0); // Đưa về Black 0 Alpha - chuẩn an toàn nhất của WebGL
+    renderer.setClearAlpha(0);
+    renderer.domElement.style.setProperty('background', 'transparent', 'important');
+    renderer.domElement.style.outline = 'none';
+    scene.background = null;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2;
     container.appendChild(renderer.domElement);
 
-    const renderScene = new RenderPass(scene, camera);
-    const renderTarget = new THREE.WebGLRenderTarget(rect.width, rect.height, {
-        minFilter: THREE.LinearFilter,
-        magFilter: THREE.LinearFilter,
-        format: THREE.RGBAFormat,
-        type: THREE.HalfFloatType
-    });
-
-    composer = new EffectComposer(renderer, renderTarget);
-    composer.addPass(renderScene);
-
-    // UnrealBloomPass can kill alpha, we need a custom approach or lower strength
-    bloomPass = new UnrealBloomPass(new THREE.Vector2(rect.width, rect.height), 1.5, 0.4, 0.85); // Initialize bloomPass here
-    bloomPass.strength = 1.2;
-    bloomPass.radius = 0.8;
-    bloomPass.threshold = 0.2;
-    composer.addPass(bloomPass);
-
-    // Add a final pass to ensure alpha is handled correctly if needed, 
-    // but ACESFilmic + RGBAFormat usually works with 0 clear alpha.
+    // Initial check for post-processing
+    composer = null;
+    renderer.autoClear = true;
 
     scene.add(new THREE.AmbientLight(0xffffff, 1.2));
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
@@ -94,7 +87,6 @@ export function initPetScene(canvasId) {
         requestAnimationFrame(animate);
         const delta = clock.getDelta();
 
-        // Guard: Chỉ render nếu có kích thước hợp lệ để tránh lỗi Framebuffer
         if (container.clientWidth === 0 || container.clientHeight === 0) return;
 
         if (mixer) mixer.update(delta);
@@ -112,14 +104,18 @@ export function initPetScene(canvasId) {
             }
         }
 
-        composer.render();
+        if (composer) {
+            composer.render();
+        } else {
+            renderer.render(scene, camera);
+        }
     }
     animate();
 
     window.addEventListener('resize', onWindowResize);
     container.addEventListener('click', () => triggerDopamine());
     isInitialized = true;
-    console.log("Pet Scene Hardened & Animated");
+    console.log("Pet Scene Re-initialized with transparency");
 }
 
 function onWindowResize() {
@@ -133,12 +129,12 @@ function onWindowResize() {
         return;
     }
 
-    if (!camera || !renderer || !composer) return;
+    if (!camera || !renderer) return;
 
     camera.aspect = rect.width / rect.height;
     camera.updateProjectionMatrix();
     renderer.setSize(rect.width, rect.height);
-    composer.setSize(rect.width, rect.height);
+    if (composer) composer.setSize(rect.width, rect.height);
 }
 
 // Hàm giải phóng bộ nhớ GPU triệt để (The Root-Cause Fix 1)
@@ -171,94 +167,149 @@ function disposeMaterial(mat) {
 function createFallbackModel() {
     const group = new THREE.Group();
 
-    // 1. Chậu gốm nghệ thuật (Torus + Cylinder)
-    const potGroup = new THREE.Group();
-    const potGeo = new THREE.CylinderGeometry(0.4, 0.3, 0.15, 24);
-    const potMat = new THREE.MeshStandardMaterial({
-        color: 0x2c3e50,
-        roughness: 0.2,
-        metalness: 0.5
+    // 1. Hòn đảo lơ lửng (Floating Island) thay vì chậu gốm
+    const islandGroup = new THREE.Group();
+
+    // Geometry cho đảo (Low-poly rock)
+    const islandGeo = new THREE.IcosahedronGeometry(0.5, 1);
+    const islandMat = new THREE.MeshStandardMaterial({
+        color: 0x3d4444, // Slate Rock
+        flatShading: true,
+        roughness: 0.8,
+        metalness: 0.2
     });
-    const pot = new THREE.Mesh(potGeo, potMat);
-    potGroup.add(pot);
+    const island = new THREE.Mesh(islandGeo, islandMat);
+    island.scale.set(1.2, 0.4, 1.2);
+    island.position.y = 0.1;
+    islandGroup.add(island);
 
-    const rimGeo = new THREE.TorusGeometry(0.4, 0.03, 12, 24);
-    const rim = new THREE.Mesh(rimGeo, potMat);
-    rim.rotation.x = Math.PI / 2;
-    rim.position.y = 0.075;
-    potGroup.add(rim);
+    // Thêm một lớp cỏ phía trên
+    const grassGeo = new THREE.CylinderGeometry(0.55, 0.5, 0.1, 8);
+    const grassMat = new THREE.MeshStandardMaterial({
+        color: 0x4caf50,
+        flatShading: true
+    });
+    const grass = new THREE.Mesh(grassGeo, grassMat);
+    grass.position.y = 0.25;
+    islandGroup.add(grass);
 
-    potGroup.position.y = 0.075;
-    group.add(potGroup);
+    group.add(islandGroup);
 
-    // 2. Thân cây uốn lượn (Curve path with tube)
-    const points = [];
-    points.push(new THREE.Vector3(0, 0, 0));
-    points.push(new THREE.Vector3(0.1, 0.2, 0.05));
-    points.push(new THREE.Vector3(-0.1, 0.5, -0.05));
-    points.push(new THREE.Vector3(0.2, 0.8, 0.1));
+    // 2. Thân cây hữu cơ (Organic Trunk) - Thon dần về phía ngọn
+    const trunkPoints = [
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(0.05, 0.2, 0.05),
+        new THREE.Vector3(-0.05, 0.5, 0.1),
+        new THREE.Vector3(0.1, 0.8, -0.05),
+        new THREE.Vector3(0, 1.1, 0)
+    ];
+    const trunkCurve = new THREE.CatmullRomCurve3(trunkPoints);
+    const trunkGeo = new THREE.TubeGeometry(trunkCurve, 20, 0.06, 8, false);
 
-    const curve = new THREE.CatmullRomCurve3(points);
-    const trunkGeo = new THREE.TubeGeometry(curve, 20, 0.05, 8, false);
+    // Tùy chỉnh độ dày thon dần (Tapering) bàng cách can thiệp vào vertices (đơn giản hóa bằng scale)
     const trunkMat = new THREE.MeshStandardMaterial({
-        color: 0x4e342e,
-        roughness: 0.9
+        color: 0x4a3728, // Dark Wood
+        roughness: 0.9,
+        metalness: 0.1
     });
     const trunk = new THREE.Mesh(trunkGeo, trunkMat);
-    trunk.position.y = 0.15;
     group.add(trunk);
 
-    // 3. Tán lá (Low-poly clouds of focus)
+    // 3. Cành phụ (Branches)
+    const branchMat = trunkMat.clone();
+    const createBranch = (start, end, radius) => {
+        const curve = new THREE.LineCurve3(start, end);
+        const geo = new THREE.TubeGeometry(curve, 8, radius, 6, false);
+        return new THREE.Mesh(geo, branchMat);
+    };
+
+    const branch1 = createBranch(new THREE.Vector3(-0.02, 0.55, 0.08), new THREE.Vector3(-0.25, 0.7, 0.15), 0.03);
+    const branch2 = createBranch(new THREE.Vector3(0.08, 0.75, -0.02), new THREE.Vector3(0.3, 0.85, 0.05), 0.025);
+    group.add(branch1, branch2);
+
+    // 4. Tán lá (Low-poly clouds of focus)
     const leafGeo = new THREE.IcosahedronGeometry(1, 0);
     const leaves = new THREE.Group();
 
     const leafPositions = [
-        { pos: [0.2, 0.8, 0.1], scale: 0.2, color: 0x81c784 },
-        { pos: [0.35, 0.75, 0.15], scale: 0.15, color: 0x66bb6a },
-        { pos: [0.1, 0.85, 0.05], scale: 0.18, color: 0xa5d6a7 }
+        { pos: [0, 1.1, 0], scale: 0.3, color: 0x64ffda }, // Top cluster
+        { pos: [-0.25, 0.75, 0.15], scale: 0.22, color: 0x1de9b6 }, // Left branch
+        { pos: [0.3, 0.88, 0.05], scale: 0.2, color: 0x00bfa5 }, // Right branch
+        { pos: [0.1, 0.95, -0.05], scale: 0.25, color: 0x64ffda } // Middle cluster
     ];
 
     leafPositions.forEach(config => {
-        const mat = new THREE.MeshStandardMaterial({
-            color: config.color,
-            flatShading: true,
-            transparent: true,
-            opacity: 0.85
-        });
-        const leaf = new THREE.Mesh(leafGeo, mat);
-        leaf.position.set(...config.pos);
-        leaf.scale.setScalar(config.scale);
-        leaves.add(leaf);
+        const cluster = new THREE.Group();
+        // Một cụm gồm nhiều khối cầu tán lá (Clouds style)
+        for (let i = 0; i < 3; i++) {
+            const mat = new THREE.MeshPhysicalMaterial({
+                color: config.color,
+                flatShading: true,
+                transparent: true,
+                opacity: 0.6,
+                transmission: 0.6,
+                thickness: 0.5,
+                roughness: 0.2,
+                emissive: config.color,
+                emissiveIntensity: 0.15
+            });
+            const subLeaf = new THREE.Mesh(leafGeo, mat);
+            subLeaf.position.set(
+                (Math.random() - 0.5) * 0.15,
+                (Math.random() - 0.5) * 0.15,
+                (Math.random() - 0.5) * 0.15
+            );
+            subLeaf.scale.setScalar(config.scale * (0.8 + Math.random() * 0.4));
+            cluster.add(subLeaf);
+        }
+        cluster.position.set(...config.pos);
+        leaves.add(cluster);
     });
-    leaves.position.y = 0.15; // Offset trunk position
     group.add(leaves);
 
-    // 4. Quả cầu linh hồn (Spiritual core)
-    const soulGeo = new THREE.SphereGeometry(0.15, 16, 16);
-    const soulMat = new THREE.MeshStandardMaterial({
-        color: 0x64ffda,
-        emissive: 0x64ffda,
-        emissiveIntensity: 4.0,
+    // 5. Quả cầu linh hồn (Soul Core)
+    const coreGeo = new THREE.SphereGeometry(0.12, 16, 16);
+    const coreMat = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
         transparent: true,
-        opacity: 0.95
+        opacity: 0.9
     });
-    const soul = new THREE.Mesh(soulGeo, soulMat);
-    soul.position.set(0.2, 1.1, 0.1);
-    group.add(soul);
+    const core = new THREE.Mesh(coreGeo, coreMat);
 
-    // 5. Cánh sen năng lượng (Floating petals)
-    const petalGeo = new THREE.ConeGeometry(0.04, 0.12, 3);
+    const coreGlowGeo = new THREE.SphereGeometry(0.25, 16, 16);
+    const coreGlowMat = new THREE.MeshBasicMaterial({
+        color: 0x64ffda,
+        transparent: true,
+        opacity: 0.3
+    });
+    const coreGlow = new THREE.Mesh(coreGlowGeo, coreGlowMat);
+
     const petals = new THREE.Group();
-    for (let i = 0; i < 5; i++) {
-        const petal = new THREE.Mesh(petalGeo, soulMat);
-        const angle = (i / 5) * Math.PI * 2;
-        petal.position.set(Math.sin(angle) * 0.25, 0, Math.cos(angle) * 0.25);
-        petal.rotation.x = Math.PI / 2;
-        petal.rotation.z = angle;
-        petals.add(petal);
-    }
-    petals.position.set(0.2, 1.1, 0.1);
+    petals.add(core);
+    petals.add(coreGlow);
+    petals.position.set(0, 1.15, 0);
     group.add(petals);
+
+    // 6. Hiệu ứng Fireflies (Đom đóm Zen)
+    const firefliesCount = 8;
+    const fireflies = new THREE.Group();
+    const fireflyGeo = new THREE.SphereGeometry(0.02, 4, 4);
+    const fireflyMat = new THREE.MeshBasicMaterial({ color: 0x64ffda });
+
+    for (let i = 0; i < firefliesCount; i++) {
+        const firefly = new THREE.Mesh(fireflyGeo, fireflyMat);
+        firefly.position.set(
+            (Math.random() - 0.5) * 2,
+            Math.random() * 1.5,
+            (Math.random() - 0.5) * 2
+        );
+        firefly.userData = {
+            speed: 0.3 + Math.random() * 0.5,
+            offset: Math.random() * Math.PI * 2
+        };
+        fireflies.add(firefly);
+    }
+    group.add(fireflies);
 
     // Animation
     const startTime = Date.now();
@@ -277,10 +328,31 @@ function createFallbackModel() {
         trunk.rotation.z = Math.sin(time) * 0.02;
         leaves.rotation.z = Math.sin(time) * 0.03;
 
-        // Rotating leaves for shimmer
-        leaves.children.forEach((l, i) => {
-            l.rotation.y += 0.01 * (i + 1);
+        // Breathing foliage
+        leaves.children.forEach((cluster, i) => {
+            cluster.scale.setScalar(1 + Math.sin(time * 1.5 + i) * 0.05);
+            cluster.rotation.y += 0.005 * (i + 1);
         });
+
+        // Fireflies floating
+        const range = 1.2;
+        fireflies.children.forEach((f, i) => {
+            f.position.y += Math.sin(time * f.userData.speed + f.userData.offset) * 0.008;
+            f.position.x += Math.cos(time * 0.6 + f.userData.offset) * 0.004;
+            f.position.z += Math.sin(time * 0.4 + f.userData.offset) * 0.004;
+
+            // Re-center fireflies if they drift too far
+            if (Math.abs(f.position.x) > range) f.position.x *= 0.9;
+            if (Math.abs(f.position.z) > range) f.position.z *= 0.9;
+
+            f.material.opacity = 0.3 + Math.abs(Math.sin(time * 2 + f.userData.offset)) * 0.7;
+        });
+
+        // Island floating
+        islandGroup.position.y = Math.sin(time * 0.8) * 0.06;
+
+        // Soul core pulse
+        coreGlow.scale.setScalar(1 + Math.sin(time * 3) * 0.2);
     };
 
     return group;
@@ -362,11 +434,7 @@ export function triggerDopamine() {
         mixer.addEventListener('finished', onFinished);
     }
 
-    // 2. Visual Effects
-    const originalStrength = bloomPass.strength;
-    bloomPass.strength = 2.0;
-    setTimeout(() => { bloomPass.strength = originalStrength; }, 500);
-
+    // 2. Visual Effects (Particles only for now to ensure alpha transparency)
     const geometry = new THREE.SphereGeometry(0.05, 8, 8);
     const colors = [0xFFD700, 0xFFFFFF, 0x00FF00];
 

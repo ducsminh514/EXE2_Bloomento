@@ -6,17 +6,45 @@
 @inject IPetClientService PetService
 @inject IPreferencesService PreferencesService
 
-<div class="relative w-full @(IsCompact ? "h-60" : "h-72") transition-all duration-700 rounded-[2.5rem] overflow-hidden border backdrop-blur-3xl shadow-2xl group
-     @(PreferencesService.CurrentThemeMode == "dark" 
-        ? "bg-gradient-to-br from-emerald-950/40 via-slate-900/90 to-emerald-900/40 border-emerald-500/20 shadow-emerald-500/5" 
-        : "bg-gradient-to-br from-white/90 via-emerald-50/40 to-white/90 border-white/60 shadow-slate-200")">
+<div id="mascot-card-main" class="relative w-full @(IsCompact ? "h-60" : "h-72") rounded-[2.5rem] overflow-hidden border shadow-2xl group
+     @(PreferencesService.CurrentThemeMode == "dark" ? "border-slate-800 shadow-emerald-950/20" : "border-emerald-100/50 shadow-emerald-200/40")">
+
+    <style>
+        #mascot-card-main {
+            background: @(PreferencesService.CurrentThemeMode == "dark" 
+                ? "linear-gradient(135deg, #0f172a 0%, #061a15 50%, #0f172a 100%)" 
+                : "linear-gradient(135deg, #ffffff 0%, #f0fdf4 50%, #f5f3ff 100%)") !important;
+        }
+        #pet-mascot-container canvas {
+            background: transparent !important;
+        }
+        .hp-bar-glow {
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4), inset 0 0 8px rgba(255, 255, 255, 0.2);
+        }
+        .xp-bar-glow {
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.4), inset 0 0 8px rgba(255, 255, 255, 0.2);
+        }
+        .bar-container-hd {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            backdrop-filter: blur(4px);
+        }
+        #mascot-card-main.dark .bar-container-hd {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
     
-    <!-- Dynamic Background Elements - Optimized for Light/Dark -->
-    <div class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-        <div class="absolute -top-24 -left-24 w-64 h-64 rounded-full blur-[100px] animate-pulse
-             @(PreferencesService.CurrentThemeMode == "dark" ? "bg-emerald-500/10" : "bg-emerald-300/40")"></div>
-        <div class="absolute -bottom-24 -right-24 w-64 h-64 rounded-full blur-[100px] animate-pulse
-             @(PreferencesService.CurrentThemeMode == "dark" ? "bg-teal-500/10" : "bg-teal-300/30")" style="animation-delay: 1.5s"></div>
+    <!-- Soft Premium Glow Effect -->
+    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] opacity-40"
+             style="background: radial-gradient(circle at center, rgba(16, 185, 129, 0.12) 0%, rgba(99, 102, 241, 0.05) 40%, transparent 80%);"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t @(PreferencesService.CurrentThemeMode == "dark" ? "from-emerald-900/20" : "from-emerald-500/10") via-transparent to-transparent"></div>
+    </div>
+
+    <!-- Diagnostic Tag (Temporary) -->
+    <div class="absolute bottom-4 left-4 z-50 px-2 py-0.5 bg-black/5 rounded text-[8px] font-mono text-gray-400 opacity-20">
+        @(PreferencesService.CurrentThemeMode == "dark" ? "MODE:D" : "MODE:L")
     </div>
     
     @if (_isLoading)
@@ -49,57 +77,62 @@
     @if (_pet != null)
     {
         <!-- UI Overlay - Top Left -->
-        <div class="absolute top-6 left-7 z-10 flex flex-col space-y-1">
+        <div class="absolute top-7 left-8 z-10 flex flex-col">
             @if (!IsCompact)
             {
-                <span class="text-[10px] font-black tracking-[0.2em] uppercase px-2.5 py-1 rounded-full w-fit mb-1
-                      @(PreferencesService.CurrentThemeMode == "dark" 
-                        ? "text-emerald-400 bg-emerald-400/10 border border-emerald-400/20" 
-                        : "text-emerald-600 bg-emerald-600/10 border border-emerald-600/20")">@_pet.EvolutionName • LV. @_pet.CurrentLevel</span>
+                <span class="text-[9px] font-black tracking-[0.3em] uppercase text-emerald-700/60 mb-1">
+                    @_pet.EvolutionName • LV. @_pet.CurrentLevel
+                </span>
             }
-            <h3 class="@(IsCompact ? "text-lg" : "text-2xl") font-black tracking-tight drop-shadow-sm
-                  @(PreferencesService.CurrentThemeMode == "dark" ? "text-white" : "text-slate-900")">@(_pet.CustomName ?? "Linh vật chưa tên")</h3>
+            <h3 class="@(IsCompact ? "text-xl" : "text-2xl") font-black tracking-tight drop-shadow-sm
+                      @(PreferencesService.CurrentThemeMode == "dark" ? "text-white" : "text-slate-800")">
+                @(_pet.CustomName ?? "Linh vật chưa tên")
+            </h3>
         </div>
 
         <!-- UI Overlay - Bottom -->
-        <div class="absolute bottom-6 left-7 right-7 z-10 @(IsCompact ? "space-y-2" : "space-y-4")">
-            <!-- HP Bar -->
+        <div class="absolute bottom-7 left-8 right-8 z-10 @(IsCompact ? "space-y-3" : "space-y-4")">
+            <!-- HP Bar - High Definition -->
             <div class="space-y-1.5">
-                <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest 
-                      @(PreferencesService.CurrentThemeMode == "dark" ? "text-emerald-400/70" : "text-emerald-600/80")">
-                    <span class="flex items-center gap-1.5">💖 @(IsCompact ? "HP" : "Sinh mệnh")</span>
-                    <span>@(_pet.CurrentHealth)%</span>
+                <div class="flex items-center justify-between text-[9px] font-black uppercase tracking-[0.2em] text-emerald-400/80">
+                    <span class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]"></span>
+                        @(IsCompact ? "HP" : "Sinh mệnh")
+                    </span>
+                    <span class="font-mono">@(_pet.CurrentHealth)%</span>
                 </div>
-                <div class="relative h-3 rounded-full overflow-hidden border @(PreferencesService.CurrentThemeMode == "dark" ? "bg-slate-800/50 border-white/5" : "bg-slate-200/50 border-white/40") shadow-inner">
-                    <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(16,185,129,0.3)]" 
+                <div class="relative h-2.5 rounded-full bar-container-hd overflow-hidden hp-bar-glow">
+                    <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-rose-500 via-rose-400 to-emerald-400 transition-all duration-1000 ease-out" 
                          style="width: @(_pet.CurrentHealth)%">
-                        <div class="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.4)_50%,transparent_100%)] animate-[shimmer_2.5s_infinite]"></div>
+                        <div class="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.6)_50%,transparent_100%)] animate-[shimmer_2s_infinite]"></div>
                     </div>
                 </div>
             </div>
             
-            <!-- XP Bar -->
+            <!-- XP Bar - Minimalist -->
             <div class="space-y-1.5">
-                <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest 
-                      @(PreferencesService.CurrentThemeMode == "dark" ? "text-amber-400/70" : "text-amber-600/80")">
-                    <span class="flex items-center gap-1.5">⭐ @(IsCompact ? "XP" : "Tiến hóa")</span>
-                    <span>@_xpPercentage%</span>
+                <div class="flex items-center justify-between text-[9px] font-black uppercase tracking-[0.2em] text-amber-400/80">
+                    <span class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]"></span>
+                        @(IsCompact ? "XP" : "Tiến hóa")
+                    </span>
+                    <span class="font-mono">@_xpPercentage%</span>
                 </div>
-                <div class="relative h-2 rounded-full overflow-hidden @(PreferencesService.CurrentThemeMode == "dark" ? "bg-slate-800/50" : "bg-slate-200/50") shadow-inner">
-                    <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-amber-400 to-orange-500 transition-all duration-1000 ease-out" 
-                         style="width: @_xpPercentage%"></div>
+                <div class="relative h-2 rounded-full bar-container-hd overflow-hidden xp-bar-glow">
+                    <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-amber-300 via-amber-500 to-orange-600 transition-all duration-1000 ease-out" 
+                         style="width: @_xpPercentage%">
+                        <div class="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.4)_50%,transparent_100%)] animate-[shimmer_3s_infinite]"></div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Coin Badge -->
-        <div class="absolute top-6 right-7 z-10 flex items-center">
-            <div class="px-4 py-2 rounded-2xl shadow-xl border flex items-center space-x-2 transition-all hover:scale-105
-                  @(PreferencesService.CurrentThemeMode == "dark" 
-                    ? "bg-slate-800/90 border-slate-700 text-slate-100" 
-                    : "bg-white/95 border-white/80 text-slate-800")">
-                <span class="text-lg">🪙</span>
-                <span class="text-sm font-black tracking-tight">@_userCoins.ToString("N0")</span>
+        <div class="absolute top-7 right-8 z-10 flex items-center">
+            <div class="px-4 py-2 rounded-2xl shadow-lg border flex items-center space-x-2 transition-all hover:scale-105 active:scale-95
+                      @(PreferencesService.CurrentThemeMode == "dark" ? "bg-slate-800/80 border-slate-700" : "bg-white/90 border-emerald-100")">
+                <span class="text-lg drop-shadow-sm">🪙</span>
+                <span class="text-sm font-black tracking-tight @(PreferencesService.CurrentThemeMode == "dark" ? "text-emerald-400" : "text-emerald-900")">@_userCoins.ToString("N0")</span>
             </div>
         </div>
 
@@ -117,10 +150,12 @@
     else if (!_isLoading)
     {
         <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center space-y-5">
-            <div class="relative w-28 h-28 rounded-full flex items-center justify-center text-6xl shadow-inner border
-                  @(PreferencesService.CurrentThemeMode == "dark" ? "bg-slate-800/50 border-white/5" : "bg-emerald-50 border-emerald-100/50")">
-                <div class="absolute inset-0 rounded-full bg-emerald-400/10 animate-ping"></div>
-                🥚
+            <div class="relative w-28 h-28 rounded-full flex items-center justify-center text-6xl shadow-inner border transition-all duration-500
+                  @(PreferencesService.CurrentThemeMode == "dark" ? "bg-emerald-900/20 border-emerald-400/30" : "bg-emerald-50 border-emerald-100/50")">
+                <div class="absolute inset-0 rounded-full bg-emerald-400/5 blur-xl animate-pulse"></div>
+                <span class="text-7xl drop-shadow-[0_0_35px_rgba(251,191,36,0.8)] animate-pulse relative z-10 block">
+                    🥚
+                </span>
             </div>
             <div class="space-y-2">
                 <h4 class="font-black text-lg @(PreferencesService.CurrentThemeMode == "dark" ? "text-white" : "text-slate-900")">Vườn Ươm Bloomento</h4>

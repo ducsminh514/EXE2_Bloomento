@@ -37,7 +37,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\css\app.css" />
     <None Include="wwwroot\js\pets\petRenderer.js" />
     <None Include="wwwroot\js\auth.js" />
   </ItemGroup>

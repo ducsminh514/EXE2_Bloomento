@@ -43,9 +43,20 @@ public class PetService : IPetService
             .Select(ui => ui.Coins)
             .FirstOrDefaultAsync();
 
-        // Công thức Tuyến tính (Linear): Mỗi 100 XP là 1 Level
-        int relativeXp = userPet.TotalXp % 100;
-        if (userPet.TotalXp > 0 && relativeXp == 0) relativeXp = 0; // Đã sang level mới, thanh XP reset về 0
+        // Công thức Bậc hai (Quadratic): Level = 1 + floor(sqrt(XP / 100))
+        // Tính XP của level hiện tại để hiển thị thanh bar
+        int currentLevelBaseXp = (userPet.CurrentLevel - 1) * (userPet.CurrentLevel - 1) * 100;
+        int nextLevelBaseXp = userPet.CurrentLevel * userPet.CurrentLevel * 100;
+        int relativeXp = 0;
+        int xpToNextLevel = nextLevelBaseXp - currentLevelBaseXp;
+
+        if (userPet.TotalXp > currentLevelBaseXp)
+        {
+            relativeXp = userPet.TotalXp - currentLevelBaseXp;
+        }
+        
+        // Chuyển đổi sang phần trăm (0-100) để UI dễ hiển thị
+        int xpPercentage = (int)((double)relativeXp / xpToNextLevel * 100);
 
         return new PetStatusDto
     {
@@ -53,13 +64,13 @@ public class PetService : IPetService
             {
                 Id = userPet.Id,
                 CustomName = userPet.CustomName,
-                TotalXp = relativeXp, // XP tiến trình trong level hiện tại
+                TotalXp = xpPercentage, // Trả về phần trăm tiến trình
                 CurrentLevel = userPet.CurrentLevel,
                 CurrentHealth = userPet.CurrentHealth,
                 State = (int)userPet.State,
                 AssetUrl = stage?.AssetUrl ?? "",
                 EvolutionName = stage?.EvolutionName ?? "Unknown",
-                XpToNextLevel = 100 // Mỗi cấp luôn cần 100 XP
+                XpToNextLevel = 100 // UI mặc định coi 100% là đầy thanh
             },
             Coins = coins
         };
@@ -122,12 +133,9 @@ public class PetService : IPetService
         {
             if (xpAmount <= 0) return; // Không tạo pet nếu trừ điểm hoặc điểm = 0
 
-            // Lấy Template đầu tiên từ DB để đảm bảo Foreign Key luôn hợp lệ
             var defaultTemplate = await _context.PetTemplates.FirstOrDefaultAsync();
             if (defaultTemplate == null)
             {
-                // Fallback: Nếu Seeder chưa chạy kịp, dùng ID mặc định nhưng log lại
-                // Ở môi trường Production, Seeder nên được chạy qua Migration hoặc Startup
                 _cache.Set("PetSeederError", "No templates found in DB during auto-adoption", TimeSpan.FromMinutes(5));
                 return; 
             }
@@ -147,26 +155,31 @@ public class PetService : IPetService
                 CreatedAt = now
             };
             _context.UserPets.Add(pet);
-
-            // Đảm bảo Inventory tồn tại
-            var inventory = await _context.UserInventories.FirstOrDefaultAsync(ui => ui.UserId == userId);
-            if (inventory == null)
-            {
-                _context.UserInventories.Add(new UserInventory
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = userId,
-                    Coins = 0,
-                    ResurrectionPotionCount = 0,
-                    UpdatedAt = now
-                });
-            }
         }
 
-        // 3. Cập nhật XP và logic Trạng thái
+        // Đảm bảo Inventory tồn tại và Cập nhật Coins
+        var inventory = await _context.UserInventories.FirstOrDefaultAsync(ui => ui.UserId == userId);
+        if (inventory == null)
+        {
+            inventory = new UserInventory
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                Coins = 0,
+                ResurrectionPotionCount = 0,
+                UpdatedAt = now
+            };
+            _context.UserInventories.Add(inventory);
+        }
+
+        // 3. Cập nhật XP, Coins và logic Trạng thái
         pet.TotalXp = Math.Max(0, pet.TotalXp + xpAmount);
-        pet.CurrentLevel = (pet.TotalXp / 100) + 1;
+        pet.CurrentLevel = CalculateLevelFromXp(pet.TotalXp);
         pet.LastActionAt = now;
+
+        // Cập nhật Coins (Tỉ lệ 1:1 với XP)
+        inventory.Coins = Math.Max(0, inventory.Coins + xpAmount); // Hỗ trợ cả trừ điểm/tiền
+        inventory.UpdatedAt = now;
 
         // Đánh thức nếu đang Hibernate và có XP dương
         if (pet.State == PetState.Hibernate && xpAmount > 0)
@@ -199,12 +212,11 @@ public class PetService : IPetService
 
     public async System.Threading.Tasks.Task UseRecoveryItemAsync(Guid userId)
     {
-        // 1. Atomic Update cho Inventory (Chống Race Condition trừ vật phẩm)
-        // Chỉ trừ nếu số lượng > 0
+        // 1. Atomic Update cho Inventory - Sử dụng 100 Coins (Đồng bộ với UI)
         int affectedRows = await _context.UserInventories
-            .Where(ui => ui.UserId == userId && ui.ResurrectionPotionCount > 0)
+            .Where(ui => ui.UserId == userId && ui.Coins >= 100)
             .ExecuteUpdateAsync(s => s
-                .SetProperty(ui => ui.ResurrectionPotionCount, ui => ui.ResurrectionPotionCount - 1));
+                .SetProperty(ui => ui.Coins, ui => ui.Coins - 100));
 
         if (affectedRows > 0)
         {
