@@ -18,13 +18,26 @@ window.initGoogleSignIn = (dotNetHelper, clientId) => {
             google.accounts.id.initialize({
                 client_id: clientId,
                 callback: (response) => {
+                    console.log("Google Credential received!");
                     dotNetHelper.invokeMethodAsync('HandleGoogleCredential', response.credential);
                 },
                 auto_select: false,
                 cancel_on_tap_outside: true
             });
 
-            google.accounts.id.prompt();
+            google.accounts.id.prompt((notification) => {
+                console.log("Google Prompt Status:", notification);
+                if (notification.isNotDisplayed()) {
+                    console.warn("Prompt not displayed. Reason:", notification.getNotDisplayedReason());
+                    // If suppressed, we might need a manual button
+                }
+                if (notification.isSkippedMoment()) {
+                    console.warn("Prompt skipped. Reason:", notification.getSkippedReason());
+                }
+                if (notification.isDismissedMoment()) {
+                    console.warn("Prompt dismissed. Reason:", notification.getDismissedReason());
+                }
+            });
             console.log("Google prompt triggered.");
         } catch (e) {
             console.error("Error initializing Google Sign-In:", e);
