@@ -1,5 +1,5 @@
 self.assetsManifest = {
-  "version": "JUElixS6",
+  "version": "LeP5xMyv",
   "assets": [
     {
       "hash": "sha256-We76yQ6BbUqy3OL7pB4AiChSOtAH/BdDsZ0Z+MzXvD0=",
@@ -198,11 +198,11 @@ self.assetsManifest = {
       "url": "_content/MudBlazor/MudBlazor.min.js"
     },
     {
-      "hash": "sha256-tl81pZSPDyRXab35X+iPFsPnHey6kgY9FW6jV0L/pyw=",
+      "hash": "sha256-NFZ37RRYSzejHbvXUNN++8awUZ6CYMSTqSd+RHrMqcY=",
       "url": "_framework/ADHDChecklist.Client.pdb"
     },
     {
-      "hash": "sha256-JJAvRLLyDVNmh6w9NCmERbvhTIb2d8jg3tCIEeMsxKg=",
+      "hash": "sha256-nej2WlnQRMqrkB6ZorO5+QUGOaSN/yD586wzz8XeSng=",
       "url": "_framework/ADHDChecklist.Client.wasm"
     },
     {
@@ -1054,7 +1054,7 @@ self.assetsManifest = {
       "url": "_framework/WindowsBase.wasm"
     },
     {
-      "hash": "sha256-qLDlm/SMeJSu8EiE6usm02sYjDdFK7ea91kruUs9rwE=",
+      "hash": "sha256-Y94KceQhrkdsr+XcMRDIpDCKiR9B8Hnc5YofjBfgGNw=",
       "url": "_framework/blazor.boot.json"
     },
     {
@@ -1130,11 +1130,11 @@ self.assetsManifest = {
       "url": "icon-512.png"
     },
     {
-      "hash": "sha256-HGp+FnfGeyw2M5iO5CHStQLf628nAwj4Zn+fctcgXfw=",
+      "hash": "sha256-wjg1noL2ITt3U1Mmc7U9ag93pxdYqVn5sTwbt7LhBQU=",
       "url": "index.html"
     },
     {
-      "hash": "sha256-8YBVR1onsJJxB9bsujaW/Y6ZVVmZY4lBEObU16RezT8=",
+      "hash": "sha256-KAEiHrj3GAbb51c/r+SOPOI9mbE4k3ySI90bm1IQSIw=",
       "url": "js/auth.js"
     },
     {
@@ -1154,7 +1154,7 @@ self.assetsManifest = {
       "url": "manifest.webmanifest"
     },
     {
-      "hash": "sha256-aGAVin92bEP/Zbq4xplHDOq3gM99dw+eHMu3ClVgHu8=",
+      "hash": "sha256-yF8woFAg0gfR1jIVGxlYvFmlw7CuvOqovNbqMWtDW20=",
       "url": "vercel.json"
     }
   ]

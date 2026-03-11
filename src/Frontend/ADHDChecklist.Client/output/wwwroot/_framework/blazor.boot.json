@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "ADHDChecklist.Client",
   "resources": {
-    "hash": "sha256-eZRxmq5b2e4n8LPoZc+YmcZVpofot5e6UoGB0W+PuiA=",
+    "hash": "sha256-G9u7UXbeWW0CLf9JlVLaT01ou4qJ7xfm9M15zkhp59c=",
     "jsModuleNative": {
       "dotnet.native.js": "sha256-vtotCeXt2UD6oc459laJT32vBgigZ+eLoUmdeFkvYDk="
     },
@@ -101,14 +101,14 @@
       "System.wasm": "sha256-I4hhyMuUoHdrzDopL9tlnkL/Skg+0OO+gmkOXNT3dcg=",
       "netstandard.wasm": "sha256-KN3YEwdTZvpnqzoLyHgtrZtt5890/vdlEcdSOLJ68Rc=",
       "System.Private.CoreLib.wasm": "sha256-YYdvwLq6RwtSk3erX9yBzVJ629+4+MA8i+7vEsdVG9U=",
-      "ADHDChecklist.Client.wasm": "sha256-xxF+SOZbKcMv9gw2gHTVfJwDZjrpN4XspOOoPo4urnc="
+      "ADHDChecklist.Client.wasm": "sha256-nej2WlnQRMqrkB6ZorO5+QUGOaSN/yD586wzz8XeSng="
     }
   },
   "debugLevel": 0,
   "linkerEnabled": true,
   "appsettings": [
-    "../appsettings.json",
-    "../appsettings.Development.json"
+    "../appsettings.Development.json",
+    "../appsettings.json"
   ],
   "globalizationMode": "sharded",
   "extensions": {

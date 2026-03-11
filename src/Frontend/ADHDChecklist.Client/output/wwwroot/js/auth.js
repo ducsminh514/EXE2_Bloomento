@@ -29,7 +29,6 @@ window.initGoogleSignIn = (dotNetHelper, clientId) => {
                 console.log("Google Prompt Status:", notification);
                 if (notification.isNotDisplayed()) {
                     console.warn("Prompt not displayed. Reason:", notification.getNotDisplayedReason());
-                    // If suppressed, we might need a manual button
                 }
                 if (notification.isSkippedMoment()) {
                     console.warn("Prompt skipped. Reason:", notification.getSkippedReason());
@@ -38,7 +37,21 @@ window.initGoogleSignIn = (dotNetHelper, clientId) => {
                     console.warn("Prompt dismissed. Reason:", notification.getDismissedReason());
                 }
             });
-            console.log("Google prompt triggered.");
+
+            // Always render the official button as a fallback/manual option
+            const btnContainer = document.getElementById("google-button-container");
+            if (btnContainer) {
+                console.log("Rendering Google Sign-In button...");
+                google.accounts.id.renderButton(btnContainer, {
+                    theme: "outline",
+                    size: "large",
+                    shape: "rectangular",
+                    width: btnContainer.offsetWidth || 350,
+                    text: "signin_with",
+                    locale: "vi"
+                });
+            }
+            console.log("Google initialization complete.");
         } catch (e) {
             console.error("Error initializing Google Sign-In:", e);
         }
