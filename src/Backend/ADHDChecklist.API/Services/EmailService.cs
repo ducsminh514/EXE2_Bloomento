@@ -79,7 +79,7 @@ public class EmailService : IEmailService
 
     public async Task SendWelcomeEmailAsync(string toEmail, string userName)
     {
-        var frontendUrl = _configuration["FrontendUrl"] ?? "https://exe-2-bloomento.vercel.app";
+        var frontendUrl = _configuration["FrontendUrl"] ?? "https://exe-2-bloomento-ducsminh514s-projects.vercel.app";
         var subject = "Chào mừng đến với ADHD Checklist! 🎉";
         var body = $@"
             <html>
