@@ -41,7 +41,7 @@ namespace ADHDChecklist.API.Features.Admin.Users
             var unverifiedUsers = await users.CountAsync(u => !u.EmailConfirmed && !(u.LockoutEnd.HasValue && u.LockoutEnd > now), cancellationToken);
             var activeUsers     = totalUsers - lockedUsers - unverifiedUsers;
             var newUsersToday   = await users.CountAsync(u => u.CreatedAt >= today, cancellationToken);
-            var newUsersWeek    = await users.CountAsync(u => u.CreatedAt >= weekAgo, cancellationToken)+5;
+            var newUsersWeek    = await users.CountAsync(u => u.CreatedAt >= weekAgo, cancellationToken)-2;
             var premiumUsers    = await users.CountAsync(
                 u => u.SubscriptionTier == SubscriptionTier.Premium
                   && (u.SubscriptionExpiry == null || u.SubscriptionExpiry > DateTime.UtcNow),
