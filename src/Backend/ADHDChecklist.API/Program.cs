@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using ADHDChecklist.API.Features.Tasks.AutoAdjust;
 using Hangfire;
 using Hangfire.PostgreSql; // Npgsql Hangfire storage
@@ -414,6 +414,7 @@ app.MapUploadImageEndpoint();
 app.MapGetAdminDashboardStatsEndpoint();
 app.MapGetAdminDashboardChartsEndpoint();
 app.MapGetUsersEndpoint();
+app.MapGetUserStatsEndpoint();
 app.MapGetUserDetailEndpoint();
 app.MapToggleUserLockEndpoint();
 

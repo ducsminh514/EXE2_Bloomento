@@ -20,6 +20,17 @@ public class UserDto
     public bool IsLockedOut { get; set; }
 }
 
+public class UserStatsDto
+{
+    public int TotalUsers { get; set; }
+    public int ActiveUsers { get; set; }
+    public int UnverifiedUsers { get; set; }
+    public int LockedUsers { get; set; }
+    public int NewUsersToday { get; set; }
+    public int NewUsersThisWeek { get; set; }
+    public int PremiumUsers { get; set; }
+}
+
 public class UserDetailResponse
 {
     public string Id { get; set; } = string.Empty;

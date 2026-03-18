@@ -1,5 +1,4 @@
 using ADHDChecklist.Client.Infrastructure.Services;
-using System.Net.Http.Json;
 using ADHDChecklist.Client.Features.Admin.DTOs;
 
 namespace ADHDChecklist.Client.Features.Admin.Services;
@@ -9,6 +8,7 @@ public interface IAdminService
     Task<AdminDashboardStats?> GetDashboardStatsAsync();
     Task<AdminDashboardChartsResponse?> GetDashboardChartsAsync();
     Task<UserListResponse?> GetUsersAsync(int page = 1, int pageSize = 10, string? search = null);
+    Task<UserStatsDto?> GetUserStatsAsync();
     Task<UserDetailResponse?> GetUserDetailAsync(string userId);
     Task<bool> ToggleUserLockAsync(string userId);
 }
@@ -56,6 +56,18 @@ public class AdminService : IAdminService
                 url += $"&search={Uri.EscapeDataString(search)}";
             }
             return await _apiClient.GetAsync<UserListResponse>(url);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
+    public async Task<UserStatsDto?> GetUserStatsAsync()
+    {
+        try
+        {
+            return await _apiClient.GetAsync<UserStatsDto>("/api/admin/users/stats");
         }
         catch (Exception)
         {
@@ -116,5 +128,3 @@ public class CategoryDistributionData
     public string CategoryName { get; set; } = string.Empty;
     public int ArticleCount { get; set; }
 }
-
-
