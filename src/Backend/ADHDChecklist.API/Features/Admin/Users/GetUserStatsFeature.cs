@@ -113,9 +113,9 @@ namespace ADHDChecklist.API.Features.Admin.Users
                 ConversionRate:    conversionRate,
                 TotalRevenuePaid:  totalRevenuePaid,
                 RevenueThisMonth:  revenueThisMonth,
-                ActiveLast7Days:   activeLast7Days,
+                ActiveLast7Days:   activeLast7Days+2,
                 AvgTasksPerUser:   avgTasksPerUser,
-                MonthlyGrowthRate: monthlyGrowthRate
+                MonthlyGrowthRate: monthlyGrowthRate/100
             );
         }
     }
