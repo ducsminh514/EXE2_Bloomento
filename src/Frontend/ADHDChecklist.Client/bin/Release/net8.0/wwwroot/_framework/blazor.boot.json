@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "ADHDChecklist.Client",
   "resources": {
-    "hash": "sha256-xVIF/uuWmsGSTC5tQlVLG4sUWpOKG5VPGmub+UY1pAo=",
+    "hash": "sha256-ISb6FPGHLm22nPv+sb5tos1eJPOnES+/tu+bxWrWQEI=",
     "jsModuleNative": {
       "dotnet.native.js": "sha256-vtotCeXt2UD6oc459laJT32vBgigZ+eLoUmdeFkvYDk="
     },
@@ -232,10 +232,10 @@
       "mscorlib.wasm": "sha256-K9gNrsN9UmPqLs6J/FrkiKpmkVGnHjjqUsc7YGvesCY=",
       "netstandard.wasm": "sha256-4emjlXLM9qW3t2tlII20SDylBgG4ueI0wy9nh5FMd8g=",
       "System.Private.CoreLib.wasm": "sha256-2DN4v7I/tabltDEPdIO8sDBB0tY8zOm+0CvHbMssXW4=",
-      "ADHDChecklist.Client.wasm": "sha256-Gc6ezO9EQhhM6qpTutISy5AAaBRb9IqLvHEH0zhYBQM="
+      "ADHDChecklist.Client.wasm": "sha256-8Dt4gAgnd4Kj8vkIlBsfJc++YuHGE3ooOFCgOenuSj4="
     },
     "pdb": {
-      "ADHDChecklist.Client.pdb": "sha256-v5ibTpH+K5dAml5+CzuJrl/2BH8kJaZHqpXxfZHQcLw="
+      "ADHDChecklist.Client.pdb": "sha256-sYN5TTzaQ7FOk8s1bjSy0k1NdwR8ZR1PS9btQM3i8XU="
     }
   },
   "debugLevel": -1,
