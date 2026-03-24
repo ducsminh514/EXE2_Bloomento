@@ -29,6 +29,15 @@ public class UserStatsDto
     public int NewUsersToday { get; set; }
     public int NewUsersThisWeek { get; set; }
     public int PremiumUsers { get; set; }
+
+    // Growth & Revenue
+    public int FamilyAccounts { get; set; }
+    public double ConversionRate { get; set; }
+    public long TotalRevenuePaid { get; set; }
+    public long RevenueThisMonth { get; set; }
+    public int ActiveLast7Days { get; set; }
+    public double AvgTasksPerUser { get; set; }
+    public double MonthlyGrowthRate { get; set; }
 }
 
 public class UserDetailResponse

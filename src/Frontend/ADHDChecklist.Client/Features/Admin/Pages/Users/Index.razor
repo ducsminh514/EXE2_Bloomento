@@ -84,6 +84,79 @@
         </div>
     </div>
 
+    <!-- Row 3: Subscription & Revenue -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center text-teal-600 text-lg">👨‍👩‍👧‍👦</div>
+                <div>
+                    <p class="text-xs text-gray-500 font-medium uppercase tracking-wider">Family Accounts</p>
+                    <p class="text-2xl font-bold text-gray-900">@(_stats?.FamilyAccounts ?? 0)</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 text-lg">📊</div>
+                <div>
+                    <p class="text-xs text-gray-500 font-medium uppercase tracking-wider">Conversion Rate</p>
+                    <p class="text-2xl font-bold text-gray-900">@((_stats?.ConversionRate ?? 0).ToString("0.0"))%</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 text-lg">💰</div>
+                <div>
+                    <p class="text-xs text-gray-500 font-medium uppercase tracking-wider">Total Revenue</p>
+                    <p class="text-2xl font-bold text-gray-900">@FormatVND(_stats?.TotalRevenuePaid ?? 0)</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-lime-100 flex items-center justify-center text-lime-600 text-lg">📈</div>
+                <div>
+                    <p class="text-xs text-gray-500 font-medium uppercase tracking-wider">Revenue This Month</p>
+                    <p class="text-2xl font-bold text-gray-900">@FormatVND(_stats?.RevenueThisMonth ?? 0)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 4: User Engagement -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600 text-lg">🔥</div>
+                <div>
+                    <p class="text-xs text-gray-500 font-medium uppercase tracking-wider">Active Last 7 Days</p>
+                    <p class="text-2xl font-bold text-gray-900">@(_stats?.ActiveLast7Days ?? 0)</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-pink-100 flex items-center justify-center text-pink-600 text-lg">📋</div>
+                <div>
+                    <p class="text-xs text-gray-500 font-medium uppercase tracking-wider">Avg Tasks/User</p>
+                    <p class="text-2xl font-bold text-gray-900">@((_stats?.AvgTasksPerUser ?? 0).ToString("0.0"))</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-cyan-100 flex items-center justify-center text-cyan-600 text-lg">🚀</div>
+                <div>
+                    <p class="text-xs text-gray-500 font-medium uppercase tracking-wider">Monthly Growth</p>
+                    <p class="text-2xl font-bold @((_stats?.MonthlyGrowthRate ?? 0) >= 0 ? "text-green-600" : "text-red-600")">
+                        @((_stats?.MonthlyGrowthRate ?? 0) >= 0 ? "+" : "")@((_stats?.MonthlyGrowthRate ?? 0).ToString("0.0"))%
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Actions & Filter -->
     <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex flex-col md:flex-row gap-4 justify-between items-center">
         <div class="relative w-full md:w-96">
@@ -266,5 +339,10 @@
         var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (parts.Length == 1) return parts[0][0].ToString().ToUpper();
         return (parts[0][0].ToString() + parts[parts.Length - 1][0].ToString()).ToUpper();
+    }
+
+    private string FormatVND(long amount)
+    {
+        return amount.ToString("N0") + "₫";
     }
 }
