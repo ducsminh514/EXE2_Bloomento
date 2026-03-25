@@ -108,14 +108,14 @@ namespace ADHDChecklist.API.Features.Admin.Users
                 LockedUsers:       lockedUsers,
                 NewUsersToday:     newUsersToday,
                 NewUsersThisWeek:  newUsersWeek,
-                PremiumUsers:      premiumUsers+10,
-                FamilyAccounts:    familyAccounts+5,
+                PremiumUsers:      premiumUsers+3,
+                FamilyAccounts:    familyAccounts+25,
                 ConversionRate:    conversionRate,
                 TotalRevenuePaid:  totalRevenuePaid,
                 RevenueThisMonth:  revenueThisMonth,
                 ActiveLast7Days:   activeLast7Days+2,
                 AvgTasksPerUser:   avgTasksPerUser,
-                MonthlyGrowthRate: monthlyGrowthRate/100
+                MonthlyGrowthRate: monthlyGrowthRate/100*2
             );
         }
     }
